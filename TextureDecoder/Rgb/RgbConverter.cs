@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 
 namespace TextureDecoder.Rgb
 {
@@ -272,7 +273,7 @@ namespace TextureDecoder.Rgb
 			{
 				for (int j = 0; j < height; j++)
 				{
-					byte r = Convert.ToByte(Math.Round(ToHalf(input, io) * 255f));
+					byte r = ClampByte(ToHalf(input, io) * 255f);
 					output[oo + 0] = 0;             // b
 					output[oo + 1] = 0;             // g
 					output[oo + 2] = r;				// r
@@ -298,8 +299,8 @@ namespace TextureDecoder.Rgb
 			{
 				for (int j = 0; j < height; j++)
 				{
-					byte r = Convert.ToByte(Math.Round(ToHalf(input, io + 0) * 255f));
-					byte g = Convert.ToByte(Math.Round(ToHalf(input, io + 2) * 255f));
+					byte r = ClampByte(ToHalf(input, io + 0) * 255f);
+					byte g = ClampByte(ToHalf(input, io + 2) * 255f);
 					output[oo + 0] = 0;             // b
 					output[oo + 1] = g;             // g
 					output[oo + 2] = r;             // r
@@ -354,7 +355,7 @@ namespace TextureDecoder.Rgb
 			{
 				for (int j = 0; j < height; j++)
 				{
-					byte r = Convert.ToByte(Math.Round(BitConverter.ToSingle(input, io) * 255f));
+					byte r = ClampByte(ToSingle(input, io) * 255f);
 					output[oo + 0] = 0;				// b
 					output[oo + 1] = 0;				// g
 					output[oo + 2] = r;				// r
@@ -380,8 +381,8 @@ namespace TextureDecoder.Rgb
 			{
 				for (int j = 0; j < height; j++)
 				{
-					byte r = Convert.ToByte(Math.Round(BitConverter.ToSingle(input, io + 0) * 255f));
-					byte g = Convert.ToByte(Math.Round(BitConverter.ToSingle(input, io + 4) * 255f));
+					byte r = ClampByte(ToSingle(input, io + 0) * 255f);
+					byte g = ClampByte(ToSingle(input, io + 4) * 255f);
 					output[oo + 0] = 0;             // b
 					output[oo + 1] = g;             // g
 					output[oo + 2] = r;             // r
@@ -407,10 +408,10 @@ namespace TextureDecoder.Rgb
 			{
 				for (int j = 0; j < height; j++)
 				{
-					byte r = Convert.ToByte(Math.Round(BitConverter.ToSingle(input, io + 0) * 255f));
-					byte g = Convert.ToByte(Math.Round(BitConverter.ToSingle(input, io + 4) * 255f));
-					byte b = Convert.ToByte(Math.Round(BitConverter.ToSingle(input, io + 8) * 255f));
-					byte a = Convert.ToByte(Math.Round(BitConverter.ToSingle(input, io + 12) * 255f));
+					byte r = ClampByte(ToSingle(input, io + 0));
+					byte g = ClampByte(ToSingle(input, io + 4));
+					byte b = ClampByte(ToSingle(input, io + 8));
+					byte a = ClampByte(ToSingle(input, io + 12));
 					output[oo + 0] = b;				// b
 					output[oo + 1] = g;				// g
 					output[oo + 2] = r;				// r
@@ -438,9 +439,9 @@ namespace TextureDecoder.Rgb
 				{
 					uint value = BitConverter.ToUInt32(input, io);
 					double scale = Math.Pow(2, unchecked((int)(value >> 27) - 24));
-					byte r = Convert.ToByte(Math.Round((value >> 0 & 0x1FF) * scale * 255.0));
-					byte g = Convert.ToByte(Math.Round((value >> 9 & 0x1FF) * scale * 255.0));
-					byte b = Convert.ToByte(Math.Round((value >> 18 & 0x1FF) * scale * 255.0));
+					byte r = ClampByte((value >> 0 & 0x1FF) * scale * 255.0);
+					byte g = ClampByte((value >> 9 & 0x1FF) * scale * 255.0);
+					byte b = ClampByte((value >> 18 & 0x1FF) * scale * 255.0);
 					output[oo + 0] = b;             // b
 					output[oo + 1] = g;             // g
 					output[oo + 2] = r;             // r
@@ -463,6 +464,30 @@ namespace TextureDecoder.Rgb
 #else
 			return (float)Half.ToHalf(input, offset);
 #endif
+		}
+
+		private static float ToSingle(byte[] input, int offset)
+		{
+#if NET5_0_OR_GREATER
+			return System.Buffers.Binary.BinaryPrimitives.ReadSingleLittleEndian(input.AsSpan(offset, 4));
+#else
+			if (BitConverter.IsLittleEndian)
+				return BitConverter.ToSingle(input, offset);
+			else
+				return BitConverter.ToSingle(new byte[] { input[offset + 3], input[offset + 2], input[offset + 1], input[offset] }, 0);
+#endif
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static byte ClampByte(float x)
+		{
+			return byte.MaxValue < x ? byte.MaxValue : (x > byte.MinValue ? (byte)x : byte.MinValue);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static byte ClampByte(double x)
+		{
+			return byte.MaxValue < x ? byte.MaxValue : (x > byte.MinValue ? (byte)x : byte.MinValue);
 		}
 	}
 }
