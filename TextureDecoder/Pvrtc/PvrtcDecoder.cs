@@ -2,12 +2,13 @@
 #define ASSUME_IMAGE_TILING
 
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace TextureDecoder.Pvrtc
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	public static class PvrtcDecoder
 	{
 		private struct AmtcBlock

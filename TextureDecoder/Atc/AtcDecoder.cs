@@ -3,8 +3,18 @@ using System.Runtime.CompilerServices;
 
 namespace TextureDecoder.Atc
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	public static class AtcDecoder
 	{
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns></returns>
 		public static byte[] DecompressAtcRgb4(byte[] input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
@@ -12,6 +22,13 @@ namespace TextureDecoder.Atc
 			return output;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public unsafe static void DecompressAtcRgb4(byte[] input, int width, int height, byte[] output)
 		{
 			fixed (byte* inputPtr = input)
@@ -23,6 +40,13 @@ namespace TextureDecoder.Atc
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public unsafe static void DecompressAtcRgb4(byte* input, int width, int height, byte* output)
 		{
 			int bcw = (width + 3) / 4;
@@ -47,6 +71,13 @@ namespace TextureDecoder.Atc
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns></returns>
 		public static byte[] DecompressAtcRgba8(byte[] input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
@@ -54,6 +85,13 @@ namespace TextureDecoder.Atc
 			return output;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public unsafe static void DecompressAtcRgba8(byte[] input, int width, int height, byte[] output)
 		{
 			fixed (byte* inputPtr = input)
@@ -65,6 +103,13 @@ namespace TextureDecoder.Atc
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public unsafe static void DecompressAtcRgba8(byte* input, int width, int height, byte* output)
 		{
 			int bcw = (width + 3) / 4;

@@ -2,8 +2,18 @@ using System.Runtime.CompilerServices;
 
 namespace TextureDecoder.Yuy2
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	public static class Yuy2Decoder
 	{
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns></returns>
 		public static byte[] DecompressYUY2(byte[] input, int width, int height)
 		{
 			byte[] output = new byte[width * height * sizeof(uint)];
@@ -11,6 +21,13 @@ namespace TextureDecoder.Yuy2
 			return output;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public static void DecompressYUY2(byte[] input, int width, int height, byte[] output)
 		{
 			int p = 0;

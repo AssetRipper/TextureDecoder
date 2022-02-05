@@ -1,10 +1,19 @@
-using System;
 using System.Runtime.CompilerServices;
 
 namespace TextureDecoder.Etc
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	public static class EtcDecoder
 	{
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns></returns>
 		public static byte[] DecompressETC(byte[] input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
@@ -12,6 +21,13 @@ namespace TextureDecoder.Etc
 			return output;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public unsafe static void DecompressETC(byte[] input, int width, int height, byte[] output)
 		{
 			fixed (byte* inputPtr = input)
@@ -23,6 +39,13 @@ namespace TextureDecoder.Etc
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public unsafe static void DecompressETC(byte* input, int width, int height, byte* output)
 		{
 			int bcw = (width + 3) / 4;
@@ -47,6 +70,13 @@ namespace TextureDecoder.Etc
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns></returns>
 		public static byte[] DecompressETC2(byte[] input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
@@ -54,6 +84,13 @@ namespace TextureDecoder.Etc
 			return output;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public unsafe static void DecompressETC2(byte[] input, int width, int height, byte[] output)
 		{
 			fixed (byte* inputPtr = input)
@@ -65,6 +102,13 @@ namespace TextureDecoder.Etc
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public unsafe static void DecompressETC2(byte* input, int width, int height, byte* output)
 		{
 			int bcw = (width + 3) / 4;
@@ -89,6 +133,13 @@ namespace TextureDecoder.Etc
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns></returns>
 		public static byte[] DecompressETC2A1(byte[] input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
@@ -96,6 +147,13 @@ namespace TextureDecoder.Etc
 			return output;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public unsafe static void DecompressETC2A1(byte[] input, int width, int height, byte[] output)
 		{
 			fixed (byte* inputPtr = input)
@@ -107,6 +165,13 @@ namespace TextureDecoder.Etc
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public unsafe static void DecompressETC2A1(byte* input, int width, int height, byte* output)
 		{
 			int width4 = width * 4;
@@ -132,6 +197,13 @@ namespace TextureDecoder.Etc
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns></returns>
 		public static byte[] DecompressETC2A8(byte[] input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
@@ -139,6 +211,13 @@ namespace TextureDecoder.Etc
 			return output;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public unsafe static void DecompressETC2A8(byte[] input, int width, int height, byte[] output)
 		{
 			fixed (byte* inputPtr = input)
@@ -150,6 +229,13 @@ namespace TextureDecoder.Etc
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public unsafe static void DecompressETC2A8(byte* input, int width, int height, byte* output)
 		{
 			int bcw = (width + 3) / 4;
@@ -175,6 +261,13 @@ namespace TextureDecoder.Etc
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns></returns>
 		public static byte[] DecompressEACRUnsigned(byte[] input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
@@ -182,6 +275,13 @@ namespace TextureDecoder.Etc
 			return output;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public unsafe static void DecompressEACRUnsigned(byte[] input, int width, int height, byte[] output)
 		{
 			fixed (byte* inputPtr = input)
@@ -193,6 +293,13 @@ namespace TextureDecoder.Etc
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public unsafe static void DecompressEACRUnsigned(byte* input, int width, int height, byte* output)
 		{
 			int bcw = (width + 3) / 4;
@@ -221,6 +328,13 @@ namespace TextureDecoder.Etc
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns></returns>
 		public static byte[] DecompressEACRSigned(byte[] input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
@@ -228,6 +342,13 @@ namespace TextureDecoder.Etc
 			return output;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public unsafe static void DecompressEACRSigned(byte[] input, int width, int height, byte[] output)
 		{
 			fixed (byte* inputPtr = input)
@@ -239,6 +360,13 @@ namespace TextureDecoder.Etc
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public unsafe static void DecompressEACRSigned(byte* input, int width, int height, byte* output)
 		{
 			int bcw = (width + 3) / 4;
@@ -267,6 +395,13 @@ namespace TextureDecoder.Etc
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns></returns>
 		public static byte[] DecompressEACRGUnsigned(byte[] input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
@@ -274,6 +409,13 @@ namespace TextureDecoder.Etc
 			return output;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public unsafe static void DecompressEACRGUnsigned(byte[] input, int width, int height, byte[] output)
 		{
 			fixed (byte* inputPtr = input)
@@ -285,6 +427,13 @@ namespace TextureDecoder.Etc
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public unsafe static void DecompressEACRGUnsigned(byte* input, int width, int height, byte* output)
 		{
 			int bcw = (width + 3) / 4;
@@ -314,6 +463,13 @@ namespace TextureDecoder.Etc
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns></returns>
 		public static byte[] DecompressEACRGSigned(byte[] input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
@@ -321,6 +477,13 @@ namespace TextureDecoder.Etc
 			return output;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public unsafe static void DecompressEACRGSigned(byte[] input, int width, int height, byte[] output)
 		{
 			fixed (byte* inputPtr = input)
@@ -332,6 +495,13 @@ namespace TextureDecoder.Etc
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public unsafe static void DecompressEACRGSigned(byte* input, int width, int height, byte* output)
 		{
 			int bcw = (width + 3) / 4;

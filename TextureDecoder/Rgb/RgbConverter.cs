@@ -3,8 +3,18 @@ using System.Runtime.CompilerServices;
 
 namespace TextureDecoder.Rgb
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	public static class RgbConverter
 	{
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns></returns>
 		public static byte[] A8ToBGRA32(byte[] input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
@@ -12,6 +22,13 @@ namespace TextureDecoder.Rgb
 			return output;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public static void A8ToBGRA32(byte[] input, int width, int height, byte[] output)
 		{
 			int io = 0;
@@ -30,6 +47,13 @@ namespace TextureDecoder.Rgb
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns></returns>
 		public static byte[] ARGB16ToBGRA32(byte[] input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
@@ -37,6 +61,13 @@ namespace TextureDecoder.Rgb
 			return output;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public static void ARGB16ToBGRA32(byte[] input, int width, int height, byte[] output)
 		{
 			int io = 0;
@@ -55,6 +86,13 @@ namespace TextureDecoder.Rgb
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns></returns>
 		public static byte[] RGB24ToBGRA32(byte[] input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
@@ -62,6 +100,13 @@ namespace TextureDecoder.Rgb
 			return output;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public static void RGB24ToBGRA32(byte[] input, int width, int height, byte[] output)
 		{
 			int io = 0;
@@ -80,6 +125,13 @@ namespace TextureDecoder.Rgb
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns></returns>
 		public static byte[] RGBA32ToBGRA32(byte[] input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
@@ -87,6 +139,13 @@ namespace TextureDecoder.Rgb
 			return output;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public static void RGBA32ToBGRA32(byte[] input, int width, int height, byte[] output)
 		{
 			int io = 0;
@@ -105,6 +164,13 @@ namespace TextureDecoder.Rgb
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns></returns>
 		public static byte[] ARGB32ToBGRA32(byte[] input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
@@ -112,6 +178,13 @@ namespace TextureDecoder.Rgb
 			return output;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public static void ARGB32ToBGRA32(byte[] input, int width, int height, byte[] output)
 		{
 			int io = 0;
@@ -130,6 +203,13 @@ namespace TextureDecoder.Rgb
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns></returns>
 		public static byte[] RGB16ToBGRA32(byte[] input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
@@ -137,6 +217,13 @@ namespace TextureDecoder.Rgb
 			return output;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public static void RGB16ToBGRA32(byte[] input, int width, int height, byte[] output)
 		{
 			int io = 0;
@@ -158,6 +245,13 @@ namespace TextureDecoder.Rgb
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns></returns>
 		public static byte[] R16ToBGRA32(byte[] input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
@@ -165,6 +259,13 @@ namespace TextureDecoder.Rgb
 			return output;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public static void R16ToBGRA32(byte[] input, int width, int height, byte[] output)
 		{
 			int io = 0;
@@ -183,6 +284,13 @@ namespace TextureDecoder.Rgb
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns></returns>
 		public static byte[] RGBA16ToBGRA32(byte[] input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
@@ -190,6 +298,13 @@ namespace TextureDecoder.Rgb
 			return output;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public static void RGBA16ToBGRA32(byte[] input, int width, int height, byte[] output)
 		{
 			int io = 0;
@@ -208,6 +323,13 @@ namespace TextureDecoder.Rgb
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns></returns>
 		public static byte[] RG16ToBGRA32(byte[] input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
@@ -215,6 +337,13 @@ namespace TextureDecoder.Rgb
 			return output;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public static void RG16ToBGRA32(byte[] input, int width, int height, byte[] output)
 		{
 			int io = 0;
@@ -233,6 +362,13 @@ namespace TextureDecoder.Rgb
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns></returns>
 		public static byte[] R8ToBGRA32(byte[] input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
@@ -240,6 +376,13 @@ namespace TextureDecoder.Rgb
 			return output;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public static void R8ToBGRA32(byte[] input, int width, int height, byte[] output)
 		{
 			int io = 0;
@@ -258,6 +401,13 @@ namespace TextureDecoder.Rgb
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns></returns>
 		public static byte[] RHalfToBGRA32(byte[] input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
@@ -265,6 +415,13 @@ namespace TextureDecoder.Rgb
 			return output;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public static void RHalfToBGRA32(byte[] input, int width, int height, byte[] output)
 		{
 			int io = 0;
@@ -284,6 +441,13 @@ namespace TextureDecoder.Rgb
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns></returns>
 		public static byte[] RGHalfToBGRA32(byte[] input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
@@ -291,6 +455,13 @@ namespace TextureDecoder.Rgb
 			return output;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public static void RGHalfToBGRA32(byte[] input, int width, int height, byte[] output)
 		{
 			int io = 0;
@@ -311,6 +482,13 @@ namespace TextureDecoder.Rgb
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns></returns>
 		public static byte[] RGBAHalfToBGRA32(byte[] input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
@@ -318,6 +496,13 @@ namespace TextureDecoder.Rgb
 			return output;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public static void RGBAHalfToBGRA32(byte[] input, int width, int height, byte[] output)
 		{
 			int io = 0;
@@ -340,6 +525,13 @@ namespace TextureDecoder.Rgb
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns></returns>
 		public static byte[] RFloatToBGRA32(byte[] input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
@@ -347,6 +539,13 @@ namespace TextureDecoder.Rgb
 			return output;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public static void RFloatToBGRA32(byte[] input, int width, int height, byte[] output)
 		{
 			int io = 0;
@@ -366,6 +565,13 @@ namespace TextureDecoder.Rgb
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns></returns>
 		public static byte[] RGFloatToBGRA32(byte[] input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
@@ -373,6 +579,13 @@ namespace TextureDecoder.Rgb
 			return output;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public static void RGFloatToBGRA32(byte[] input, int width, int height, byte[] output)
 		{
 			int io = 0;
@@ -393,6 +606,13 @@ namespace TextureDecoder.Rgb
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns></returns>
 		public static byte[] RGBAFloatToBGRA32(byte[] input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
@@ -400,6 +620,13 @@ namespace TextureDecoder.Rgb
 			return output;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public static void RGBAFloatToBGRA32(byte[] input, int width, int height, byte[] output)
 		{
 			int io = 0;
@@ -422,6 +649,13 @@ namespace TextureDecoder.Rgb
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns></returns>
 		public static byte[] RGB9e5FloatToBGRA32(byte[] input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
@@ -429,6 +663,13 @@ namespace TextureDecoder.Rgb
 			return output;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="output"></param>
 		public static void RGB9e5FloatToBGRA32(byte[] input, int width, int height, byte[] output)
 		{
 			int io = 0;
