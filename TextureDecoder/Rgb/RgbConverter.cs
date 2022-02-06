@@ -511,10 +511,10 @@ namespace TextureDecoder.Rgb
 			{
 				for (int j = 0; j < height; j++)
 				{
-					byte r = Convert.ToByte(Math.Round(ToHalf(input, io + 0) * 255f));
-					byte g = Convert.ToByte(Math.Round(ToHalf(input, io + 2) * 255f));
-					byte b = Convert.ToByte(Math.Round(ToHalf(input, io + 4) * 255f));
-					byte a = Convert.ToByte(Math.Round(ToHalf(input, io + 6) * 255f));
+					byte r = ClampByte(ToHalf(input, io + 0) * 255f);
+					byte g = ClampByte(ToHalf(input, io + 2) * 255f);
+					byte b = ClampByte(ToHalf(input, io + 4) * 255f);
+					byte a = ClampByte(ToHalf(input, io + 6) * 255f);
 					output[oo + 0] = b;             // b
 					output[oo + 1] = g;             // g
 					output[oo + 2] = r;             // r
