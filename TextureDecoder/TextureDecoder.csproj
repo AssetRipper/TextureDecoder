@@ -9,8 +9,8 @@
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<Authors>ds5678</Authors>
 		<Company>AssetRipper</Company>
-		<Version>1.0.1.0</Version>
-		<AssemblyVersion>1.0.1.0</AssemblyVersion>
+		<Version>1.0.2.0</Version>
+		<AssemblyVersion>1.0.2.0</AssemblyVersion>
 		<PackageId>TextureDecoder</PackageId>
 		<PackageTags>C# Texture</PackageTags>
 		<RepositoryUrl>https://github.com/AssetRipper/TextureDecoder</RepositoryUrl>
