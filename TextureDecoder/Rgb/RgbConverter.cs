@@ -1,7 +1,10 @@
 using System;
 using System.Runtime.CompilerServices;
+#if NET5_0_OR_GREATER
+using System.Buffers.Binary;
+#endif
 
-namespace TextureDecoder.Rgb
+namespace AssetRipper.TextureDecoder.Rgb
 {
 	/// <summary>
 	/// 
@@ -696,21 +699,26 @@ namespace TextureDecoder.Rgb
 		private static float ToHalf(byte[] input, int offset)
 		{
 #if NET6_0_OR_GREATER
-			return (float)System.Buffers.Binary.BinaryPrimitives.ReadHalfLittleEndian(input.AsSpan(offset, 2));
-#elif NET5_0_OR_GREATER
-			if(BitConverter.IsLittleEndian)
-				return (float)BitConverter.ToHalf(input, offset);
-			else
-				return (float)BitConverter.ToHalf(new byte[] { input[offset + 1], input[offset] });
+			return (float)BinaryPrimitives.ReadHalfLittleEndian(input.AsSpan(offset, 2));
+#elif NET5_0
+			return (float)ToHalf(BinaryPrimitives.ReadUInt16LittleEndian(input.AsSpan(offset, 2)));
 #else
 			return (float)Half.ToHalf(input, offset);
 #endif
 		}
 
+#if NET5_0
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static unsafe Half ToHalf(ushort bits)
+		{
+			return *((Half*)&bits);
+		}
+#endif
+
 		private static float ToSingle(byte[] input, int offset)
 		{
 #if NET5_0_OR_GREATER
-			return System.Buffers.Binary.BinaryPrimitives.ReadSingleLittleEndian(input.AsSpan(offset, 4));
+			return BinaryPrimitives.ReadSingleLittleEndian(input.AsSpan(offset, 4));
 #else
 			if (BitConverter.IsLittleEndian)
 				return BitConverter.ToSingle(input, offset);
@@ -730,5 +738,6 @@ namespace TextureDecoder.Rgb
 		{
 			return byte.MaxValue < x ? byte.MaxValue : (x > byte.MinValue ? (byte)x : byte.MinValue);
 		}
+
 	}
 }

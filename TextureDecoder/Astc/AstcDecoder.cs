@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace TextureDecoder.Astc
+namespace AssetRipper.TextureDecoder.Astc
 {
 	/// <summary>
 	/// 

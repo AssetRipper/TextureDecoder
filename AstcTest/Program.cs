@@ -1,7 +1,7 @@
 using System;
 using System.Drawing.Imaging;
 using System.IO;
-using TextureDecoder.Astc;
+using AssetRipper.TextureDecoder.Astc;
 
 namespace AstcTest
 {

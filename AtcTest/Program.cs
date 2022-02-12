@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.IO;
-using TextureDecoder.Atc;
+using AssetRipper.TextureDecoder.Atc;
 
 namespace AtcTest
 {

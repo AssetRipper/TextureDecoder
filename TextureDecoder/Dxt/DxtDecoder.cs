@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.CompilerServices;
 
-namespace TextureDecoder.Dxt
+namespace AssetRipper.TextureDecoder.Dxt
 {
 	/// <summary>
 	/// 

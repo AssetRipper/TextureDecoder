@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace TextureDecoder.Yuy2
+namespace AssetRipper.TextureDecoder.Yuy2
 {
 	/// <summary>
 	/// 

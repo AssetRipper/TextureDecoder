@@ -1,17 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;net5.0;net6.0</TargetFrameworks>
 		<LangVersion>Latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+		<RootNamespace>AssetRipper.TextureDecoder</RootNamespace>
 		<Authors>ds5678</Authors>
 		<Company>AssetRipper</Company>
-		<Version>1.0.2.0</Version>
-		<AssemblyVersion>1.0.2.0</AssemblyVersion>
-		<PackageId>TextureDecoder</PackageId>
+		<Version>1.1.0.0</Version>
+		<AssemblyVersion>1.1.0.0</AssemblyVersion>
+		<PackageId>AssetRipper.TextureDecoder</PackageId>
 		<PackageTags>C# Texture</PackageTags>
 		<RepositoryUrl>https://github.com/AssetRipper/TextureDecoder</RepositoryUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>

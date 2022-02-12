@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.IO;
-using TextureDecoder.Dxt;
+using AssetRipper.TextureDecoder.Dxt;
 
 namespace DxtTest
 {

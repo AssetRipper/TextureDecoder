@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.IO;
-using TextureDecoder.Yuy2;
+using AssetRipper.TextureDecoder.Yuy2;
 
 namespace Yuy2Test
 {
