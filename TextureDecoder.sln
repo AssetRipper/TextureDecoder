@@ -31,6 +31,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{
 		.github\workflows\build.yml = .github\workflows\build.yml
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Licenses", "Licenses", "{0BFF6817-43C8-43EE-8EE8-1A03B7ECEA1A}"
+	ProjectSection(SolutionItems) = preProject
+		Licenses\uTinyRipper.md = Licenses\uTinyRipper.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +80,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{226FED9B-5CD8-4FD0-8E77-660F542D7508} = {3AAF94E5-9A19-461C-923F-BBC603C630BB}
+		{0BFF6817-43C8-43EE-8EE8-1A03B7ECEA1A} = {3AAF94E5-9A19-461C-923F-BBC603C630BB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D4E786DF-F6DD-407C-B23E-854CF00B7801}
