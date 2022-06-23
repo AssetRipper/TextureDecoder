@@ -2,9 +2,6 @@ using System.Runtime.CompilerServices;
 
 namespace AssetRipper.TextureDecoder.Astc
 {
-	/// <summary>
-	/// 
-	/// </summary>
 	public static class AstcDecoder
 	{
 		private unsafe struct BlockData
@@ -32,15 +29,6 @@ namespace AssetRipper.TextureDecoder.Astc
 			public int nonbits;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="input"></param>
-		/// <param name="width"></param>
-		/// <param name="height"></param>
-		/// <param name="blockWidth"></param>
-		/// <param name="blockHeight"></param>
-		/// <returns></returns>
 		public static byte[] DecodeASTC(byte[] input, int width, int height, int blockWidth, int blockHeight)
 		{
 			byte[] output = new byte[width * height * 4];
@@ -48,15 +36,6 @@ namespace AssetRipper.TextureDecoder.Astc
 			return output;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="input"></param>
-		/// <param name="width"></param>
-		/// <param name="height"></param>
-		/// <param name="blockWidth"></param>
-		/// <param name="blockHeight"></param>
-		/// <param name="output"></param>
 		public unsafe static void DecodeASTC(byte[] input, int width, int height, int blockWidth, int blockHeight, byte[] output)
 		{
 			fixed (byte* inputPtr = input)
@@ -68,15 +47,6 @@ namespace AssetRipper.TextureDecoder.Astc
 			}
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="input"></param>
-		/// <param name="width"></param>
-		/// <param name="height"></param>
-		/// <param name="blockWidth"></param>
-		/// <param name="blockHeight"></param>
-		/// <param name="output"></param>
 		public unsafe static void DecodeASTC(byte* input, int width, int height, int blockWidth, int blockHeight, byte* output)
 		{
 			int bcw = (width + blockWidth - 1) / blockWidth;

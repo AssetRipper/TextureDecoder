@@ -3,18 +3,8 @@ using System.Runtime.CompilerServices;
 
 namespace AssetRipper.TextureDecoder.Dxt
 {
-	/// <summary>
-	/// 
-	/// </summary>
 	public static class DxtDecoder
 	{
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="input"></param>
-		/// <param name="width"></param>
-		/// <param name="height"></param>
-		/// <param name="output"></param>
 		public static void DecompressDXT1(byte[] input, int width, int height, byte[] output)
 		{
 			int offset = 0;
@@ -59,13 +49,6 @@ namespace AssetRipper.TextureDecoder.Dxt
 			}
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="input"></param>
-		/// <param name="width"></param>
-		/// <param name="height"></param>
-		/// <param name="output"></param>
 		public static void DecompressDXT3(byte[] input, int width, int height, byte[] output)
 		{
 			int offset = 0;
@@ -120,13 +103,6 @@ namespace AssetRipper.TextureDecoder.Dxt
 			}
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="input"></param>
-		/// <param name="width"></param>
-		/// <param name="height"></param>
-		/// <param name="output"></param>
 		public static void DecompressDXT5(byte[] input, int width, int height, byte[] output)
 		{
 			int offset = 0;

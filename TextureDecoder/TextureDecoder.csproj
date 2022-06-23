@@ -21,8 +21,10 @@
 		<Copyright>Copyright (c) 2022 ds5678</Copyright>
 		<Description>Managed library for decoding textures in multiple formats.</Description>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<DocumentationFile>bin\TextureDecoder.xml</DocumentationFile>
+		<NoWarn>1591</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">

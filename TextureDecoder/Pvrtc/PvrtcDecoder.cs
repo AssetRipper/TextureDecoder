@@ -6,9 +6,6 @@ using System.Runtime.CompilerServices;
 
 namespace AssetRipper.TextureDecoder.Pvrtc
 {
-	/// <summary>
-	/// 
-	/// </summary>
 	public static class PvrtcDecoder
 	{
 		private struct AmtcBlock
