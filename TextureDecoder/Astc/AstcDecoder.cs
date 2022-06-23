@@ -14,10 +14,16 @@ namespace AssetRipper.TextureDecoder.Astc
 			public int dual_plane;
 			public int plane_selector;
 			public int weight_range;
-			public int weight_num; // max: 120
+			/// <summary>
+			/// max: 120
+			/// </summary>
+			public int weight_num;
 			public fixed int cem[4];
 			public int cem_range;
-			public int endpoint_value_num; // max: 32
+			/// <summary>
+			/// max: 32
+			/// </summary>
+			public int endpoint_value_num;
 			public fixed int endpoints[4 * 8];
 			public fixed int weights[144 * 2];
 			public fixed int partition[144];
@@ -63,7 +69,11 @@ namespace AssetRipper.TextureDecoder.Astc
 					uint* bufPtr = buf;
 					for (int i = 0, y = t * blockHeight; i < blockHeight && y < height; i++, y++)
 					{
-						for (int j = 0; j < clen; j++) outputPtr[j] = bufPtr[j];
+						for (int j = 0; j < clen; j++)
+						{
+							outputPtr[j] = bufPtr[j];
+						}
+
 						outputPtr += width;
 						bufPtr += blockWidth;
 					}
@@ -164,23 +174,17 @@ namespace AssetRipper.TextureDecoder.Astc
 
 			pBlock->weight_num = pBlock->width * pBlock->height;
 			if (pBlock->dual_plane != 0)
-				pBlock->weight_num *= 2;
-
-			int weight_bits, config_bits, cem_base = 0;
-
-			switch (WeightPrecTableA[pBlock->weight_range])
 			{
-				case 3:
-					weight_bits = pBlock->weight_num * WeightPrecTableB[pBlock->weight_range] + (pBlock->weight_num * 8 + 4) / 5;
-					break;
-				case 5:
-					weight_bits = pBlock->weight_num * WeightPrecTableB[pBlock->weight_range] + (pBlock->weight_num * 7 + 2) / 3;
-					break;
-				default:
-					weight_bits = pBlock->weight_num * WeightPrecTableB[pBlock->weight_range];
-					break;
+				pBlock->weight_num *= 2;
 			}
 
+			int config_bits, cem_base = 0;
+			int weight_bits = WeightPrecTableA[pBlock->weight_range] switch
+			{
+				3 => pBlock->weight_num * WeightPrecTableB[pBlock->weight_range] + (pBlock->weight_num * 8 + 4) / 5,
+				5 => pBlock->weight_num * WeightPrecTableB[pBlock->weight_range] + (pBlock->weight_num * 7 + 2) / 3,
+				_ => pBlock->weight_num * WeightPrecTableB[pBlock->weight_range],
+			};
 			if (pBlock->part_num == 1)
 			{
 				pBlock->cem[0] = *((int*)(input + 1)) >> 5 & 0xf;
@@ -243,19 +247,12 @@ namespace AssetRipper.TextureDecoder.Astc
 
 			for (int i = 0, endpoint_bits; i < CemTableA.Length; i++)
 			{
-				switch (CemTableA[i])
+				endpoint_bits = CemTableA[i] switch
 				{
-					case 3:
-						endpoint_bits = pBlock->endpoint_value_num * CemTableB[i] + (pBlock->endpoint_value_num * 8 + 4) / 5;
-						break;
-					case 5:
-						endpoint_bits = pBlock->endpoint_value_num * CemTableB[i] + (pBlock->endpoint_value_num * 7 + 2) / 3;
-						break;
-					default:
-						endpoint_bits = pBlock->endpoint_value_num * CemTableB[i];
-						break;
-				}
-
+					3 => pBlock->endpoint_value_num * CemTableB[i] + (pBlock->endpoint_value_num * 8 + 4) / 5,
+					5 => pBlock->endpoint_value_num * CemTableB[i] + (pBlock->endpoint_value_num * 7 + 2) / 3,
+					_ => pBlock->endpoint_value_num * CemTableB[i],
+				};
 				if (endpoint_bits <= remain_bits)
 				{
 					pBlock->cem_range = i;
@@ -334,35 +331,51 @@ namespace AssetRipper.TextureDecoder.Astc
 					{
 						case 1:
 							for (int i = 0; i < pBlock->endpoint_value_num; i++)
+							{
 								ev[i] = epSeq[i].bits * 0xff;
+							}
 							break;
 						case 2:
 							for (int i = 0; i < pBlock->endpoint_value_num; i++)
+							{
 								ev[i] = epSeq[i].bits * 0x55;
+							}
 							break;
 						case 3:
 							for (int i = 0; i < pBlock->endpoint_value_num; i++)
+							{
 								ev[i] = epSeq[i].bits << 5 | epSeq[i].bits << 2 | epSeq[i].bits >> 1;
+							}
 							break;
 						case 4:
 							for (int i = 0; i < pBlock->endpoint_value_num; i++)
+							{
 								ev[i] = epSeq[i].bits << 4 | epSeq[i].bits;
+							}
 							break;
 						case 5:
 							for (int i = 0; i < pBlock->endpoint_value_num; i++)
+							{
 								ev[i] = epSeq[i].bits << 3 | epSeq[i].bits >> 2;
+							}
 							break;
 						case 6:
 							for (int i = 0; i < pBlock->endpoint_value_num; i++)
+							{
 								ev[i] = epSeq[i].bits << 2 | epSeq[i].bits >> 4;
+							}
 							break;
 						case 7:
 							for (int i = 0; i < pBlock->endpoint_value_num; i++)
+							{
 								ev[i] = epSeq[i].bits << 1 | epSeq[i].bits >> 6;
+							}
 							break;
 						case 8:
 							for (int i = 0; i < pBlock->endpoint_value_num; i++)
+							{
 								ev[i] = epSeq[i].bits;
+							}
 							break;
 					}
 					break;
@@ -397,27 +410,42 @@ namespace AssetRipper.TextureDecoder.Astc
 						break;
 					case 8:
 						if (v[0] + v[2] + v[4] <= v[1] + v[3] + v[5])
+						{
 							SetEndpoint(&pBlock->endpoints[cemOff], v[0], v[2], v[4], 255, v[1], v[3], v[5], 255);
+						}
 						else
+						{
 							SetEndpointBlue(&pBlock->endpoints[cemOff], v[1], v[3], v[5], 255, v[0], v[2], v[4], 255);
+						}
+
 						break;
 					case 9:
 						BitTransferSigned(&v[1], &v[0]);
 						BitTransferSigned(&v[3], &v[2]);
 						BitTransferSigned(&v[5], &v[4]);
 						if (v[1] + v[3] + v[5] >= 0)
+						{
 							SetEndpointClamp(&pBlock->endpoints[cemOff], v[0], v[2], v[4], 255, v[0] + v[1], v[2] + v[3], v[4] + v[5], 255);
+						}
 						else
+						{
 							SetEndpointBlueClamp(&pBlock->endpoints[cemOff], v[0] + v[1], v[2] + v[3], v[4] + v[5], 255, v[0], v[2], v[4], 255);
+						}
+
 						break;
 					case 10:
 						SetEndpoint(&pBlock->endpoints[cemOff], v[0] * v[3] >> 8, v[1] * v[3] >> 8, v[2] * v[3] >> 8, v[4], v[0], v[1], v[2], v[5]);
 						break;
 					case 12:
 						if (v[0] + v[2] + v[4] <= v[1] + v[3] + v[5])
+						{
 							SetEndpoint(&pBlock->endpoints[cemOff], v[0], v[2], v[4], v[6], v[1], v[3], v[5], v[7]);
+						}
 						else
+						{
 							SetEndpointBlue(&pBlock->endpoints[cemOff], v[1], v[3], v[5], v[7], v[0], v[2], v[4], v[6]);
+						}
+
 						break;
 					case 13:
 						BitTransferSigned(&v[1], &v[0]);
@@ -425,9 +453,14 @@ namespace AssetRipper.TextureDecoder.Astc
 						BitTransferSigned(&v[5], &v[4]);
 						BitTransferSigned(&v[7], &v[6]);
 						if (v[1] + v[3] + v[5] >= 0)
+						{
 							SetEndpointClamp(&pBlock->endpoints[cemOff], v[0], v[2], v[4], v[6], v[0] + v[1], v[2] + v[3], v[4] + v[5], v[6] + v[7]);
+						}
 						else
+						{
 							SetEndpointBlueClamp(&pBlock->endpoints[cemOff], v[0] + v[1], v[2] + v[3], v[4] + v[5], v[6] + v[7], v[0], v[2], v[4], v[6]);
+						}
+
 						break;
 				}
 			}
@@ -445,23 +478,38 @@ namespace AssetRipper.TextureDecoder.Astc
 				{
 					case 1:
 						for (int i = 0; i < block->weight_num; i++)
+						{
 							wv[i] = wSeq[i].bits != 0 ? 63 : 0;
+						}
+
 						break;
 					case 2:
 						for (int i = 0; i < block->weight_num; i++)
+						{
 							wv[i] = wSeq[i].bits << 4 | wSeq[i].bits << 2 | wSeq[i].bits;
+						}
+
 						break;
 					case 3:
 						for (int i = 0; i < block->weight_num; i++)
+						{
 							wv[i] = wSeq[i].bits << 3 | wSeq[i].bits;
+						}
+
 						break;
 					case 4:
 						for (int i = 0; i < block->weight_num; i++)
+						{
 							wv[i] = wSeq[i].bits << 2 | wSeq[i].bits >> 2;
+						}
+
 						break;
 					case 5:
 						for (int i = 0; i < block->weight_num; i++)
+						{
 							wv[i] = wSeq[i].bits << 1 | wSeq[i].bits >> 4;
+						}
+
 						break;
 				}
 				for (int i = 0; i < block->weight_num; i++)
@@ -516,7 +564,10 @@ namespace AssetRipper.TextureDecoder.Astc
 					{
 						case 1:
 							for (int i = 0; i < block->weight_num; i++)
+							{
 								wv[i] = wSeq[i].nonbits * 28;
+							}
+
 							break;
 						case 2:
 							for (int i = 0; i < block->weight_num; i++)
@@ -709,7 +760,9 @@ namespace AssetRipper.TextureDecoder.Astc
 		private unsafe static void DecodeIntseq(byte* input, int offset, int a, int b, int count, bool reverse, IntSeqData* _out)
 		{
 			if (count <= 0)
+			{
 				return;
+			}
 
 			int n = 0;
 
@@ -866,15 +919,25 @@ namespace AssetRipper.TextureDecoder.Astc
 		{
 			ulong mask = len == 64 ? 0xffffffffffffffff : (1UL << len) - 1;
 			if (len < 1)
+			{
 				return 0;
+			}
 			else if (bit >= 64)
+			{
 				return *((ulong*)(input + 8)) >> (bit - 64) & mask;
+			}
 			else if (bit <= 0)
+			{
 				return *((ulong*)input) << -bit & mask;
+			}
 			else if (bit + len <= 64)
+			{
 				return *((ulong*)input) >> bit & mask;
+			}
 			else
+			{
 				return (*((ulong*)input) >> bit | *((ulong*)(input + 8)) << (64 - bit)) & mask;
+			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -889,7 +952,9 @@ namespace AssetRipper.TextureDecoder.Astc
 			*b = (*b >> 1) | (*a & 0x80);
 			*a = (*a >> 1) & 0x3f;
 			if ((*a & 0x20) != 0)
+			{
 				*a -= 0x40;
+			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]

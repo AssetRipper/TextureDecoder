@@ -39,7 +39,11 @@ namespace AssetRipper.TextureDecoder.Atc
 					uint* bufPtr = buf;
 					for (int i = 0, y = t * 4; i < 4 && y < height; i++, y++)
 					{
-						for (int j = 0; j < clen; j++) outputPtr[j] = bufPtr[j];
+						for (int j = 0; j < clen; j++)
+						{
+							outputPtr[j] = bufPtr[j];
+						}
+
 						outputPtr += width;
 						bufPtr += 4;
 					}
@@ -81,7 +85,11 @@ namespace AssetRipper.TextureDecoder.Atc
 					uint* bufPtr = buf;
 					for (int i = 0, y = t * 4; i < 4 && y < height; i++, y++)
 					{
-						for (int j = 0; j < clen; j++) outputPtr[j] = bufPtr[j];
+						for (int j = 0; j < clen; j++)
+						{
+							outputPtr[j] = bufPtr[j];
+						}
+
 						outputPtr += width;
 						bufPtr += 4;
 					}

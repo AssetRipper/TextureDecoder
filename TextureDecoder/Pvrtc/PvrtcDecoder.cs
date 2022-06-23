@@ -213,10 +213,9 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 			// Map X and Y into the local 2x2 block
 			y = (y & 0x3) | ((~y & 0x2) << 1);
 
-			if (do2bitMode)
-				x = (x & 0x7) | ((~x & 0x4) << 1);
-			else
-				x = (x & 0x3) | ((~x & 0x2) << 1);
+			x = do2bitMode 
+				? (x & 0x7) | ((~x & 0x4) << 1) 
+				: (x & 0x3) | ((~x & 0x2) << 1);
 
 			// assume no PT for now
 			doPT = false;
