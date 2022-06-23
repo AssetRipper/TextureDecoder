@@ -21,18 +21,13 @@
 		<Copyright>Copyright (c) 2022 ds5678</Copyright>
 		<Description>Managed library for decoding textures in multiple formats.</Description>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<DocumentationFile>bin\TextureDecoder.xml</DocumentationFile>
 	</PropertyGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
 		<PackageReference Include="Half" Version="1.0.0" />
+		<PackageReference Include="System.Memory" Version="4.5.5" />
 	</ItemGroup>
-
-	<PropertyGroup>
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-	</PropertyGroup>
-
-	<PropertyGroup>
-		<DocumentationFile>bin\TextureDecoder.xml</DocumentationFile>
-	</PropertyGroup>
 
 </Project>
