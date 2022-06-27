@@ -35,14 +35,14 @@ namespace AssetRipper.TextureDecoder.Astc
 			public int nonbits;
 		}
 
-		public static byte[] DecodeASTC(byte[] input, int width, int height, int blockWidth, int blockHeight)
+		public static byte[] DecodeASTC(ReadOnlySpan<byte> input, int width, int height, int blockWidth, int blockHeight)
 		{
 			byte[] output = new byte[width * height * 4];
 			DecodeASTC(input, width, height, blockWidth, blockHeight, output);
 			return output;
 		}
 
-		public unsafe static void DecodeASTC(byte[] input, int width, int height, int blockWidth, int blockHeight, byte[] output)
+		public unsafe static void DecodeASTC(ReadOnlySpan<byte> input, int width, int height, int blockWidth, int blockHeight, Span<byte> output)
 		{
 			fixed (byte* inputPtr = input)
 			{
@@ -53,7 +53,7 @@ namespace AssetRipper.TextureDecoder.Astc
 			}
 		}
 
-		public unsafe static void DecodeASTC(byte* input, int width, int height, int blockWidth, int blockHeight, byte* output)
+		private unsafe static void DecodeASTC(byte* input, int width, int height, int blockWidth, int blockHeight, byte* output)
 		{
 			int bcw = (width + blockWidth - 1) / blockWidth;
 			int bch = (height + blockHeight - 1) / blockHeight;

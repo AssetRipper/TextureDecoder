@@ -4,14 +4,14 @@ namespace AssetRipper.TextureDecoder.Yuy2
 {
 	public static class Yuy2Decoder
 	{
-		public static byte[] DecompressYUY2(byte[] input, int width, int height)
+		public static byte[] DecompressYUY2(ReadOnlySpan<byte> input, int width, int height)
 		{
 			byte[] output = new byte[width * height * sizeof(uint)];
 			DecompressYUY2(input, width, height, output);
 			return output;
 		}
 
-		public static void DecompressYUY2(byte[] input, int width, int height, byte[] output)
+		public static void DecompressYUY2(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int p = 0;
 			int o = 0;

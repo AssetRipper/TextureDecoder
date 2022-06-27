@@ -1,11 +1,12 @@
-using System;
+using System.Buffers.Binary;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace AssetRipper.TextureDecoder.Dxt
 {
 	public static class DxtDecoder
 	{
-		public static void DecompressDXT1(byte[] input, int width, int height, byte[] output)
+		public static void DecompressDXT1(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int offset = 0;
 			int bcw = (width + 3) / 4;
@@ -17,11 +18,10 @@ namespace AssetRipper.TextureDecoder.Dxt
 			{
 				for (int s = 0; s < bcw; s++, offset += 8)
 				{
-					int r0, g0, b0, r1, g1, b1;
 					int q0 = input[offset + 0] | input[offset + 1] << 8;
 					int q1 = input[offset + 2] | input[offset + 3] << 8;
-					Rgb565(q0, out r0, out g0, out b0);
-					Rgb565(q1, out r1, out g1, out b1);
+					Rgb565(q0, out int r0, out int g0, out int b0);
+					Rgb565(q1, out int r1, out int g1, out int b1);
 					colors[0] = Color(r0, g0, b0, 255);
 					colors[1] = Color(r1, g1, b1, 255);
 					if (q0 > q1)
@@ -34,7 +34,7 @@ namespace AssetRipper.TextureDecoder.Dxt
 						colors[2] = Color((r0 + r1) / 2, (g0 + g1) / 2, (b0 + b1) / 2, 255);
 					}
 
-					uint d = BitConverter.ToUInt32(input, offset + 4);
+					uint d = ToUInt32(input, offset + 4);
 					for (int i = 0; i < 16; i++, d >>= 2)
 					{
 						buffer[i] = unchecked((uint)colors[d & 3]);
@@ -43,13 +43,14 @@ namespace AssetRipper.TextureDecoder.Dxt
 					int clen = (s < bcw - 1 ? 4 : clen_last) * 4;
 					for (int i = 0, y = t * 4; i < 4 && y < height; i++, y++)
 					{
-						Buffer.BlockCopy(buffer, i * 4 * 4, output, (y * width + s * 4) * 4, clen);
+						ReadOnlySpan<byte> bufferSpan = MemoryMarshal.Cast<uint, byte>(new ReadOnlySpan<uint>(buffer));
+						BlockCopy(bufferSpan, i * 4 * 4, output, (y * width + s * 4) * 4, clen);
 					}
 				}
 			}
 		}
 
-		public static void DecompressDXT3(byte[] input, int width, int height, byte[] output)
+		public static void DecompressDXT3(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int offset = 0;
 			int bcw = (width + 3) / 4;
@@ -71,11 +72,10 @@ namespace AssetRipper.TextureDecoder.Dxt
 						alphas[i * 4 + 3] = (((alpha >> 12) & 0xF) * 0x11) << 24;
 					}
 
-					int r0, g0, b0, r1, g1, b1;
 					int q0 = input[offset + 8] | input[offset + 9] << 8;
 					int q1 = input[offset + 10] | input[offset + 11] << 8;
-					Rgb565(q0, out r0, out g0, out b0);
-					Rgb565(q1, out r1, out g1, out b1);
+					Rgb565(q0, out int r0, out int g0, out int b0);
+					Rgb565(q1, out int r1, out int g1, out int b1);
 					colors[0] = Color(r0, g0, b0, 0);
 					colors[1] = Color(r1, g1, b1, 0);
 					if (q0 > q1)
@@ -88,7 +88,7 @@ namespace AssetRipper.TextureDecoder.Dxt
 						colors[2] = Color((r0 + r1) / 2, (g0 + g1) / 2, (b0 + b1) / 2, 0);
 					}
 
-					uint d = BitConverter.ToUInt32(input, offset + 12);
+					uint d = ToUInt32(input, offset + 12);
 					for (int i = 0; i < 16; i++, d >>= 2)
 					{
 						buffer[i] = unchecked((uint)(colors[d & 3] | alphas[i]));
@@ -97,13 +97,14 @@ namespace AssetRipper.TextureDecoder.Dxt
 					int clen = (s < bcw - 1 ? 4 : clen_last) * 4;
 					for (int i = 0, y = t * 4; i < 4 && y < height; i++, y++)
 					{
-						Buffer.BlockCopy(buffer, i * 4 * 4, output, (y * width + s * 4) * 4, clen);
+						ReadOnlySpan<byte> bufferSpan = MemoryMarshal.Cast<uint, byte>(new ReadOnlySpan<uint>(buffer));
+						BlockCopy(bufferSpan, i * 4 * 4, output, (y * width + s * 4) * 4, clen);
 					}
 				}
 			}
 		}
 
-		public static void DecompressDXT5(byte[] input, int width, int height, byte[] output)
+		public static void DecompressDXT5(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int offset = 0;
 			int bcw = (width + 3) / 4;
@@ -140,11 +141,10 @@ namespace AssetRipper.TextureDecoder.Dxt
 						alphas[i] <<= 24;
 					}
 
-					int r0, g0, b0, r1, g1, b1;
 					int q0 = input[offset + 8] | input[offset + 9] << 8;
 					int q1 = input[offset + 10] | input[offset + 11] << 8;
-					Rgb565(q0, out r0, out g0, out b0);
-					Rgb565(q1, out r1, out g1, out b1);
+					Rgb565(q0, out int r0, out int g0, out int b0);
+					Rgb565(q1, out int r1, out int g1, out int b1);
 					colors[0] = Color(r0, g0, b0, 0);
 					colors[1] = Color(r1, g1, b1, 0);
 					if (q0 > q1)
@@ -157,8 +157,8 @@ namespace AssetRipper.TextureDecoder.Dxt
 						colors[2] = Color((r0 + r1) / 2, (g0 + g1) / 2, (b0 + b1) / 2, 0);
 					}
 
-					ulong da = BitConverter.ToUInt64(input, offset) >> 16;
-					uint dc = BitConverter.ToUInt32(input, offset + 12);
+					ulong da = ToUInt64(input, offset) >> 16;
+					uint dc = ToUInt32(input, offset + 12);
 					for (int i = 0; i < 16; i++, da >>= 3, dc >>= 2)
 					{
 						buffer[i] = unchecked((uint)(alphas[da & 7] | colors[dc & 3]));
@@ -167,7 +167,8 @@ namespace AssetRipper.TextureDecoder.Dxt
 					int clen = (s < bcw - 1 ? 4 : clen_last) * 4;
 					for (int i = 0, y = t * 4; i < 4 && y < height; i++, y++)
 					{
-						Buffer.BlockCopy(buffer, i * 4 * 4, output, (y * width + s * 4) * 4, clen);
+						ReadOnlySpan<byte> bufferSpan = MemoryMarshal.Cast<uint, byte>(new ReadOnlySpan<uint>(buffer));
+						BlockCopy(bufferSpan, i * 4 * 4, output, (y * width + s * 4) * 4, clen);
 					}
 				}
 			}
@@ -188,6 +189,32 @@ namespace AssetRipper.TextureDecoder.Dxt
 		private static int Color(int r, int g, int b, int a)
 		{
 			return r << 16 | g << 8 | b | a << 24;
+		}
+
+		/// <summary>
+		/// Based on <see cref="Buffer.BlockCopy(Array, int, Array, int, int)"/>
+		/// </summary>
+		/// <param name="source">The source buffer.</param>
+		/// <param name="sourceOffset">The zero-based byte offset into source.</param>
+		/// <param name="destination">The destination buffer.</param>
+		/// <param name="destinationOffset">The zero-based byte offset into destination.</param>
+		/// <param name="count">The number of bytes to copy.</param>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static void BlockCopy(ReadOnlySpan<byte> source, int sourceOffset, Span<byte> destination, int destinationOffset, int count)
+		{
+			source.Slice(sourceOffset, count).CopyTo(destination.Slice(destinationOffset));
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static uint ToUInt32(ReadOnlySpan<byte> input, int offset)
+		{
+			return BinaryPrimitives.ReadUInt32LittleEndian(input.Slice(offset));
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static ulong ToUInt64(ReadOnlySpan<byte> input, int offset)
+		{
+			return BinaryPrimitives.ReadUInt64LittleEndian(input.Slice(offset));
 		}
 	}
 }

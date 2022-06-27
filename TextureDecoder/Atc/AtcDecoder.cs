@@ -1,18 +1,17 @@
-using System;
 using System.Runtime.CompilerServices;
 
 namespace AssetRipper.TextureDecoder.Atc
 {
 	public static class AtcDecoder
 	{
-		public static byte[] DecompressAtcRgb4(byte[] input, int width, int height)
+		public static byte[] DecompressAtcRgb4(ReadOnlySpan<byte> input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
 			DecompressAtcRgb4(input, width, height, output);
 			return output;
 		}
 
-		public unsafe static void DecompressAtcRgb4(byte[] input, int width, int height, byte[] output)
+		public unsafe static void DecompressAtcRgb4(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			fixed (byte* inputPtr = input)
 			{
@@ -23,7 +22,7 @@ namespace AssetRipper.TextureDecoder.Atc
 			}
 		}
 
-		public unsafe static void DecompressAtcRgb4(byte* input, int width, int height, byte* output)
+		private unsafe static void DecompressAtcRgb4(byte* input, int width, int height, byte* output)
 		{
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
@@ -51,14 +50,14 @@ namespace AssetRipper.TextureDecoder.Atc
 			}
 		}
 
-		public static byte[] DecompressAtcRgba8(byte[] input, int width, int height)
+		public static byte[] DecompressAtcRgba8(ReadOnlySpan<byte> input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
 			DecompressAtcRgba8(input, width, height, output);
 			return output;
 		}
 
-		public unsafe static void DecompressAtcRgba8(byte[] input, int width, int height, byte[] output)
+		public unsafe static void DecompressAtcRgba8(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			fixed (byte* inputPtr = input)
 			{
@@ -69,7 +68,7 @@ namespace AssetRipper.TextureDecoder.Atc
 			}
 		}
 
-		public unsafe static void DecompressAtcRgba8(byte* input, int width, int height, byte* output)
+		private unsafe static void DecompressAtcRgba8(byte* input, int width, int height, byte* output)
 		{
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;

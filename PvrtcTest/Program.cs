@@ -31,7 +31,7 @@ namespace PvrtcTest
 				do
 				{
 					stopwatch.Start();
-					PvrtcDecoder.DecompressPVRTC(data, width, height, bitmap.Bits, do2bit);
+					PvrtcDecoder.DecompressPVRTC(data, width, height, do2bit, bitmap.Bits);
 					stopwatch.Stop();
 
 					Console.WriteLine("Processed " + stopwatch.ElapsedMilliseconds);

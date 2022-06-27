@@ -4,14 +4,14 @@ namespace AssetRipper.TextureDecoder.Etc
 {
 	public static class EtcDecoder
 	{
-		public static byte[] DecompressETC(byte[] input, int width, int height)
+		public static byte[] DecompressETC(ReadOnlySpan<byte> input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
 			DecompressETC(input, width, height, output);
 			return output;
 		}
 
-		public unsafe static void DecompressETC(byte[] input, int width, int height, byte[] output)
+		public unsafe static void DecompressETC(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			fixed (byte* inputPtr = input)
 			{
@@ -22,7 +22,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		public unsafe static void DecompressETC(byte* input, int width, int height, byte* output)
+		private unsafe static void DecompressETC(byte* input, int width, int height, byte* output)
 		{
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
@@ -50,14 +50,14 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		public static byte[] DecompressETC2(byte[] input, int width, int height)
+		public static byte[] DecompressETC2(ReadOnlySpan<byte> input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
 			DecompressETC2(input, width, height, output);
 			return output;
 		}
 
-		public unsafe static void DecompressETC2(byte[] input, int width, int height, byte[] output)
+		public unsafe static void DecompressETC2(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			fixed (byte* inputPtr = input)
 			{
@@ -68,7 +68,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		public unsafe static void DecompressETC2(byte* input, int width, int height, byte* output)
+		private unsafe static void DecompressETC2(byte* input, int width, int height, byte* output)
 		{
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
@@ -96,14 +96,14 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		public static byte[] DecompressETC2A1(byte[] input, int width, int height)
+		public static byte[] DecompressETC2A1(ReadOnlySpan<byte> input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
 			DecompressETC2A1(input, width, height, output);
 			return output;
 		}
 
-		public unsafe static void DecompressETC2A1(byte[] input, int width, int height, byte[] output)
+		public unsafe static void DecompressETC2A1(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			fixed (byte* inputPtr = input)
 			{
@@ -114,7 +114,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		public unsafe static void DecompressETC2A1(byte* input, int width, int height, byte* output)
+		private unsafe static void DecompressETC2A1(byte* input, int width, int height, byte* output)
 		{
 			int width4 = width * 4;
 			int bcw = (width + 3) / 4;
@@ -143,14 +143,14 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		public static byte[] DecompressETC2A8(byte[] input, int width, int height)
+		public static byte[] DecompressETC2A8(ReadOnlySpan<byte> input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
 			DecompressETC2A8(input, width, height, output);
 			return output;
 		}
 
-		public unsafe static void DecompressETC2A8(byte[] input, int width, int height, byte[] output)
+		public unsafe static void DecompressETC2A8(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			fixed (byte* inputPtr = input)
 			{
@@ -161,7 +161,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		public unsafe static void DecompressETC2A8(byte* input, int width, int height, byte* output)
+		private unsafe static void DecompressETC2A8(byte* input, int width, int height, byte* output)
 		{
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
@@ -190,14 +190,14 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		public static byte[] DecompressEACRUnsigned(byte[] input, int width, int height)
+		public static byte[] DecompressEACRUnsigned(ReadOnlySpan<byte> input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
 			DecompressEACRUnsigned(input, width, height, output);
 			return output;
 		}
 
-		public unsafe static void DecompressEACRUnsigned(byte[] input, int width, int height, byte[] output)
+		public unsafe static void DecompressEACRUnsigned(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			fixed (byte* inputPtr = input)
 			{
@@ -208,7 +208,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		public unsafe static void DecompressEACRUnsigned(byte* input, int width, int height, byte* output)
+		private unsafe static void DecompressEACRUnsigned(byte* input, int width, int height, byte* output)
 		{
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
@@ -240,14 +240,14 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		public static byte[] DecompressEACRSigned(byte[] input, int width, int height)
+		public static byte[] DecompressEACRSigned(ReadOnlySpan<byte> input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
 			DecompressEACRSigned(input, width, height, output);
 			return output;
 		}
 
-		public unsafe static void DecompressEACRSigned(byte[] input, int width, int height, byte[] output)
+		public unsafe static void DecompressEACRSigned(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			fixed (byte* inputPtr = input)
 			{
@@ -258,7 +258,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		public unsafe static void DecompressEACRSigned(byte* input, int width, int height, byte* output)
+		private unsafe static void DecompressEACRSigned(byte* input, int width, int height, byte* output)
 		{
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
@@ -290,14 +290,14 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		public static byte[] DecompressEACRGUnsigned(byte[] input, int width, int height)
+		public static byte[] DecompressEACRGUnsigned(ReadOnlySpan<byte> input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
 			DecompressEACRGUnsigned(input, width, height, output);
 			return output;
 		}
 
-		public unsafe static void DecompressEACRGUnsigned(byte[] input, int width, int height, byte[] output)
+		public unsafe static void DecompressEACRGUnsigned(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			fixed (byte* inputPtr = input)
 			{
@@ -308,7 +308,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		public unsafe static void DecompressEACRGUnsigned(byte* input, int width, int height, byte* output)
+		private unsafe static void DecompressEACRGUnsigned(byte* input, int width, int height, byte* output)
 		{
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
@@ -341,14 +341,14 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		public static byte[] DecompressEACRGSigned(byte[] input, int width, int height)
+		public static byte[] DecompressEACRGSigned(ReadOnlySpan<byte> input, int width, int height)
 		{
 			byte[] output = new byte[width * height * 4];
 			DecompressEACRGSigned(input, width, height, output);
 			return output;
 		}
 
-		public unsafe static void DecompressEACRGSigned(byte[] input, int width, int height, byte[] output)
+		public unsafe static void DecompressEACRGSigned(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			fixed (byte* inputPtr = input)
 			{
@@ -359,7 +359,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		public unsafe static void DecompressEACRGSigned(byte* input, int width, int height, byte* output)
+		private unsafe static void DecompressEACRGSigned(byte* input, int width, int height, byte* output)
 		{
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;

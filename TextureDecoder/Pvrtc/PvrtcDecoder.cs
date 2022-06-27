@@ -1,7 +1,6 @@
 //#define DISABLE_TWINDDLING_ROUTINE
 #define ASSUME_IMAGE_TILING
 
-using System;
 using System.Runtime.CompilerServices;
 
 namespace AssetRipper.TextureDecoder.Pvrtc
@@ -38,15 +37,15 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 		/// <param name="output">The decompressed texture data</param>
 		/// <param name="do2bitMode">Signifies whether the data is PVRTC2 or PVRTC4</param>
 		/// <returns></returns>
-		public unsafe static void DecompressPVRTC(byte[] input, int xDim, int yDim, byte[] output, bool do2bitMode)
+		public unsafe static void DecompressPVRTC(ReadOnlySpan<byte> input, int xDim, int yDim, bool do2bitMode, Span<byte> output)
 		{
 			fixed (byte* inputPtr = input)
 			{
-				PVRDecompress(inputPtr, do2bitMode, xDim, yDim, output);
+				PVRDecompress(inputPtr, xDim, yDim, do2bitMode, output);
 			}
 		}
 
-		private unsafe static void PVRDecompress(byte* compressedData, bool do2bitMode, int xDim, int yDim, byte[] output)
+		private unsafe static void PVRDecompress(byte* compressedData, int xDim, int yDim, bool do2bitMode, Span<byte> output)
 		{
 			int xBlockSize = do2bitMode ? BlockX2bpp : BlockX4bpp;
 			// for MBX don't allow the sizes to get too small
