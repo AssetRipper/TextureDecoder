@@ -6,8 +6,18 @@ namespace AssetRipper.TextureDecoder.Dxt
 {
 	public static class DxtDecoder
 	{
-		public static void DecompressDXT1(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		/// <summary>
+		/// Decompress a DXT1 image
+		/// </summary>
+		/// <param name="input">Input buffer containing the compressed image</param>
+		/// <param name="width">Pixel width of the image.</param>
+		/// <param name="height">Pixel height of the image.</param>
+		/// <param name="output">An output buffer. Must be at least 4 * width * height.</param>
+		/// <returns>Number of bytes read from <paramref name="input"/></returns>
+		public static int DecompressDXT1(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
+			ThrowHelper.ThrowIfNotEnoughSpace(output, width, height);
+			
 			int offset = 0;
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
@@ -48,10 +58,22 @@ namespace AssetRipper.TextureDecoder.Dxt
 					}
 				}
 			}
+
+			return offset;
 		}
 
-		public static void DecompressDXT3(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		/// <summary>
+		/// Decompress a DXT3 image
+		/// </summary>
+		/// <param name="input">Input buffer containing the compressed image</param>
+		/// <param name="width">Pixel width of the image.</param>
+		/// <param name="height">Pixel height of the image.</param>
+		/// <param name="output">An output buffer. Must be at least 4 * width * height.</param>
+		/// <returns>Number of bytes read from <paramref name="input"/></returns>
+		public static int DecompressDXT3(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
+			ThrowHelper.ThrowIfNotEnoughSpace(output, width, height);
+
 			int offset = 0;
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
@@ -102,10 +124,22 @@ namespace AssetRipper.TextureDecoder.Dxt
 					}
 				}
 			}
+
+			return offset;
 		}
 
-		public static void DecompressDXT5(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		/// <summary>
+		/// Decompress a DXT5 image
+		/// </summary>
+		/// <param name="input">Input buffer containing the compressed image</param>
+		/// <param name="width">Pixel width of the image.</param>
+		/// <param name="height">Pixel height of the image.</param>
+		/// <param name="output">An output buffer. Must be at least 4 * width * height.</param>
+		/// <returns>Number of bytes read from <paramref name="input"/></returns>
+		public static int DecompressDXT5(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
+			ThrowHelper.ThrowIfNotEnoughSpace(output, width, height);
+
 			int offset = 0;
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
@@ -172,6 +206,8 @@ namespace AssetRipper.TextureDecoder.Dxt
 					}
 				}
 			}
+			
+			return offset;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]

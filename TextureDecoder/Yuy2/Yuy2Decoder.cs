@@ -4,14 +4,32 @@ namespace AssetRipper.TextureDecoder.Yuy2
 {
 	public static class Yuy2Decoder
 	{
-		public static void DecompressYUY2(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+		/// <summary>
+		/// Decompress a YUY2 image
+		/// </summary>
+		/// <param name="input">Input buffer containing the compressed image</param>
+		/// <param name="width">Pixel width of the image.</param>
+		/// <param name="height">Pixel height of the image.</param>
+		/// <param name="output">An output buffer of size 4 * width * height.</param>
+		/// <returns>Number of bytes read from <paramref name="input"/></returns>
+		public static int DecompressYUY2(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			output = new byte[width * height * sizeof(uint)];
-			DecompressYUY2(input, width, height, output);
+			return DecompressYUY2(input, width, height, output);
 		}
 
-		public static void DecompressYUY2(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		/// <summary>
+		/// Decompress a YUY2 image
+		/// </summary>
+		/// <param name="input">Input buffer containing the compressed image</param>
+		/// <param name="width">Pixel width of the image.</param>
+		/// <param name="height">Pixel height of the image.</param>
+		/// <param name="output">An output buffer. Must be at least 4 * width * height.</param>
+		/// <returns>Number of bytes read from <paramref name="input"/></returns>
+		public static int DecompressYUY2(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
+			ThrowHelper.ThrowIfNotEnoughSpace(output, width, height);
+
 			int p = 0;
 			int o = 0;
 			int halfWidth = width / 2;
@@ -37,6 +55,8 @@ namespace AssetRipper.TextureDecoder.Yuy2
 					output[o++] = 255;
 				}
 			}
+
+			return p;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
