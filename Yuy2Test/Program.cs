@@ -32,7 +32,7 @@ namespace Yuy2Test
 					Yuy2Decoder.DecompressYUY2(data, width, height, bitmap.Bits);
 					stopwatch.Stop();
 
-					Console.WriteLine("Processed " + stopwatch.ElapsedMilliseconds);
+					Console.WriteLine($"Processed in {stopwatch.ElapsedMilliseconds} ms");
 					stopwatch.Reset();
 					key = Console.ReadKey();
 				}

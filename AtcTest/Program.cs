@@ -45,7 +45,7 @@ namespace AtcTest
 					}
 					stopwatch.Stop();
 
-					Console.WriteLine("Processed " + stopwatch.ElapsedMilliseconds);
+					Console.WriteLine($"Processed in {stopwatch.ElapsedMilliseconds} ms");
 					stopwatch.Reset();
 					key = Console.ReadKey();
 				}
