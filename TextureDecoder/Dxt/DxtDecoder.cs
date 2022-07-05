@@ -9,7 +9,21 @@ namespace AssetRipper.TextureDecoder.Dxt
 		/// <summary>
 		/// Decompress a DXT1 image
 		/// </summary>
-		/// <param name="input">Input buffer containing the compressed image</param>
+		/// <param name="input">Input buffer containing the compressed image.</param>
+		/// <param name="width">Pixel width of the image.</param>
+		/// <param name="height">Pixel height of the image.</param>
+		/// <param name="output">An output buffer of size 4 * width * height.</param>
+		/// <returns>Number of bytes read from <paramref name="input"/></returns>
+		public static int DecompressDXT1(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+		{
+			output = new byte[width * height * sizeof(uint)];
+			return DecompressDXT1(input, width, height, output);
+		}
+
+		/// <summary>
+		/// Decompress a DXT1 image
+		/// </summary>
+		/// <param name="input">Input buffer containing the compressed image.</param>
 		/// <param name="width">Pixel width of the image.</param>
 		/// <param name="height">Pixel height of the image.</param>
 		/// <param name="output">An output buffer. Must be at least 4 * width * height.</param>
@@ -65,7 +79,21 @@ namespace AssetRipper.TextureDecoder.Dxt
 		/// <summary>
 		/// Decompress a DXT3 image
 		/// </summary>
-		/// <param name="input">Input buffer containing the compressed image</param>
+		/// <param name="input">Input buffer containing the compressed image.</param>
+		/// <param name="width">Pixel width of the image.</param>
+		/// <param name="height">Pixel height of the image.</param>
+		/// <param name="output">An output buffer of size 4 * width * height.</param>
+		/// <returns>Number of bytes read from <paramref name="input"/></returns>
+		public static int DecompressDXT3(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+		{
+			output = new byte[width * height * sizeof(uint)];
+			return DecompressDXT3(input, width, height, output);
+		}
+
+		/// <summary>
+		/// Decompress a DXT3 image
+		/// </summary>
+		/// <param name="input">Input buffer containing the compressed image.</param>
 		/// <param name="width">Pixel width of the image.</param>
 		/// <param name="height">Pixel height of the image.</param>
 		/// <param name="output">An output buffer. Must be at least 4 * width * height.</param>
@@ -131,7 +159,21 @@ namespace AssetRipper.TextureDecoder.Dxt
 		/// <summary>
 		/// Decompress a DXT5 image
 		/// </summary>
-		/// <param name="input">Input buffer containing the compressed image</param>
+		/// <param name="input">Input buffer containing the compressed image.</param>
+		/// <param name="width">Pixel width of the image.</param>
+		/// <param name="height">Pixel height of the image.</param>
+		/// <param name="output">An output buffer of size 4 * width * height.</param>
+		/// <returns>Number of bytes read from <paramref name="input"/></returns>
+		public static int DecompressDXT5(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+		{
+			output = new byte[width * height * sizeof(uint)];
+			return DecompressDXT5(input, width, height, output);
+		}
+
+		/// <summary>
+		/// Decompress a DXT5 image
+		/// </summary>
+		/// <param name="input">Input buffer containing the compressed image.</param>
 		/// <param name="width">Pixel width of the image.</param>
 		/// <param name="height">Pixel height of the image.</param>
 		/// <param name="output">An output buffer. Must be at least 4 * width * height.</param>

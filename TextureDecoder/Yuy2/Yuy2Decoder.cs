@@ -7,7 +7,7 @@ namespace AssetRipper.TextureDecoder.Yuy2
 		/// <summary>
 		/// Decompress a YUY2 image
 		/// </summary>
-		/// <param name="input">Input buffer containing the compressed image</param>
+		/// <param name="input">Input buffer containing the compressed image.</param>
 		/// <param name="width">Pixel width of the image.</param>
 		/// <param name="height">Pixel height of the image.</param>
 		/// <param name="output">An output buffer of size 4 * width * height.</param>
@@ -21,7 +21,7 @@ namespace AssetRipper.TextureDecoder.Yuy2
 		/// <summary>
 		/// Decompress a YUY2 image
 		/// </summary>
-		/// <param name="input">Input buffer containing the compressed image</param>
+		/// <param name="input">Input buffer containing the compressed image.</param>
 		/// <param name="width">Pixel width of the image.</param>
 		/// <param name="height">Pixel height of the image.</param>
 		/// <param name="output">An output buffer. Must be at least 4 * width * height.</param>
