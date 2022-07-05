@@ -12,7 +12,7 @@ namespace Yuy2Test
 		{
 			if (args.Length < 3)
 			{
-				Console.WriteLine("Format: {path} {width} {height} {2bitMode}");
+				Console.WriteLine("Format: {path} {width} {height}");
 				Console.ReadKey();
 				return;
 			}

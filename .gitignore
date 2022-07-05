@@ -4,3 +4,5 @@ obj
 .vs
 .idea
 .vscode
+launchSettings.json
+test.png

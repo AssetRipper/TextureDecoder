@@ -13,7 +13,15 @@ namespace EtcTest
 			if (args.Length < 4)
 			{
 				Console.WriteLine("Format: {fileName} {width} {height} {mode}");
-				Console.WriteLine("mode: 0 - ETC; 1 - ETC2; 2 - ETC2a1; 3 - ETC2a8; 4 - EAC R; 5 - EAC signed R; 6 - EAC RG; 7 - EAC signed RG;");
+				Console.WriteLine("mode:");
+				Console.WriteLine("  0 - ETC");
+				Console.WriteLine("  1 - ETC2");
+				Console.WriteLine("  2 - ETC2a1");
+				Console.WriteLine("  3 - ETC2a8");
+				Console.WriteLine("  4 - EAC R");
+				Console.WriteLine("  5 - EAC signed R");
+				Console.WriteLine("  6 - EAC RG");
+				Console.WriteLine("  7 - EAC signed RG");
 				Console.ReadKey();
 				return;
 			}
