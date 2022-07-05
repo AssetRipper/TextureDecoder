@@ -2,7 +2,7 @@ namespace AssetRipper.TextureDecoder.Tests
 {
 	public sealed class EtcTests
 	{
-		private const int TestImageWidth = 512;
+		/*private const int TestImageWidth = 512;
 		private const int TestImageHeight = 170;
 
 		[Test]
@@ -59,6 +59,6 @@ namespace AssetRipper.TextureDecoder.Tests
 		{
 			byte[] data = File.ReadAllBytes(PathConstants.EtcTestProjectRootFolder + "test.eac_rg");
 			Etc.EtcDecoder.DecompressEACRGUnsigned(data, TestImageWidth, TestImageHeight, out _);
-		}
+		}*/
 	}
 }

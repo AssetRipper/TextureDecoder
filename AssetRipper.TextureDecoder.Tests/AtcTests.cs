@@ -2,7 +2,7 @@
 {
 	public sealed class AtcTests
 	{
-		private const int TestImageWidth = 512;
+		/*private const int TestImageWidth = 512;
 		private const int TestImageHeight = 170;
 
 		[Test]
@@ -17,6 +17,6 @@
 		{
 			byte[] data = File.ReadAllBytes(PathConstants.AtcTestProjectRootFolder + "test.atc_rgba8");
 			Atc.AtcDecoder.DecompressAtcRgba8(data, TestImageWidth, TestImageHeight, out _);
-		}
+		}*/
 	}
 }
