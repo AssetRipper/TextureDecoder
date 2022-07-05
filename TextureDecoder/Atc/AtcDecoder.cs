@@ -4,11 +4,10 @@ namespace AssetRipper.TextureDecoder.Atc
 {
 	public static class AtcDecoder
 	{
-		public static byte[] DecompressAtcRgb4(ReadOnlySpan<byte> input, int width, int height)
+		public static void DecompressAtcRgb4(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
-			byte[] output = new byte[width * height * 4];
+			output = new byte[width * height * 4];
 			DecompressAtcRgb4(input, width, height, output);
-			return output;
 		}
 
 		public unsafe static void DecompressAtcRgb4(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
@@ -50,11 +49,10 @@ namespace AssetRipper.TextureDecoder.Atc
 			}
 		}
 
-		public static byte[] DecompressAtcRgba8(ReadOnlySpan<byte> input, int width, int height)
+		public static void DecompressAtcRgba8(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
-			byte[] output = new byte[width * height * 4];
+			output = new byte[width * height * 4];
 			DecompressAtcRgba8(input, width, height, output);
-			return output;
 		}
 
 		public unsafe static void DecompressAtcRgba8(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)

@@ -35,11 +35,10 @@ namespace AssetRipper.TextureDecoder.Astc
 			public int nonbits;
 		}
 
-		public static byte[] DecodeASTC(ReadOnlySpan<byte> input, int width, int height, int blockWidth, int blockHeight)
+		public static void DecodeASTC(ReadOnlySpan<byte> input, int width, int height, int blockWidth, int blockHeight, out byte[] output)
 		{
-			byte[] output = new byte[width * height * 4];
+			output = new byte[width * height * 4];
 			DecodeASTC(input, width, height, blockWidth, blockHeight, output);
-			return output;
 		}
 
 		public unsafe static void DecodeASTC(ReadOnlySpan<byte> input, int width, int height, int blockWidth, int blockHeight, Span<byte> output)

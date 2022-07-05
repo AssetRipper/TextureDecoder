@@ -5,11 +5,10 @@ namespace AssetRipper.TextureDecoder.Rgb
 {
 	public static class RgbConverter
 	{
-		public static byte[] A8ToBGRA32(ReadOnlySpan<byte> input, int width, int height)
+		public static void A8ToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
-			byte[] output = new byte[width * height * 4];
+			output = new byte[width * height * 4];
 			A8ToBGRA32(input, width, height, output);
-			return output;
 		}
 
 		public static void A8ToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
@@ -30,11 +29,10 @@ namespace AssetRipper.TextureDecoder.Rgb
 			}
 		}
 
-		public static byte[] ARGB16ToBGRA32(ReadOnlySpan<byte> input, int width, int height)
+		public static void ARGB16ToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
-			byte[] output = new byte[width * height * 4];
+			output = new byte[width * height * 4];
 			ARGB16ToBGRA32(input, width, height, output);
-			return output;
 		}
 
 		public static void ARGB16ToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
@@ -55,11 +53,10 @@ namespace AssetRipper.TextureDecoder.Rgb
 			}
 		}
 
-		public static byte[] RGB24ToBGRA32(ReadOnlySpan<byte> input, int width, int height)
+		public static void RGB24ToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
-			byte[] output = new byte[width * height * 4];
+			output = new byte[width * height * 4];
 			RGB24ToBGRA32(input, width, height, output);
-			return output;
 		}
 
 		public static void RGB24ToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
@@ -80,11 +77,10 @@ namespace AssetRipper.TextureDecoder.Rgb
 			}
 		}
 
-		public static byte[] RGBA32ToBGRA32(ReadOnlySpan<byte> input, int width, int height)
+		public static void RGBA32ToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
-			byte[] output = new byte[width * height * 4];
+			output = new byte[width * height * 4];
 			RGBA32ToBGRA32(input, width, height, output);
-			return output;
 		}
 
 		public static void RGBA32ToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
@@ -105,11 +101,10 @@ namespace AssetRipper.TextureDecoder.Rgb
 			}
 		}
 
-		public static byte[] ARGB32ToBGRA32(ReadOnlySpan<byte> input, int width, int height)
+		public static void ARGB32ToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
-			byte[] output = new byte[width * height * 4];
+			output = new byte[width * height * 4];
 			ARGB32ToBGRA32(input, width, height, output);
-			return output;
 		}
 
 		public static void ARGB32ToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
@@ -130,11 +125,10 @@ namespace AssetRipper.TextureDecoder.Rgb
 			}
 		}
 
-		public static byte[] RGB16ToBGRA32(ReadOnlySpan<byte> input, int width, int height)
+		public static void RGB16ToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
-			byte[] output = new byte[width * height * 4];
+			output = new byte[width * height * 4];
 			RGB16ToBGRA32(input, width, height, output);
-			return output;
 		}
 
 		public static void RGB16ToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
@@ -158,11 +152,10 @@ namespace AssetRipper.TextureDecoder.Rgb
 			}
 		}
 
-		public static byte[] R16ToBGRA32(ReadOnlySpan<byte> input, int width, int height)
+		public static void R16ToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
-			byte[] output = new byte[width * height * 4];
+			output = new byte[width * height * 4];
 			R16ToBGRA32(input, width, height, output);
-			return output;
 		}
 
 		public static void R16ToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
@@ -183,11 +176,10 @@ namespace AssetRipper.TextureDecoder.Rgb
 			}
 		}
 
-		public static byte[] RGBA16ToBGRA32(ReadOnlySpan<byte> input, int width, int height)
+		public static void RGBA16ToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
-			byte[] output = new byte[width * height * 4];
+			output = new byte[width * height * 4];
 			RGBA16ToBGRA32(input, width, height, output);
-			return output;
 		}
 
 		public static void RGBA16ToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
@@ -208,11 +200,10 @@ namespace AssetRipper.TextureDecoder.Rgb
 			}
 		}
 
-		public static byte[] RG16ToBGRA32(ReadOnlySpan<byte> input, int width, int height)
+		public static void RG16ToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
-			byte[] output = new byte[width * height * 4];
+			output = new byte[width * height * 4];
 			RG16ToBGRA32(input, width, height, output);
-			return output;
 		}
 
 		public static void RG16ToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
@@ -233,11 +224,10 @@ namespace AssetRipper.TextureDecoder.Rgb
 			}
 		}
 
-		public static byte[] R8ToBGRA32(ReadOnlySpan<byte> input, int width, int height)
+		public static void R8ToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
-			byte[] output = new byte[width * height * 4];
+			output = new byte[width * height * 4];
 			R8ToBGRA32(input, width, height, output);
-			return output;
 		}
 
 		public static void R8ToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
@@ -258,11 +248,10 @@ namespace AssetRipper.TextureDecoder.Rgb
 			}
 		}
 
-		public static byte[] RHalfToBGRA32(ReadOnlySpan<byte> input, int width, int height)
+		public static void RHalfToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
-			byte[] output = new byte[width * height * 4];
+			output = new byte[width * height * 4];
 			RHalfToBGRA32(input, width, height, output);
-			return output;
 		}
 
 		public static void RHalfToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
@@ -284,11 +273,10 @@ namespace AssetRipper.TextureDecoder.Rgb
 			}
 		}
 
-		public static byte[] RGHalfToBGRA32(ReadOnlySpan<byte> input, int width, int height)
+		public static void RGHalfToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
-			byte[] output = new byte[width * height * 4];
+			output = new byte[width * height * 4];
 			RGHalfToBGRA32(input, width, height, output);
-			return output;
 		}
 
 		public static void RGHalfToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
@@ -311,11 +299,10 @@ namespace AssetRipper.TextureDecoder.Rgb
 			}
 		}
 
-		public static byte[] RGBAHalfToBGRA32(ReadOnlySpan<byte> input, int width, int height)
+		public static void RGBAHalfToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
-			byte[] output = new byte[width * height * 4];
+			output = new byte[width * height * 4];
 			RGBAHalfToBGRA32(input, width, height, output);
-			return output;
 		}
 
 		public static void RGBAHalfToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
@@ -340,11 +327,10 @@ namespace AssetRipper.TextureDecoder.Rgb
 			}
 		}
 
-		public static byte[] RFloatToBGRA32(ReadOnlySpan<byte> input, int width, int height)
+		public static void RFloatToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
-			byte[] output = new byte[width * height * 4];
+			output = new byte[width * height * 4];
 			RFloatToBGRA32(input, width, height, output);
-			return output;
 		}
 
 		public static void RFloatToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
@@ -366,11 +352,10 @@ namespace AssetRipper.TextureDecoder.Rgb
 			}
 		}
 
-		public static byte[] RGFloatToBGRA32(ReadOnlySpan<byte> input, int width, int height)
+		public static void RGFloatToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
-			byte[] output = new byte[width * height * 4];
+			output = new byte[width * height * 4];
 			RGFloatToBGRA32(input, width, height, output);
-			return output;
 		}
 
 		public static void RGFloatToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
@@ -393,11 +378,10 @@ namespace AssetRipper.TextureDecoder.Rgb
 			}
 		}
 
-		public static byte[] RGBAFloatToBGRA32(ReadOnlySpan<byte> input, int width, int height)
+		public static void RGBAFloatToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
-			byte[] output = new byte[width * height * 4];
+			output = new byte[width * height * 4];
 			RGBAFloatToBGRA32(input, width, height, output);
-			return output;
 		}
 
 		public static void RGBAFloatToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
@@ -422,11 +406,10 @@ namespace AssetRipper.TextureDecoder.Rgb
 			}
 		}
 
-		public static byte[] RGB9e5FloatToBGRA32(ReadOnlySpan<byte> input, int width, int height)
+		public static void RGB9e5FloatToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
-			byte[] output = new byte[width * height * 4];
+			output = new byte[width * height * 4];
 			RGB9e5FloatToBGRA32(input, width, height, output);
-			return output;
 		}
 
 		public static void RGB9e5FloatToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
