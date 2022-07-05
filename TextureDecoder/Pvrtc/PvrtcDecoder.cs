@@ -5,29 +5,8 @@ using System.Runtime.CompilerServices;
 
 namespace AssetRipper.TextureDecoder.Pvrtc
 {
-	public static class PvrtcDecoder
+	public static partial class PvrtcDecoder
 	{
-		private struct AmtcBlock
-		{
-			public AmtcBlock(uint v0, uint v1)
-			{
-				PackedData0 = v0;
-				PackedData1 = v1;
-			}
-
-			// Uses 64 bits pre block
-			public readonly uint PackedData0;
-			public readonly uint PackedData1;
-		}
-
-		/// <summary>
-		/// Low precision colours extracted from the blocks
-		/// </summary>
-		private unsafe struct Colours5554
-		{
-			public fixed int Reps[2 * 4];
-		}
-
 		/// <summary>
 		/// Decompresses PVRTC to RGBA 8888
 		/// </summary>
