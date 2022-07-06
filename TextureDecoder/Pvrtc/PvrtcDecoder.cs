@@ -2,6 +2,7 @@
 #define ASSUME_IMAGE_TILING
 
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace AssetRipper.TextureDecoder.Pvrtc
 {
@@ -16,15 +17,7 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 		/// <param name="output">The decompressed texture data</param>
 		/// <param name="do2bitMode">Signifies whether the data is PVRTC2 or PVRTC4</param>
 		/// <returns></returns>
-		public unsafe static void DecompressPVRTC(ReadOnlySpan<byte> input, int xDim, int yDim, bool do2bitMode, Span<byte> output)
-		{
-			fixed (byte* inputPtr = input)
-			{
-				PVRDecompress(inputPtr, xDim, yDim, do2bitMode, output);
-			}
-		}
-
-		private unsafe static void PVRDecompress(byte* compressedData, int xDim, int yDim, bool do2bitMode, Span<byte> output)
+		public static void DecompressPVRTC(ReadOnlySpan<byte> input, int xDim, int yDim, bool do2bitMode, Span<byte> output)
 		{
 			int xBlockSize = do2bitMode ? BlockX2bpp : BlockX4bpp;
 			// for MBX don't allow the sizes to get too small
@@ -36,13 +29,15 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 			uint pblocki10 = uint.MaxValue;
 			uint pblocki11 = uint.MaxValue;
 
-			Colours5554* m_colors = stackalloc Colours5554[2 * 2];
+			Span<Colours5554> m_colors = stackalloc Colours5554[2 * 2];
 			// interpolated A colors for the pixel
-			int* aSig = stackalloc int[4];
+			Span<int> aSig = stackalloc int[4];
 			// interpolated B colors for the pixel
-			int* bSig = stackalloc int[4];
-			int* modulationVals = stackalloc int[8 * 16];
-			int* modulationModes = stackalloc int[8 * 16];
+			Span<int> bSig = stackalloc int[4];
+			Span<int> modulationVals = stackalloc int[8 * 16];
+			Span<int> modulationModes = stackalloc int[8 * 16];
+
+			ReadOnlySpan<AmtcBlock> blocks = MemoryMarshal.Cast<byte, AmtcBlock>(input);
 
 			// step through the pixels of the image decompressing each one in turn.
 			// Note that this is a hideously inefficient way to do this!
@@ -71,17 +66,17 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 					bool changed = blocki00 != pblocki00 || blocki01 != pblocki01 || blocki10 != pblocki10 || blocki11 != pblocki11;
 					if (changed)
 					{
-						AmtcBlock* block00 = &((AmtcBlock*)compressedData)[blocki00];
-						Unpack5554Colour(block00, m_colors[0].Reps);
+						AmtcBlock block00 = blocks[(int)blocki00];
+						Unpack5554Colour(block00, m_colors.GetIntSpanForColor(0));
 						UnpackModulations(block00, do2bitMode, modulationVals, modulationModes, 0, 0);
-						AmtcBlock* block01 = &((AmtcBlock*)compressedData)[blocki01];
-						Unpack5554Colour(block01, m_colors[1].Reps);
+						AmtcBlock block01 = blocks[(int)blocki01];
+						Unpack5554Colour(block01, m_colors.GetIntSpanForColor(1));
 						UnpackModulations(block01, do2bitMode, modulationVals, modulationModes, xBlockSize, 0);
-						AmtcBlock* block10 = &((AmtcBlock*)compressedData)[blocki10];
-						Unpack5554Colour(block10, m_colors[2].Reps);
+						AmtcBlock block10 = blocks[(int)blocki10];
+						Unpack5554Colour(block10, m_colors.GetIntSpanForColor(2));
 						UnpackModulations(block10, do2bitMode, modulationVals, modulationModes, 0, BlockYSize);
-						AmtcBlock* block11 = &((AmtcBlock*)compressedData)[blocki11];
-						Unpack5554Colour(block11, m_colors[3].Reps);
+						AmtcBlock block11 = blocks[(int)blocki11];
+						Unpack5554Colour(block11, m_colors.GetIntSpanForColor(3));
 						UnpackModulations(block11, do2bitMode, modulationVals, modulationModes, xBlockSize, BlockYSize);
 
 						pblocki00 = blocki00;
@@ -91,8 +86,8 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 					}
 
 					// decompress the pixel.  First compute the interpolated A and B signals
-					InterpolateColours(m_colors[0].Reps, m_colors[1].Reps, m_colors[2].Reps, m_colors[3].Reps, 0, do2bitMode, x, y, aSig);
-					InterpolateColours(m_colors[0].Reps, m_colors[1].Reps, m_colors[2].Reps, m_colors[3].Reps, 1, do2bitMode, x, y, bSig);
+					InterpolateColours(m_colors.GetIntSpanForColor(0), m_colors.GetIntSpanForColor(1), m_colors.GetIntSpanForColor(2), m_colors.GetIntSpanForColor(3), 0, do2bitMode, x, y, aSig);
+					InterpolateColours(m_colors.GetIntSpanForColor(0), m_colors.GetIntSpanForColor(1), m_colors.GetIntSpanForColor(2), m_colors.GetIntSpanForColor(3), 1, do2bitMode, x, y, bSig);
 					GetModulationValue(x, y, do2bitMode, modulationVals, modulationModes, out int mod, out bool doPT);
 
 					// compute the modulated color. Swap red and blue channel
@@ -186,7 +181,7 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 		/// <summary>
 		/// Get the modulation value as a numerator of a fraction of 8ths
 		/// </summary>
-		private unsafe static void GetModulationValue(int x, int y, bool do2bitMode, int* modulationVals, int* modulationModes, out int mod, out bool doPT)
+		private static void GetModulationValue(int x, int y, bool do2bitMode, ReadOnlySpan<int> modulationVals, ReadOnlySpan<int> modulationModes, out int mod, out bool doPT)
 		{
 			// Map X and Y into the local 2x2 block
 			y = (y & 0x3) | ((~y & 0x2) << 1);
@@ -242,7 +237,7 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 		/// This performs a HW bit accurate interpolation of either the A or B colours for a particular pixel
 		/// <para>NOTE: It is assumed that the source colours are in ARGB 5554 format - This means that some "preparation" of the values will be necessary</para>
 		/// </summary>
-		private unsafe static void InterpolateColours(int* colorP, int* colorQ, int* colorR, int* colorS, int ci, bool do2bitMode, int x, int y, int* result)
+		private static void InterpolateColours(ReadOnlySpan<int> colorP, ReadOnlySpan<int> colorQ, ReadOnlySpan<int> colorR, ReadOnlySpan<int> colorS, int ci, bool do2bitMode, int x, int y, Span<int> result)
 		{
 			// put the x and y values into the right range and get the u and v scale amounts
 			int v = ((y & 0x3) | ((~y & 0x2) << 1)) - BlockYSize / 2;
@@ -308,10 +303,10 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 		/// <summary>
 		/// Given the block and the texture type and it's relative position in the 2x2 group of blocks, extract the bit patterns for the fully defined pixels.
 		/// </summary>
-		private unsafe static void UnpackModulations(AmtcBlock* block, bool do2bitMode, int* modulationVals, int* modulationModes, int startX, int startY)
+		private static void UnpackModulations(AmtcBlock block, bool do2bitMode, Span<int> modulationVals, Span<int> modulationModes, int startX, int startY)
 		{
-			int blockModMode = (int)(block->PackedData1 & 1);
-			uint modulationBits = block->PackedData0;
+			int blockModMode = (int)(block.PackedData1 & 1);
+			uint modulationBits = block.PackedData0;
 
 			// if it's in an interpolated mode
 			if (do2bitMode && (blockModMode != 0))
@@ -379,14 +374,14 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 		/// <summary>
 		/// Given a block, extract the colour information and convert to 5554 formats
 		/// </summary>
-		private unsafe static void Unpack5554Colour(AmtcBlock* block, int* abColors)
+		private static void Unpack5554Colour(AmtcBlock block, Span<int> abColors)
 		{
-			uint* rawBits = stackalloc uint[2];
+			Span<uint> rawBits = stackalloc uint[2];
 			// extract A and B
 			// 15 bits (shifted up by one)
-			rawBits[0] = block->PackedData1 & (0xFFFE);
+			rawBits[0] = block.PackedData1 & (0xFFFE);
 			// 16 bits
-			rawBits[1] = block->PackedData1 >> 16;
+			rawBits[1] = block.PackedData1 >> 16;
 
 			// step through both colours
 			for (int i = 0; i < 2; i++)
@@ -436,6 +431,12 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 					abColors[i * 4 + 3] = (int)((rawBits[i] >> 11) & 0xE);
 				}
 			}
+		}
+		
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static Span<int> GetIntSpanForColor(this Span<Colours5554> colorSpan, int index)
+		{
+			return MemoryMarshal.Cast<Colours5554, int>(colorSpan.Slice(index, 1));
 		}
 
 		/// <summary>

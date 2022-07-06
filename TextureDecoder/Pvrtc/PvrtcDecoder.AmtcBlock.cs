@@ -6,6 +6,9 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 {
 	public static partial class PvrtcDecoder
 	{
+		/// <summary>
+		/// 8 bytes
+		/// </summary>
 		private struct AmtcBlock
 		{
 			public AmtcBlock(uint v0, uint v1)
