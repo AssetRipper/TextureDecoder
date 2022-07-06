@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace AssetRipper.TextureDecoder.Atc
 {
@@ -32,7 +33,7 @@ namespace AssetRipper.TextureDecoder.Atc
 			{
 				for (int s = 0; s < bcw; s++, inputOffset += 8)
 				{
-					DecodeAtcRgb4Block(input + inputOffset, buf);
+					DecodeAtcRgb4Block(new ReadOnlySpan<byte>(input + inputOffset, 8), new Span<uint>(buf, 16));
 					int clen = s < bcw - 1 ? 4 : clen_last;
 					uint* outputPtr = (uint*)(output + (t * 16 * width + s * 16));
 					uint* bufPtr = buf;
@@ -79,7 +80,7 @@ namespace AssetRipper.TextureDecoder.Atc
 			{
 				for (int s = 0; s < bcw; s++, inputOffset += 16)
 				{
-					DecodeAtcRgba8Block(input + inputOffset, buf);
+					DecodeAtcRgba8Block(new ReadOnlySpan<byte>(input + inputOffset, 16), new Span<uint>(buf, 16));
 					int clen = s < bcw - 1 ? 4 : clen_last;
 					uint* outputPtr = (uint*)(output + (t * 16 * width + s * 16));
 					uint* bufPtr = buf;
@@ -98,18 +99,18 @@ namespace AssetRipper.TextureDecoder.Atc
 			return inputOffset;
 		}
 
-		private unsafe static void DecodeAtcRgb4Block(byte* input, uint* output)
+		private unsafe static void DecodeAtcRgb4Block(ReadOnlySpan<byte> input, Span<uint> output)
 		{
-			int* colors = stackalloc int[16];
-			int c0 = *((ushort*)(input + 0));
-			int c1 = *((ushort*)(input + 2));
-			uint cindex = *((uint*)(input + 4));
+			Span<int> colors = stackalloc int[16];
+			int c0 = input.ReadAtOffset<ushort>(0);
+			int c1 = input.ReadAtOffset<ushort>(2);
+			uint cindex = input.ReadAtOffset<uint>(4);
 
 			DecodeColors(colors, c0, c1);
 
 			for (int i = 0; i < 4 * 4; i++)
 			{
-				uint cidx = cindex & 3;
+				int cidx = unchecked((int)(cindex & 3));
 				int cb = colors[cidx * 4 + 0];
 				int cg = colors[cidx * 4 + 1];
 				int cr = colors[cidx * 4 + 2];
@@ -118,18 +119,18 @@ namespace AssetRipper.TextureDecoder.Atc
 			}
 		}
 
-		private unsafe static void DecodeAtcRgba8Block(byte* input, uint* output)
+		private unsafe static void DecodeAtcRgba8Block(ReadOnlySpan<byte> input, Span<uint> output)
 		{
-			int* alphas = stackalloc int[16];
-			ulong avalue = *((ulong*)input);
+			Span<int> alphas = stackalloc int[16];
+			ulong avalue = input.ReadAtOffset<ulong>(0);
 			int a0 = unchecked((int)(avalue >> 0) & 0xFF);
 			int a1 = unchecked((int)(avalue >> 8) & 0xFF);
 			ulong aindex = avalue >> 16;
 
-			int* colors = stackalloc int[16];
-			int c0 = *((ushort*)(input + 8));
-			int c1 = *((ushort*)(input + 10));
-			uint cindex = *((uint*)(input + 12));
+			Span<int> colors = stackalloc int[16];
+			int c0 = input.ReadAtOffset<ushort>(8);
+			int c1 = input.ReadAtOffset<ushort>(10);
+			uint cindex = input.ReadAtOffset<uint>(12);
 
 			DecodeColors(colors, c0, c1);
 			DecodeAlphas(alphas, a0, a1);
@@ -149,7 +150,13 @@ namespace AssetRipper.TextureDecoder.Atc
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private unsafe static void DecodeColors(int* colors, int c0, int c1)
+		private static T ReadAtOffset<T>(this ReadOnlySpan<byte> input, int offset) where T : unmanaged
+		{
+			return MemoryMarshal.Read<T>(input.Slice(offset));
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private unsafe static void DecodeColors(Span<int> colors, int c0, int c1)
 		{
 			if ((c0 & 0x8000) == 0)
 			{
@@ -190,7 +197,7 @@ namespace AssetRipper.TextureDecoder.Atc
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private unsafe static void DecodeAlphas(int* alphas, int a0, int a1)
+		private unsafe static void DecodeAlphas(Span<int> alphas, int a0, int a1)
 		{
 			alphas[0] = a0;
 			alphas[1] = a1;
