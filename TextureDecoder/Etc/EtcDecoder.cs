@@ -4,34 +4,38 @@ namespace AssetRipper.TextureDecoder.Etc
 {
 	public static class EtcDecoder
 	{
-		public static void DecompressETC(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+		public static int DecompressETC(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			output = new byte[width * height * 4];
-			DecompressETC(input, width, height, output);
+			return DecompressETC(input, width, height, output);
 		}
 
-		public unsafe static void DecompressETC(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		public unsafe static int DecompressETC(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
-			fixed (byte* inputPtr = input)
+			int requiredLength = ((width + 3) / 4) * ((height + 3) / 4) * 8;
+			if (input.Length < requiredLength)
 			{
-				fixed (byte* outputPtr = output)
-				{
-					DecompressETC(inputPtr, width, height, outputPtr);
-				}
+				throw new ArgumentException($"{nameof(input)} has length {input.Length} which is less than the required length {requiredLength}", nameof(input));
+			}
+
+			fixed (byte* outputPtr = output)
+			{
+				return DecompressETC(input, width, height, outputPtr);
 			}
 		}
 
-		private unsafe static void DecompressETC(byte* input, int width, int height, byte* output)
+		private unsafe static int DecompressETC(ReadOnlySpan<byte> input, int width, int height, byte* output)
 		{
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
 			int clen_last = (width + 3) % 4 + 1;
 			uint* buf = stackalloc uint[16];
+			int inputOffset = 0;
 			for (int t = 0; t < bch; t++)
 			{
-				for (int s = 0; s < bcw; s++, input += 8)
+				for (int s = 0; s < bcw; s++, inputOffset += 8)
 				{
-					DecodeEtc1Block(input, buf);
+					DecodeEtc1Block(input.Slice(inputOffset, 8), new Span<uint>(buf, 16));
 					int clen = s < bcw - 1 ? 4 : clen_last;
 					uint* outputPtr = (uint*)(output + (t * 16 * width + s * 16));
 					uint* bufPtr = buf;
@@ -47,36 +51,41 @@ namespace AssetRipper.TextureDecoder.Etc
 					}
 				}
 			}
+			return inputOffset;
 		}
 
-		public static void DecompressETC2(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+		public static int DecompressETC2(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			output = new byte[width * height * 4];
-			DecompressETC2(input, width, height, output);
+			return DecompressETC2(input, width, height, output);
 		}
 
-		public unsafe static void DecompressETC2(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		public unsafe static int DecompressETC2(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
-			fixed (byte* inputPtr = input)
+			int requiredLength = ((width + 3) / 4) * ((height + 3) / 4) * 8;
+			if (input.Length < requiredLength)
 			{
-				fixed (byte* outputPtr = output)
-				{
-					DecompressETC2(inputPtr, width, height, outputPtr);
-				}
+				throw new ArgumentException($"{nameof(input)} has length {input.Length} which is less than the required length {requiredLength}", nameof(input));
+			}
+
+			fixed (byte* outputPtr = output)
+			{
+				return DecompressETC2(input, width, height, outputPtr);
 			}
 		}
 
-		private unsafe static void DecompressETC2(byte* input, int width, int height, byte* output)
+		private unsafe static int DecompressETC2(ReadOnlySpan<byte> input, int width, int height, byte* output)
 		{
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
 			int clen_last = (width + 3) % 4 + 1;
 			uint* buf = stackalloc uint[16];
+			int inputOffset = 0;
 			for (int t = 0; t < bch; t++)
 			{
-				for (int s = 0; s < bcw; s++, input += 8)
+				for (int s = 0; s < bcw; s++, inputOffset += 8)
 				{
-					DecodeEtc2Block(input, buf);
+					DecodeEtc2Block(input.Slice(inputOffset, 8), new Span<uint>(buf, 16));
 					int clen = s < bcw - 1 ? 4 : clen_last;
 					uint* outputPtr = (uint*)(output + (t * 16 * width + s * 16));
 					uint* bufPtr = buf;
@@ -92,37 +101,41 @@ namespace AssetRipper.TextureDecoder.Etc
 					}
 				}
 			}
+			return inputOffset;
 		}
 
-		public static void DecompressETC2A1(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+		public static int DecompressETC2A1(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			output = new byte[width * height * 4];
-			DecompressETC2A1(input, width, height, output);
+			return DecompressETC2A1(input, width, height, output);
 		}
 
-		public unsafe static void DecompressETC2A1(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		public unsafe static int DecompressETC2A1(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
-			fixed (byte* inputPtr = input)
+			int requiredLength = ((width + 3) / 4) * ((height + 3) / 4) * 8;
+			if (input.Length < requiredLength)
 			{
-				fixed (byte* outputPtr = output)
-				{
-					DecompressETC2A1(inputPtr, width, height, outputPtr);
-				}
+				throw new ArgumentException($"{nameof(input)} has length {input.Length} which is less than the required length {requiredLength}", nameof(input));
+			}
+
+			fixed (byte* outputPtr = output)
+			{
+				return DecompressETC2A1(input, width, height, outputPtr);
 			}
 		}
 
-		private unsafe static void DecompressETC2A1(byte* input, int width, int height, byte* output)
+		private unsafe static int DecompressETC2A1(ReadOnlySpan<byte> input, int width, int height, byte* output)
 		{
-			int width4 = width * 4;
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
 			int clen_last = (width + 3) % 4 + 1;
 			uint* buf = stackalloc uint[16];
+			int inputOffset = 0;
 			for (int t = 0; t < bch; t++)
 			{
-				for (int s = 0; s < bcw; s++, input += 8)
+				for (int s = 0; s < bcw; s++, inputOffset += 8)
 				{
-					DecodeEtc2a1Block(input, buf);
+					DecodeEtc2a1Block(input.Slice(inputOffset, 8), new Span<uint>(buf, 16));
 					int clen = s < bcw - 1 ? 4 : clen_last;
 					uint* outputPtr = (uint*)(output + (t * 16 * width + s * 16));
 					uint* bufPtr = buf;
@@ -138,37 +151,42 @@ namespace AssetRipper.TextureDecoder.Etc
 					}
 				}
 			}
+			return inputOffset;
 		}
 
-		public static void DecompressETC2A8(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+		public static int DecompressETC2A8(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			output = new byte[width * height * 4];
-			DecompressETC2A8(input, width, height, output);
+			return DecompressETC2A8(input, width, height, output);
 		}
 
-		public unsafe static void DecompressETC2A8(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		public unsafe static int DecompressETC2A8(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
-			fixed (byte* inputPtr = input)
+			int requiredLength = ((width + 3) / 4) * ((height + 3) / 4) * 16;
+			if (input.Length < requiredLength)
 			{
-				fixed (byte* outputPtr = output)
-				{
-					DecompressETC2A8(inputPtr, width, height, outputPtr);
-				}
+				throw new ArgumentException($"{nameof(input)} has length {input.Length} which is less than the required length {requiredLength}", nameof(input));
+			}
+
+			fixed (byte* outputPtr = output)
+			{
+				return DecompressETC2A8(input, width, height, outputPtr);
 			}
 		}
 
-		private unsafe static void DecompressETC2A8(byte* input, int width, int height, byte* output)
+		private unsafe static int DecompressETC2A8(ReadOnlySpan<byte> input, int width, int height, byte* output)
 		{
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
 			int clen_last = (width + 3) % 4 + 1;
 			uint* buf = stackalloc uint[16];
+			int inputOffset = 0;
 			for (int t = 0; t < bch; t++)
 			{
-				for (int s = 0; s < bcw; s++, input += 16)
+				for (int s = 0; s < bcw; s++, inputOffset += 16)
 				{
-					DecodeEtc2Block(input + 8, buf);
-					DecodeEtc2a8Block(input, buf);
+					DecodeEtc2Block(input.Slice(inputOffset + 8, 8), new Span<uint>(buf, 16));
+					DecodeEtc2a8Block(input.Slice(inputOffset + 0, 8), buf);
 					int clen = s < bcw - 1 ? 4 : clen_last;
 					uint* outputPtr = (uint*)(output + (t * 16 * width + s * 16));
 					uint* bufPtr = buf;
@@ -184,75 +202,30 @@ namespace AssetRipper.TextureDecoder.Etc
 					}
 				}
 			}
+			return inputOffset;
 		}
 
-		public static void DecompressEACRUnsigned(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+		public static int DecompressEACRUnsigned(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			output = new byte[width * height * 4];
-			DecompressEACRUnsigned(input, width, height, output);
+			return DecompressEACRUnsigned(input, width, height, output);
 		}
 
-		public unsafe static void DecompressEACRUnsigned(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		public unsafe static int DecompressEACRUnsigned(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
-			fixed (byte* inputPtr = input)
+			int requiredLength = ((width + 3) / 4) * ((height + 3) / 4) * 8;
+			if (input.Length < requiredLength)
 			{
-				fixed (byte* outputPtr = output)
-				{
-					DecompressEACRUnsigned(inputPtr, width, height, outputPtr);
-				}
+				throw new ArgumentException($"{nameof(input)} has length {input.Length} which is less than the required length {requiredLength}", nameof(input));
+			}
+
+			fixed (byte* outputPtr = output)
+			{
+				return DecompressEACRUnsigned(input, width, height, outputPtr);
 			}
 		}
 
-		private unsafe static void DecompressEACRUnsigned(byte* input, int width, int height, byte* output)
-		{
-			int bcw = (width + 3) / 4;
-			int bch = (height + 3) / 4;
-			int clen_last = (width + 3) % 4 + 1;
-			uint* buf = stackalloc uint[16];
-			for (int i = 0; i < 16; i++)
-			{
-				buf[i] = 0xFF000000;
-			}
-			for (int t = 0; t < bch; t++)
-			{
-				for (int s = 0; s < bcw; s++, input += 8)
-				{
-					DecodeEacUnsignedBlock(input, buf, 2);
-					int clen = s < bcw - 1 ? 4 : clen_last;
-					uint* outputPtr = (uint*)(output + (t * 16 * width + s * 16));
-					uint* bufPtr = buf;
-					for (int i = 0, y = t * 4; i < 4 && y < height; i++, y++)
-					{
-						for (int j = 0; j < clen; j++)
-						{
-							outputPtr[j] = bufPtr[j];
-						}
-
-						outputPtr += width;
-						bufPtr += 4;
-					}
-				}
-			}
-		}
-
-		public static void DecompressEACRSigned(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
-		{
-			output = new byte[width * height * 4];
-			DecompressEACRSigned(input, width, height, output);
-		}
-
-		public unsafe static void DecompressEACRSigned(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
-		{
-			fixed (byte* inputPtr = input)
-			{
-				fixed (byte* outputPtr = output)
-				{
-					DecompressEACRSigned(inputPtr, width, height, outputPtr);
-				}
-			}
-		}
-
-		private unsafe static void DecompressEACRSigned(byte* input, int width, int height, byte* output)
+		private unsafe static int DecompressEACRUnsigned(ReadOnlySpan<byte> input, int width, int height, byte* output)
 		{
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
@@ -262,11 +235,12 @@ namespace AssetRipper.TextureDecoder.Etc
 			{
 				buf[i] = 0xFF000000;
 			}
+			int inputOffset = 0;
 			for (int t = 0; t < bch; t++)
 			{
-				for (int s = 0; s < bcw; s++, input += 8)
+				for (int s = 0; s < bcw; s++, inputOffset += 8)
 				{
-					DecodeEacSignedBlock(input, buf, 2);
+					DecodeEacUnsignedBlock(input.Slice(inputOffset, 8), buf, 2);
 					int clen = s < bcw - 1 ? 4 : clen_last;
 					uint* outputPtr = (uint*)(output + (t * 16 * width + s * 16));
 					uint* bufPtr = buf;
@@ -282,26 +256,30 @@ namespace AssetRipper.TextureDecoder.Etc
 					}
 				}
 			}
+			return inputOffset;
 		}
 
-		public static void DecompressEACRGUnsigned(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+		public static int DecompressEACRSigned(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			output = new byte[width * height * 4];
-			DecompressEACRGUnsigned(input, width, height, output);
+			return DecompressEACRSigned(input, width, height, output);
 		}
 
-		public unsafe static void DecompressEACRGUnsigned(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		public unsafe static int DecompressEACRSigned(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
-			fixed (byte* inputPtr = input)
+			int requiredLength = ((width + 3) / 4) * ((height + 3) / 4) * 8;
+			if (input.Length < requiredLength)
 			{
-				fixed (byte* outputPtr = output)
-				{
-					DecompressEACRGUnsigned(inputPtr, width, height, outputPtr);
-				}
+				throw new ArgumentException($"{nameof(input)} has length {input.Length} which is less than the required length {requiredLength}", nameof(input));
+			}
+
+			fixed (byte* outputPtr = output)
+			{
+				return DecompressEACRSigned(input, width, height, outputPtr);
 			}
 		}
-
-		private unsafe static void DecompressEACRGUnsigned(byte* input, int width, int height, byte* output)
+		
+		private unsafe static int DecompressEACRSigned(ReadOnlySpan<byte> input, int width, int height, byte* output)
 		{
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
@@ -311,12 +289,12 @@ namespace AssetRipper.TextureDecoder.Etc
 			{
 				buf[i] = 0xFF000000;
 			}
+			int inputOffset = 0;
 			for (int t = 0; t < bch; t++)
 			{
-				for (int s = 0; s < bcw; s++, input += 16)
+				for (int s = 0; s < bcw; s++, inputOffset += 8)
 				{
-					DecodeEacUnsignedBlock(input + 0, buf, 2);
-					DecodeEacUnsignedBlock(input + 8, buf, 1);
+					DecodeEacSignedBlock(input.Slice(inputOffset, 8), buf, 2);
 					int clen = s < bcw - 1 ? 4 : clen_last;
 					uint* outputPtr = (uint*)(output + (t * 16 * width + s * 16));
 					uint* bufPtr = buf;
@@ -332,26 +310,30 @@ namespace AssetRipper.TextureDecoder.Etc
 					}
 				}
 			}
+			return inputOffset;
 		}
 
-		public static void DecompressEACRGSigned(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+		public static int DecompressEACRGUnsigned(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			output = new byte[width * height * 4];
-			DecompressEACRGSigned(input, width, height, output);
+			return DecompressEACRGUnsigned(input, width, height, output);
 		}
 
-		public unsafe static void DecompressEACRGSigned(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		public unsafe static int DecompressEACRGUnsigned(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
-			fixed (byte* inputPtr = input)
+			int requiredLength = ((width + 3) / 4) * ((height + 3) / 4) * 16;
+			if (input.Length < requiredLength)
 			{
-				fixed (byte* outputPtr = output)
-				{
-					DecompressEACRGSigned(inputPtr, width, height, outputPtr);
-				}
+				throw new ArgumentException($"{nameof(input)} has length {input.Length} which is less than the required length {requiredLength}", nameof(input));
+			}
+
+			fixed (byte* outputPtr = output)
+			{
+				return DecompressEACRGUnsigned(input, width, height, outputPtr);
 			}
 		}
-
-		private unsafe static void DecompressEACRGSigned(byte* input, int width, int height, byte* output)
+		
+		private unsafe static int DecompressEACRGUnsigned(ReadOnlySpan<byte> input, int width, int height, byte* output)
 		{
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
@@ -361,12 +343,13 @@ namespace AssetRipper.TextureDecoder.Etc
 			{
 				buf[i] = 0xFF000000;
 			}
+			int inputOffset = 0;
 			for (int t = 0; t < bch; t++)
 			{
-				for (int s = 0; s < bcw; s++, input += 16)
+				for (int s = 0; s < bcw; s++, inputOffset += 16)
 				{
-					DecodeEacSignedBlock(input + 0, buf, 2);
-					DecodeEacSignedBlock(input + 8, buf, 1);
+					DecodeEacUnsignedBlock(input.Slice(inputOffset + 0, 8), buf, 2);
+					DecodeEacUnsignedBlock(input.Slice(inputOffset + 8, 8), buf, 1);
 					int clen = s < bcw - 1 ? 4 : clen_last;
 					uint* outputPtr = (uint*)(output + (t * 16 * width + s * 16));
 					uint* bufPtr = buf;
@@ -382,12 +365,71 @@ namespace AssetRipper.TextureDecoder.Etc
 					}
 				}
 			}
+			return inputOffset;
 		}
 
-		private unsafe static void DecodeEtc1Block(byte* input, uint* output)
+		public static int DecompressEACRGSigned(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+		{
+			output = new byte[width * height * 4];
+			return DecompressEACRGSigned(input, width, height, output);
+		}
+
+		public unsafe static int DecompressEACRGSigned(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		{
+			int requiredLength = ((width + 3) / 4) * ((height + 3) / 4) * 16;
+			if (input.Length < requiredLength)
+			{
+				throw new ArgumentException($"{nameof(input)} has length {input.Length} which is less than the required length {requiredLength}", nameof(input));
+			}
+
+			fixed (byte* outputPtr = output)
+			{
+				return DecompressEACRGSigned(input, width, height, outputPtr);
+			}
+		}
+
+		private unsafe static int DecompressEACRGSigned(ReadOnlySpan<byte> input, int width, int height, byte* output)
+		{
+			int bcw = (width + 3) / 4;
+			int bch = (height + 3) / 4;
+			int clen_last = (width + 3) % 4 + 1;
+			uint* buf = stackalloc uint[16];
+			for (int i = 0; i < 16; i++)
+			{
+				buf[i] = 0xFF000000;
+			}
+			int inputOffset = 0;
+			for (int t = 0; t < bch; t++)
+			{
+				for (int s = 0; s < bcw; s++, inputOffset += 16)
+				{
+					DecodeEacSignedBlock(input.Slice(inputOffset + 0, 8), buf, 2);
+					DecodeEacSignedBlock(input.Slice(inputOffset + 8, 8), buf, 1);
+					int clen = s < bcw - 1 ? 4 : clen_last;
+					uint* outputPtr = (uint*)(output + (t * 16 * width + s * 16));
+					uint* bufPtr = buf;
+					for (int i = 0, y = t * 4; i < 4 && y < height; i++, y++)
+					{
+						for (int j = 0; j < clen; j++)
+						{
+							outputPtr[j] = bufPtr[j];
+						}
+
+						outputPtr += width;
+						bufPtr += 4;
+					}
+				}
+			}
+			return inputOffset;
+		}
+
+		/// <summary>
+		/// Parses an 8-byte Etc1 block from <paramref name="input"/>.
+		/// </summary>
+		private unsafe static void DecodeEtc1Block(ReadOnlySpan<byte> input, Span<uint> output)
 		{
 			byte i3 = input[3];
-			int* code = stackalloc int[2];
+			Span<int> code = stackalloc int[2];
 			code[0] = (i3 >> 5) * 4;
 			code[1] = (i3 >> 2 & 7) * 4;
 			byte* c = stackalloc byte[6];
@@ -437,7 +479,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		private unsafe static void DecodeEtc2Block(byte* input, uint* output)
+		private unsafe static void DecodeEtc2Block(ReadOnlySpan<byte> input, Span<uint> output)
 		{
 			int j = input[6] << 8 | input[7];
 			int k = input[4] << 8 | input[5];
@@ -612,7 +654,7 @@ namespace AssetRipper.TextureDecoder.Etc
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private unsafe static void DecodeEtc2a1Block(byte* input, uint* output)
+		private unsafe static void DecodeEtc2a1Block(ReadOnlySpan<byte> input, Span<uint> output)
 		{
 			if ((input[3] & 2) != 0)
 			{
@@ -625,7 +667,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		private unsafe static void DecodeEtc2PunchThrowBlock(byte* input, uint* output)
+		private unsafe static void DecodeEtc2PunchThrowBlock(ReadOnlySpan<byte> input, Span<uint> output)
 		{
 			int j = input[6] << 8 | input[7];
 			int k = input[4] << 8 | input[5];
@@ -771,7 +813,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		private unsafe static void DecodeEtc2a8Block(byte* input, uint* output)
+		private unsafe static void DecodeEtc2a8Block(ReadOnlySpan<byte> input, uint* output)
 		{
 			int @base = input[0];
 			int data1 = input[1];
@@ -791,7 +833,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		private unsafe static void DecodeEacUnsignedBlock(byte* input, uint* output, int channel)
+		private unsafe static void DecodeEacUnsignedBlock(ReadOnlySpan<byte> input, uint* output, int channel)
 		{
 			int @base = input[0];
 			int data1 = input[1];
@@ -808,7 +850,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		private unsafe static void DecodeEacSignedBlock(byte* input, uint* output, int channel)
+		private unsafe static void DecodeEacSignedBlock(ReadOnlySpan<byte> input, uint* output, int channel)
 		{
 			int @base = 127 + unchecked((sbyte)input[0]);
 			int data1 = input[1];
@@ -878,7 +920,7 @@ namespace AssetRipper.TextureDecoder.Etc
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private unsafe static ulong Get6SwapedBytes(byte* data)
+		private unsafe static ulong Get6SwapedBytes(ReadOnlySpan<byte> data)
 		{
 			return data[7] | (uint)data[6] << 8 | (uint)data[5] << 16 | (uint)data[4] << 24 | (ulong)data[3] << 32 | (ulong)data[2] << 40;
 		}
