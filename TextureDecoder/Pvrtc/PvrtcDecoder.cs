@@ -17,6 +17,21 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 		/// <param name="output">The decompressed texture data</param>
 		/// <param name="do2bitMode">Signifies whether the data is PVRTC2 or PVRTC4</param>
 		/// <returns></returns>
+		public static void DecompressPVRTC(ReadOnlySpan<byte> input, int xDim, int yDim, bool do2bitMode, out byte[] output)
+		{
+			output = new byte[xDim * yDim * sizeof(uint)];
+			DecompressPVRTC(input, xDim, yDim, do2bitMode, output);
+		}
+
+		/// <summary>
+		/// Decompresses PVRTC to RGBA 8888
+		/// </summary>
+		/// <param name="input">The PVRTC texture data to decompress</param>
+		/// <param name="xDim">X dimension (width) of the texture</param>
+		/// <param name="yDim">Y dimension (height) of the texture</param>
+		/// <param name="output">The decompressed texture data</param>
+		/// <param name="do2bitMode">Signifies whether the data is PVRTC2 or PVRTC4</param>
+		/// <returns></returns>
 		public static void DecompressPVRTC(ReadOnlySpan<byte> input, int xDim, int yDim, bool do2bitMode, Span<byte> output)
 		{
 			int xBlockSize = do2bitMode ? BlockX2bpp : BlockX4bpp;
