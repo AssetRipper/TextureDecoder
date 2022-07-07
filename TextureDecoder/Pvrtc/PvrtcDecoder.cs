@@ -16,11 +16,11 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 		/// <param name="yDim">Y dimension (height) of the texture</param>
 		/// <param name="output">The decompressed texture data</param>
 		/// <param name="do2bitMode">Signifies whether the data is PVRTC2 or PVRTC4</param>
-		/// <returns></returns>
-		public static void DecompressPVRTC(ReadOnlySpan<byte> input, int xDim, int yDim, bool do2bitMode, out byte[] output)
+		/// <returns>The number of bytes read from <paramref name="input"/></returns>
+		public static int DecompressPVRTC(ReadOnlySpan<byte> input, int xDim, int yDim, bool do2bitMode, out byte[] output)
 		{
 			output = new byte[xDim * yDim * sizeof(uint)];
-			DecompressPVRTC(input, xDim, yDim, do2bitMode, output);
+			return DecompressPVRTC(input, xDim, yDim, do2bitMode, output);
 		}
 
 		/// <summary>
@@ -31,8 +31,8 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 		/// <param name="yDim">Y dimension (height) of the texture</param>
 		/// <param name="output">The decompressed texture data</param>
 		/// <param name="do2bitMode">Signifies whether the data is PVRTC2 or PVRTC4</param>
-		/// <returns></returns>
-		public static void DecompressPVRTC(ReadOnlySpan<byte> input, int xDim, int yDim, bool do2bitMode, Span<byte> output)
+		/// <returns>The number of bytes read from <paramref name="input"/></returns>
+		public static int DecompressPVRTC(ReadOnlySpan<byte> input, int xDim, int yDim, bool do2bitMode, Span<byte> output)
 		{
 			int xBlockSize = do2bitMode ? BlockX2bpp : BlockX4bpp;
 			// for MBX don't allow the sizes to get too small
@@ -43,6 +43,8 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 			uint pblocki01 = uint.MaxValue;
 			uint pblocki10 = uint.MaxValue;
 			uint pblocki11 = uint.MaxValue;
+
+			uint maxBlockIndexRead = uint.MinValue;
 
 			Span<Colours5554> m_colors = stackalloc Colours5554[2 * 2];
 			// interpolated A colors for the pixel
@@ -98,6 +100,8 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 						pblocki01 = blocki01;
 						pblocki10 = blocki10;
 						pblocki11 = blocki11;
+
+						maxBlockIndexRead = Math.Max(maxBlockIndexRead, Math.Max(Math.Max(blocki00, blocki01), Math.Max(blocki10, blocki11)));
 					}
 
 					// decompress the pixel.  First compute the interpolated A and B signals
@@ -113,6 +117,8 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 					output[position + 3] = doPT ? (byte)0 : (byte)((aSig[3] * 8 + mod * (bSig[3] - aSig[3])) >> 3);
 				}
 			}
+
+			return ((int)maxBlockIndexRead + 1) * Unsafe.SizeOf<AmtcBlock>();
 		}
 
 		/// <summary>

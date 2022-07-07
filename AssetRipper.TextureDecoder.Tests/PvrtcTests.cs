@@ -5,8 +5,14 @@
 		[Test]
 		public void DecompressPVRTCTest()
 		{
-			byte[] data = File.ReadAllBytes(PathConstants.PvrtcTestProjectRootFolder + "test.pvrtc4");
-			Pvrtc.PvrtcDecoder.DecompressPVRTC(data, 512, 512, false, out _);
+			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.PvrtcTestProjectRootFolder + "test.pvrtc4");
+			int totalBytesRead = 0;
+			foreach (int size in new int[] { 512, 256, 128, 64, 32, 16, 8, 4, 2, 1 }) //mip maps
+			{
+				int bytesRead = Pvrtc.PvrtcDecoder.DecompressPVRTC(data, size, size, false, out _);
+				totalBytesRead += bytesRead;
+			}
+			Assert.That(totalBytesRead, Is.EqualTo(data.Length));
 		}
 	}
 }
