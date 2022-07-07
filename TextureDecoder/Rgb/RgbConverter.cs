@@ -452,6 +452,81 @@ namespace AssetRipper.TextureDecoder.Rgb
 			return io;
 		}
 
+		public static int RG32ToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+		{
+			output = new byte[width * height * 4];
+			return RG32ToBGRA32(input, width, height, output);
+		}
+
+		public static int RG32ToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		{
+			int io = 0;
+			int oo = 0;
+			for (int i = 0; i < width; i++)
+			{
+				for (int j = 0; j < height; j++)
+				{
+					output[oo + 0] = 0;             // b
+					output[oo + 1] = input[io + 3]; // g
+					output[oo + 2] = input[io + 1]; // r
+					output[oo + 3] = 255;           // a
+					io += 4;
+					oo += 4;
+				}
+			}
+			return io;
+		}
+
+		public static int RGB48ToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+		{
+			output = new byte[width * height * 4];
+			return RGB48ToBGRA32(input, width, height, output);
+		}
+
+		public static int RGB48ToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		{
+			int io = 0;
+			int oo = 0;
+			for (int i = 0; i < width; i++)
+			{
+				for (int j = 0; j < height; j++)
+				{
+					output[oo + 0] = input[io + 5]; // b
+					output[oo + 1] = input[io + 3]; // g
+					output[oo + 2] = input[io + 1]; // r
+					output[oo + 3] = 255;           // a
+					io += 6;
+					oo += 4;
+				}
+			}
+			return io;
+		}
+
+		public static int RGBA64ToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+		{
+			output = new byte[width * height * 4];
+			return RGBA64ToBGRA32(input, width, height, output);
+		}
+
+		public static int RGBA64ToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		{
+			int io = 0;
+			int oo = 0;
+			for (int i = 0; i < width; i++)
+			{
+				for (int j = 0; j < height; j++)
+				{
+					output[oo + 0] = input[io + 5]; // b
+					output[oo + 1] = input[io + 3]; // g
+					output[oo + 2] = input[io + 1]; // r
+					output[oo + 3] = input[io + 7]; // a
+					io += 8;
+					oo += 4;
+				}
+			}
+			return io;
+		}
+
 		private static float ToHalf(ReadOnlySpan<byte> input, int offset)
 		{
 #if NET6_0_OR_GREATER

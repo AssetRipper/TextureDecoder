@@ -187,5 +187,29 @@
 			int bytesRead = Rgb.RgbConverter.RGB9e5FloatToBGRA32(data, 256, 256, out _);
 			Assert.That(bytesRead, Is.EqualTo(data.Length));
 		}
+
+		[Test]
+		public void ConvertRG32Test()
+		{
+			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestProjectRootFolder + "test.rg32");
+			int bytesRead = Rgb.RgbConverter.RG32ToBGRA32(data, 512, 512, out _);
+			Assert.That(bytesRead, Is.EqualTo(data.Length));
+		}
+
+		[Test]
+		public void ConvertRGB48Test()
+		{
+			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestProjectRootFolder + "test.rgb48");
+			int bytesRead = Rgb.RgbConverter.RGB48ToBGRA32(data, 512, 512, out _);
+			Assert.That(bytesRead, Is.EqualTo(data.Length));
+		}
+
+		[Test]
+		public void ConvertRGBA64Test()
+		{
+			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestProjectRootFolder + "test.rgba64");
+			int bytesRead = Rgb.RgbConverter.RGBA64ToBGRA32(data, 512, 512, out _);
+			Assert.That(bytesRead, Is.EqualTo(data.Length));
+		}
 	}
 }

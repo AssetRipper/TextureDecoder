@@ -32,6 +32,9 @@ namespace RgbTest
 				Console.WriteLine("15 - RGFloat");
 				Console.WriteLine("16 - RGBAFloat");
 				Console.WriteLine("17 - RGB9e5Float");
+				Console.WriteLine("18 - RG32");
+				Console.WriteLine("19 - RGB48");
+				Console.WriteLine("20 - RGBA64");
 				Console.ReadKey();
 				return;
 			}
@@ -105,6 +108,15 @@ namespace RgbTest
 								break;
 							case 17:
 								RgbConverter.RGB9e5FloatToBGRA32(data, width, height, bitmap.Bits);
+								break;
+							case 18:
+								RgbConverter.RG32ToBGRA32(data, width, height, bitmap.Bits);
+								break;
+							case 19:
+								RgbConverter.RGB48ToBGRA32(data, width, height, bitmap.Bits);
+								break;
+							case 20:
+								RgbConverter.RGBA64ToBGRA32(data, width, height, bitmap.Bits);
 								break;
 
 							default:
