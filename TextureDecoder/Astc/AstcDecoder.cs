@@ -4,34 +4,35 @@ namespace AssetRipper.TextureDecoder.Astc
 {
 	public static partial class AstcDecoder
 	{
-		public static void DecodeASTC(ReadOnlySpan<byte> input, int width, int height, int blockWidth, int blockHeight, out byte[] output)
+		public static int DecodeASTC(ReadOnlySpan<byte> input, int width, int height, int blockWidth, int blockHeight, out byte[] output)
 		{
 			output = new byte[width * height * 4];
-			DecodeASTC(input, width, height, blockWidth, blockHeight, output);
+			return DecodeASTC(input, width, height, blockWidth, blockHeight, output);
 		}
 
-		public unsafe static void DecodeASTC(ReadOnlySpan<byte> input, int width, int height, int blockWidth, int blockHeight, Span<byte> output)
+		public unsafe static int DecodeASTC(ReadOnlySpan<byte> input, int width, int height, int blockWidth, int blockHeight, Span<byte> output)
 		{
 			fixed (byte* inputPtr = input)
 			{
 				fixed (byte* outputPtr = output)
 				{
-					DecodeASTC(inputPtr, width, height, blockWidth, blockHeight, outputPtr);
+					return DecodeASTC(inputPtr, width, height, blockWidth, blockHeight, outputPtr);
 				}
 			}
 		}
 
-		private unsafe static void DecodeASTC(byte* input, int width, int height, int blockWidth, int blockHeight, byte* output)
+		private unsafe static int DecodeASTC(byte* input, int width, int height, int blockWidth, int blockHeight, byte* output)
 		{
 			int bcw = (width + blockWidth - 1) / blockWidth;
 			int bch = (height + blockHeight - 1) / blockHeight;
 			int clen_last = (width + blockWidth - 1) % blockWidth + 1;
 			uint* buf = stackalloc uint[blockWidth * blockHeight];
+			int inputOffset = 0;
 			for (int t = 0; t < bch; t++)
 			{
-				for (int s = 0; s < bcw; s++, input += 16)
+				for (int s = 0; s < bcw; s++, inputOffset += 16)
 				{
-					DecodeBlock(input, blockWidth, blockHeight, buf);
+					DecodeBlock(input + inputOffset, blockWidth, blockHeight, buf);
 					int clen = s < bcw - 1 ? blockWidth : clen_last;
 					uint* outputPtr = (uint*)(output + (t * blockHeight * 4 * width + s * 4 * blockWidth));
 					uint* bufPtr = buf;
@@ -47,6 +48,7 @@ namespace AssetRipper.TextureDecoder.Astc
 					}
 				}
 			}
+			return inputOffset;
 		}
 
 		private unsafe static void DecodeBlock(byte* input, int blockWidth, int blockHeight, uint* output)
