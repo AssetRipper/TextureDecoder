@@ -1,5 +1,6 @@
 using System.Buffers.Binary;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace AssetRipper.TextureDecoder.Rgb
 {
@@ -398,7 +399,7 @@ namespace AssetRipper.TextureDecoder.Rgb
 			output = new byte[width * height * 4];
 			return RGBAFloatToBGRA32(input, width, height, output);
 		}
-		
+
 		public static int RGBAFloatToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int io = 0;
@@ -525,6 +526,48 @@ namespace AssetRipper.TextureDecoder.Rgb
 				}
 			}
 			return io;
+		}
+
+		public static int Convert<TSource, TSourceArg, TDestination, TDestinationArg>(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+			where TSourceArg : unmanaged
+			where TSource : unmanaged, IColor<TSourceArg>
+			where TDestinationArg : unmanaged
+			where TDestination : unmanaged, IColor<TDestinationArg>
+		{
+			output = new byte[width * height * Unsafe.SizeOf<TDestination>()];
+			return Convert<TSource, TSourceArg, TDestination, TDestinationArg>(input, width, height, output);
+		}
+
+		public static int Convert<TSource, TSourceArg, TDestination, TDestinationArg>(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+			where TSourceArg : unmanaged
+			where TSource : unmanaged, IColor<TSourceArg>
+			where TDestinationArg : unmanaged
+			where TDestination : unmanaged, IColor<TDestinationArg>
+		{
+			ReadOnlySpan<TSource> sourceSpan = MemoryMarshal.Cast<byte, TSource>(input).Slice(0, width * height);
+			Span<TDestination> destinationSpan = MemoryMarshal.Cast<byte, TDestination>(output).Slice(0, width * height);
+			Convert<TSource, TSourceArg, TDestination, TDestinationArg>(sourceSpan, destinationSpan);
+			return width * height * Unsafe.SizeOf<TSource>();
+		}
+
+		public static void Convert<TSource, TSourceArg, TDestination, TDestinationArg>(ReadOnlySpan<TSource> sourceSpan, Span<TDestination> destinationSpan)
+			where TSourceArg : unmanaged
+			where TSource : unmanaged, IColor<TSourceArg>
+			where TDestinationArg : unmanaged
+			where TDestination : unmanaged, IColor<TDestinationArg>
+		{
+			for (int i = 0; i < sourceSpan.Length; i++)
+			{
+				TSource source = sourceSpan[i];
+				TDestination destination = default;
+				source.GetChannels(out TSourceArg r, out TSourceArg g, out TSourceArg b, out TSourceArg a);
+				destination.SetChannels(
+					ConversionUtilities.ConvertValue<TSourceArg, TDestinationArg>(r),
+					ConversionUtilities.ConvertValue<TSourceArg, TDestinationArg>(g),
+					ConversionUtilities.ConvertValue<TSourceArg, TDestinationArg>(b),
+					ConversionUtilities.ConvertValue<TSourceArg, TDestinationArg>(a));
+				destinationSpan[i] = destination;
+			}
 		}
 
 		private static float ToHalf(ReadOnlySpan<byte> input, int offset)

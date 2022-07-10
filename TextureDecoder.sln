@@ -36,7 +36,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Licenses", "Licenses", "{0B
 		Licenses\uTinyRipper.md = Licenses\uTinyRipper.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssetRipper.TextureDecoder.Tests", "AssetRipper.TextureDecoder.Tests\AssetRipper.TextureDecoder.Tests.csproj", "{30E8E8F4-2CE4-4435-A49F-C5AF91D58FFE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssetRipper.TextureDecoder.Tests", "AssetRipper.TextureDecoder.Tests\AssetRipper.TextureDecoder.Tests.csproj", "{30E8E8F4-2CE4-4435-A49F-C5AF91D58FFE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestSourceGenerator", "TestSourceGenerator\TestSourceGenerator.csproj", "{F13DB418-1E43-43CA-B85C-A46E911FC906}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -80,6 +82,10 @@ Global
 		{30E8E8F4-2CE4-4435-A49F-C5AF91D58FFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30E8E8F4-2CE4-4435-A49F-C5AF91D58FFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{30E8E8F4-2CE4-4435-A49F-C5AF91D58FFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F13DB418-1E43-43CA-B85C-A46E911FC906}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F13DB418-1E43-43CA-B85C-A46E911FC906}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F13DB418-1E43-43CA-B85C-A46E911FC906}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F13DB418-1E43-43CA-B85C-A46E911FC906}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
