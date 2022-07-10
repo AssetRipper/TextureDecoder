@@ -407,10 +407,10 @@ namespace AssetRipper.TextureDecoder.Rgb
 			{
 				for (int j = 0; j < height; j++)
 				{
-					byte r = ClampByte(ToSingle(input, io + 0));
-					byte g = ClampByte(ToSingle(input, io + 4));
-					byte b = ClampByte(ToSingle(input, io + 8));
-					byte a = ClampByte(ToSingle(input, io + 12));
+					byte r = ClampByte(ToSingle(input, io + 0) * 255f);
+					byte g = ClampByte(ToSingle(input, io + 4) * 255f);
+					byte b = ClampByte(ToSingle(input, io + 8) * 255f);
+					byte a = ClampByte(ToSingle(input, io + 12) * 255f);
 					output[oo + 0] = b;				// b
 					output[oo + 1] = g;				// g
 					output[oo + 2] = r;				// r
