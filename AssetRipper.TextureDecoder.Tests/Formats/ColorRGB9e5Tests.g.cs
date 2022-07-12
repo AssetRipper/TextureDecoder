@@ -56,7 +56,7 @@ public partial class ColorRGB9e5Tests
 		var g = color.G;
 		var b = color.B;
 		var a = color.A;
-		color.R = 0.333f;
+		color.R = 0.333;
 		Assert.Multiple(() =>
 		{
 			Assert.That(color.G, Is.EqualTo(g));
@@ -72,7 +72,7 @@ public partial class ColorRGB9e5Tests
 		var r = color.R;
 		var b = color.B;
 		var a = color.A;
-		color.G = 0.333f;
+		color.G = 0.333;
 		Assert.Multiple(() =>
 		{
 			Assert.That(color.R, Is.EqualTo(r));
@@ -88,7 +88,7 @@ public partial class ColorRGB9e5Tests
 		var r = color.R;
 		var g = color.G;
 		var a = color.A;
-		color.B = 0.333f;
+		color.B = 0.333;
 		Assert.Multiple(() =>
 		{
 			Assert.That(color.R, Is.EqualTo(r));
@@ -104,7 +104,7 @@ public partial class ColorRGB9e5Tests
 		var r = color.R;
 		var g = color.G;
 		var b = color.B;
-		color.A = 0.333f;
+		color.A = 0.333;
 		Assert.Multiple(() =>
 		{
 			Assert.That(color.R, Is.EqualTo(r));
@@ -146,10 +146,10 @@ public partial class ColorRGB9e5Tests
 	{
 		return new()
 		{
-			R = 0.447f,
-			G = 0.224f,
-			B = 0.95f,
-			A = 0.897f,
+			R = 0.447,
+			G = 0.224,
+			B = 0.95,
+			A = 0.897,
 		};
 	}
 }

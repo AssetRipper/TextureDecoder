@@ -22,7 +22,7 @@ namespace TestSourceGenerator
 			new GenerationData(typeof(ColorRGB16), typeof(byte), 2),
 			new GenerationData(typeof(ColorRGB24), typeof(byte), 3),
 			new GenerationData(typeof(ColorRGB48), typeof(ushort), 6),
-			new GenerationData(typeof(ColorRGB9e5), typeof(float), 4),
+			new GenerationData(typeof(ColorRGB9e5), typeof(double), 4),
 			new GenerationData(typeof(ColorRGBA16), typeof(byte), 2),
 			new GenerationData(typeof(ColorRGBA32), typeof(byte), 4),
 			new GenerationData(typeof(ColorRGBA64), typeof(ushort), 8),
@@ -39,7 +39,8 @@ namespace TestSourceGenerator
 			{ typeof(byte), new ColorRandomValues("0b11010101", "0b01110010", "0b10001111", "0b11000111", "0b01001110") },
 			{ typeof(ushort), new ColorRandomValues("44000", "21354", "60080", "347", "33871") },
 			{ typeof(Half), new ColorRandomValues("(Half)0.447f", "(Half)0.224f", "(Half)0.95f", "(Half)0.897f", "(Half)0.333f") },
-			{ typeof(float), new ColorRandomValues("0.447f", "0.224f", "0.95f", "0.897f", "0.333f") }
+			{ typeof(float), new ColorRandomValues("0.447f", "0.224f", "0.95f", "0.897f", "0.333f") },
+			{ typeof(double), new ColorRandomValues("0.447", "0.224", "0.95", "0.897", "0.333") },
 		};
 
 		static void Main(string[] args)

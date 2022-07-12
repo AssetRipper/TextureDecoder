@@ -211,7 +211,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		{
 			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestProjectRootFolder + "test.rgb9e5float");
 			RgbConverter.RGB9e5FloatToBGRA32(data, 256, 256, out byte[] originalDecodedData);
-			RgbConverter.Convert<ColorRGB9e5, float, ColorBGRA32, byte>(data, 256, 256, out byte[] newDecodedData);
+			RgbConverter.Convert<ColorRGB9e5, double, ColorBGRA32, byte>(data, 256, 256, out byte[] newDecodedData);
 			Assert.That(originalDecodedData, Is.EqualTo(newDecodedData));
 		}
 

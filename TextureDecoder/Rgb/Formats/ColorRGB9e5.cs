@@ -5,56 +5,56 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats
 	/// <summary>
 	/// 9 bits each for RGB and 5 bits for an exponent
 	/// </summary>
-	public struct ColorRGB9e5 : IColor<float>
+	public struct ColorRGB9e5 : IColor<double>
 	{
 		private uint bits;
 
-		public float R
+		public double R
 		{
-			get => (float)(RBits * Scale);
+			get => RBits * Scale;
 			set
 			{
-				GetChannels(out _, out float g, out float b, out _);
+				GetChannels(out _, out double g, out double b, out _);
 				SetChannels(value, g, b, default);
 			}
 		}
 
-		public float G
+		public double G
 		{
-			get => (float)(GBits * Scale);
+			get => GBits * Scale;
 			set
 			{
-				GetChannels(out float r, out _, out float b, out _);
+				GetChannels(out double r, out _, out double b, out _);
 				SetChannels(r, value, b, default);
 			}
 		}
 
-		public float B
+		public double B
 		{
-			get => (float)(BBits * Scale);
+			get => BBits * Scale;
 			set
 			{
-				GetChannels(out float r, out float g, out _, out _);
+				GetChannels(out double r, out double g, out _, out _);
 				SetChannels(r, g, value, default);
 			}
 		}
 
-		public float A
+		public double A
 		{
 			get => 1;
 			set { }
 		}
 
-		public void GetChannels(out float r, out float g, out float b, out float a)
+		public void GetChannels(out double r, out double g, out double b, out double a)
 		{
 			double scale = Scale;
-			r = (float)(RBits * scale);
-			g = (float)(GBits * scale);
-			b = (float)(BBits * scale);
+			r = RBits * scale;
+			g = GBits * scale;
+			b = BBits * scale;
 			a = 1;
 		}
 
-		public void SetChannels(float r, float g, float b, float a)
+		public void SetChannels(double r, double g, double b, double a)
 		{
 			int exponent = CalculateExponent(r, g, b);
 			double scale = Pow(2, exponent);
@@ -74,9 +74,9 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats
 		private uint GBits => (bits >> 9) & 0x1FF;
 		private uint BBits => (bits >> 18) & 0x1FF;
 
-		private static int CalculateExponent(float r, float g, float b)
+		private static int CalculateExponent(double r, double g, double b)
 		{
-			float maxChannel = Max(r, Max(g, b));
+			double maxChannel = Max(r, Max(g, b));
 			double minExponent = Log2(maxChannel / 0x1FF);
 			return (int)Ceiling(minExponent);
 		}
