@@ -1,4 +1,7 @@
-﻿namespace AssetRipper.TextureDecoder.Tests
+﻿using AssetRipper.TextureDecoder.Rgb.Formats;
+using AssetRipper.TextureDecoder.Yuy2;
+
+namespace AssetRipper.TextureDecoder.Tests
 {
 	public sealed class Yuy2Tests
 	{
@@ -8,8 +11,11 @@
 		[Test]
 		public void DecompressYUY2Test()
 		{
-			byte[] data = File.ReadAllBytes(PathConstants.Yuy2TestProjectRootFolder + "test.yuy2");
-			Yuy2.Yuy2Decoder.DecompressYUY2(data, TestImageWidth, TestImageHeight, out _);
+			byte[] input = File.ReadAllBytes(PathConstants.Yuy2TestProjectRootFolder + "test.yuy2");
+			int bytesRead = Yuy2Decoder.DecompressYUY2(input, TestImageWidth, TestImageHeight, out byte[] originalOutput);
+			Assert.That(bytesRead, Is.EqualTo(input.Length));
+			Yuy2Decoder.DecompressYUY2<ColorBGRA32, byte>(input, TestImageWidth, TestImageHeight, out byte[] genericOutput);
+			Assert.That(originalOutput, Is.EqualTo(genericOutput));
 		}
 	}
 }

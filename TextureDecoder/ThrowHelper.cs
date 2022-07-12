@@ -11,5 +11,13 @@
 				throw new InvalidOperationException("Not enough space");
 			}
 		}
+
+		internal static void ThrowIfNotEnoughSpace(int spaceAvailable, int spaceRequired)
+		{
+			if (spaceAvailable < spaceRequired)
+			{
+				throw new InvalidOperationException($"Not enough space. {spaceRequired} is required, but only {spaceAvailable} is available");
+			}
+		}
 	}
 }
