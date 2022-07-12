@@ -1,9 +1,11 @@
 ﻿using System.Runtime.CompilerServices;
+using static System.Runtime.CompilerServices.MethodImplOptions;
 
 namespace AssetRipper.TextureDecoder.Rgb
 {
 	internal static class ConversionUtilities
 	{
+		[MethodImpl(AggressiveInlining | AggressiveOptimization)]
 		internal static TTo ConvertValue<TFrom, TTo>(TFrom value)
 			where TFrom : unmanaged
 			where TTo : unmanaged
@@ -38,6 +40,7 @@ namespace AssetRipper.TextureDecoder.Rgb
 			}
 		}
 
+		[MethodImpl(AggressiveInlining | AggressiveOptimization)]
 		private static TTo ConvertUInt8<TTo>(byte value) where TTo : unmanaged
 		{
 			if (typeof(TTo) == typeof(byte))
@@ -70,6 +73,7 @@ namespace AssetRipper.TextureDecoder.Rgb
 			}
 		}
 
+		[MethodImpl(AggressiveInlining | AggressiveOptimization)]
 		private static TTo ConvertUInt16<TTo>(ushort value) where TTo : unmanaged
 		{
 			if (typeof(TTo) == typeof(byte))
@@ -102,6 +106,7 @@ namespace AssetRipper.TextureDecoder.Rgb
 			}
 		}
 
+		[MethodImpl(AggressiveInlining | AggressiveOptimization)]
 		private static TTo ConvertHalf<TTo>(Half value) where TTo : unmanaged
 		{
 			if (typeof(TTo) == typeof(byte))
@@ -134,6 +139,7 @@ namespace AssetRipper.TextureDecoder.Rgb
 			}
 		}
 
+		[MethodImpl(AggressiveInlining | AggressiveOptimization)]
 		private static TTo ConvertSingle<TTo>(float value) where TTo : unmanaged
 		{
 			if (typeof(TTo) == typeof(byte))
@@ -166,6 +172,7 @@ namespace AssetRipper.TextureDecoder.Rgb
 			}
 		}
 
+		[MethodImpl(AggressiveInlining | AggressiveOptimization)]
 		private static TTo ConvertDouble<TTo>(double value) where TTo : unmanaged
 		{
 			if (typeof(TTo) == typeof(byte))
@@ -198,28 +205,32 @@ namespace AssetRipper.TextureDecoder.Rgb
 			}
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(AggressiveInlining | AggressiveOptimization)]
 		private static byte ClampUInt8(float x)
 		{
 			return byte.MaxValue < x ? byte.MaxValue : (x > byte.MinValue ? (byte)x : byte.MinValue);
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(AggressiveInlining | AggressiveOptimization)]
 		private static byte ClampUInt8(double x)
 		{
 			return byte.MaxValue < x ? byte.MaxValue : (x > byte.MinValue ? (byte)x : byte.MinValue);
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(AggressiveInlining | AggressiveOptimization)]
 		private static ushort ClampUInt16(float x)
 		{
 			return ushort.MaxValue < x ? ushort.MaxValue : (x > ushort.MinValue ? (ushort)x : ushort.MinValue);
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(AggressiveInlining | AggressiveOptimization)]
 		private static ushort ClampUInt16(double x)
 		{
 			return ushort.MaxValue < x ? ushort.MaxValue : (x > ushort.MinValue ? (ushort)x : ushort.MinValue);
 		}
+
+#if !NETCOREAPP
+		private const MethodImplOptions AggressiveOptimization = default;
+#endif
 	}
 }
