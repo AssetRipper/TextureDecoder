@@ -40,6 +40,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssetRipper.TextureDecoder"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssetRipper.TextureDecoder.TestGenerator", "AssetRipper.TextureDecoder.TestGenerator\AssetRipper.TextureDecoder.TestGenerator.csproj", "{0074908C-35A8-4C71-8F74-A83A4095ACEA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssetRipper.TextureDecoder.ConsoleApp", "AssetRipper.TextureDecoder.ConsoleApp\AssetRipper.TextureDecoder.ConsoleApp.csproj", "{FFC8EEF8-8BF1-4B65-ADDA-A949EDDF4CB4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -86,6 +88,10 @@ Global
 		{0074908C-35A8-4C71-8F74-A83A4095ACEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0074908C-35A8-4C71-8F74-A83A4095ACEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0074908C-35A8-4C71-8F74-A83A4095ACEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFC8EEF8-8BF1-4B65-ADDA-A949EDDF4CB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFC8EEF8-8BF1-4B65-ADDA-A949EDDF4CB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFC8EEF8-8BF1-4B65-ADDA-A949EDDF4CB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFC8EEF8-8BF1-4B65-ADDA-A949EDDF4CB4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
