@@ -45,6 +45,7 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats
 			set { }
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public void GetChannels(out double r, out double g, out double b, out double a)
 		{
 			double scale = Scale;
@@ -54,6 +55,7 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats
 			a = 1;
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public void SetChannels(double r, double g, double b, double a)
 		{
 			int exponent = CalculateExponent(r, g, b);
@@ -74,6 +76,7 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats
 		private uint GBits => (bits >> 9) & 0x1FF;
 		private uint BBits => (bits >> 18) & 0x1FF;
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		private static int CalculateExponent(double r, double g, double b)
 		{
 			double maxChannel = Max(r, Max(g, b));
@@ -83,7 +86,7 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats
 
 #if NETSTANDARD
 		private static readonly double LogTwoConstant = Log(2);
-		[System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		private static double Log2(double value) => Log(value) / LogTwoConstant;
 #endif
 	}
