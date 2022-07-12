@@ -8,7 +8,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void ConvertA8Test()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestProjectRootFolder + "test.alpha8");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestFilesFolder + "test.alpha8");
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4, 2, 1 }) //mip maps
 			{
@@ -22,7 +22,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void ConvertARGB16Test()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestProjectRootFolder + "test.argb4444");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestFilesFolder + "test.argb4444");
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4, 2, 1 }) //mip maps
 			{
@@ -36,7 +36,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void ConvertRGB24Test()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestProjectRootFolder + "test.rgb24");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestFilesFolder + "test.rgb24");
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4, 2, 1 }) //mip maps
 			{
@@ -50,7 +50,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void ConvertRGBA32Test()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestProjectRootFolder + "test.rgba32");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestFilesFolder + "test.rgba32");
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4, 2, 1 }) //mip maps
 			{
@@ -65,7 +65,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void ConvertARGB32Test()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestProjectRootFolder + "test.argb32");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestFilesFolder + "test.argb32");
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4, 2, 1 }) //mip maps
 			{
@@ -80,7 +80,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void ConvertRGB16Test()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestProjectRootFolder + "test.rgb565");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestFilesFolder + "test.rgb565");
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4, 2, 1 }) //mip maps
 			{
@@ -95,7 +95,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void ConvertR16Test()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestProjectRootFolder + "test.r16");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestFilesFolder + "test.r16");
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4, 2, 1 }) //mip maps
 			{
@@ -110,7 +110,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void ConvertRGBA16Test()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestProjectRootFolder + "test.rgba4444");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestFilesFolder + "test.rgba4444");
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4, 2, 1 }) //mip maps
 			{
@@ -125,7 +125,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void ConvertRG16Test()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestProjectRootFolder + "test.rg16");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestFilesFolder + "test.rg16");
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4, 2, 1 }) //mip maps
 			{
@@ -140,7 +140,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void ConvertR8Test()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestProjectRootFolder + "test.r8");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestFilesFolder + "test.r8");
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4, 2, 1 }) //mip maps
 			{
@@ -155,7 +155,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void ConvertRHalfTest()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestProjectRootFolder + "test.rhalf");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestFilesFolder + "test.rhalf");
 			RgbConverter.RHalfToBGRA32(data, 256, 256, out byte[] originalDecodedData);
 			RgbConverter.Convert<ColorRHalf, Half, ColorBGRA32, byte>(data, 256, 256, out byte[] newDecodedData);
 			Assert.That(originalDecodedData, Is.EqualTo(newDecodedData));
@@ -164,7 +164,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void ConvertRGHalfTest()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestProjectRootFolder + "test.rghalf");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestFilesFolder + "test.rghalf");
 			RgbConverter.RGHalfToBGRA32(data, 256, 256, out byte[] originalDecodedData);
 			RgbConverter.Convert<ColorRGHalf, Half, ColorBGRA32, byte>(data, 256, 256, out byte[] newDecodedData);
 			Assert.That(originalDecodedData, Is.EqualTo(newDecodedData));
@@ -173,7 +173,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void ConvertRGBAHalfTest()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestProjectRootFolder + "test.rgbahalf");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestFilesFolder + "test.rgbahalf");
 			RgbConverter.RGBAHalfToBGRA32(data, 256, 256, out byte[] originalDecodedData);
 			RgbConverter.Convert<ColorRGBAHalf, Half, ColorBGRA32, byte>(data, 256, 256, out byte[] newDecodedData);
 			Assert.That(originalDecodedData, Is.EqualTo(newDecodedData));
@@ -182,7 +182,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void ConvertRFloatTest()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestProjectRootFolder + "test.rfloat");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestFilesFolder + "test.rfloat");
 			RgbConverter.RFloatToBGRA32(data, 256, 256, out byte[] originalDecodedData);
 			RgbConverter.Convert<ColorRSingle, float, ColorBGRA32, byte>(data, 256, 256, out byte[] newDecodedData);
 			Assert.That(originalDecodedData, Is.EqualTo(newDecodedData));
@@ -191,7 +191,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void ConvertRGFloatTest()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestProjectRootFolder + "test.rgfloat");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestFilesFolder + "test.rgfloat");
 			RgbConverter.RGFloatToBGRA32(data, 256, 256, out byte[] originalDecodedData);
 			RgbConverter.Convert<ColorRGSingle, float, ColorBGRA32, byte>(data, 256, 256, out byte[] newDecodedData);
 			Assert.That(originalDecodedData, Is.EqualTo(newDecodedData));
@@ -200,7 +200,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void ConvertRGBAFloatTest()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestProjectRootFolder + "test.rgbafloat");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestFilesFolder + "test.rgbafloat");
 			RgbConverter.RGBAFloatToBGRA32(data, 256, 256, out byte[] originalDecodedData);
 			RgbConverter.Convert<ColorRGBASingle, float, ColorBGRA32, byte>(data, 256, 256, out byte[] newDecodedData);
 			Assert.That(originalDecodedData, Is.EqualTo(newDecodedData));
@@ -209,7 +209,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void ConvertRGB9e5FloatTest()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestProjectRootFolder + "test.rgb9e5float");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestFilesFolder + "test.rgb9e5float");
 			RgbConverter.RGB9e5FloatToBGRA32(data, 256, 256, out byte[] originalDecodedData);
 			RgbConverter.Convert<ColorRGB9e5, double, ColorBGRA32, byte>(data, 256, 256, out byte[] newDecodedData);
 			Assert.That(originalDecodedData, Is.EqualTo(newDecodedData));
@@ -218,7 +218,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void ConvertRG32Test()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestProjectRootFolder + "test.rg32");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestFilesFolder + "test.rg32");
 			RgbConverter.RG32ToBGRA32(data, 512, 512, out byte[] originalDecodedData);
 			RgbConverter.Convert<ColorRG32, ushort, ColorBGRA32, byte>(data, 512, 512, out byte[] newDecodedData);
 			Assert.That(originalDecodedData, Is.EqualTo(newDecodedData));
@@ -227,7 +227,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void ConvertRGB48Test()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestProjectRootFolder + "test.rgb48");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestFilesFolder + "test.rgb48");
 			RgbConverter.RGB48ToBGRA32(data, 512, 512, out byte[] originalDecodedData);
 			RgbConverter.Convert<ColorRGB48, ushort, ColorBGRA32, byte>(data, 512, 512, out byte[] newDecodedData);
 			Assert.That(originalDecodedData, Is.EqualTo(newDecodedData));
@@ -236,7 +236,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void ConvertRGBA64Test()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestProjectRootFolder + "test.rgba64");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestFilesFolder + "test.rgba64");
 			RgbConverter.RGBA64ToBGRA32(data, 512, 512, out byte[] originalDecodedData);
 			RgbConverter.Convert<ColorRGBA64, ushort, ColorBGRA32, byte>(data, 512, 512, out byte[] newDecodedData);
 			Assert.That(originalDecodedData, Is.EqualTo(newDecodedData));

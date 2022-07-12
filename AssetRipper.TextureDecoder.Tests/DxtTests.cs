@@ -5,7 +5,7 @@
 		[Test]
 		public void DecompressDXT1Test()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.DxtTestProjectRootFolder + "test.dxt1");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.DxtTestFilesFolder + "test.dxt1");
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4, 2, 1 }) //mip maps
 			{
@@ -18,7 +18,7 @@
 		[Test]
 		public void DecompressDXT3Test()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.DxtTestProjectRootFolder + "test.dxt3");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.DxtTestFilesFolder + "test.dxt3");
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4, 2, 1 }) //mip maps
 			{
@@ -31,7 +31,7 @@
 		[Test]
 		public void DecompressDXT5Test()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.DxtTestProjectRootFolder + "test.dxt5");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.DxtTestFilesFolder + "test.dxt5");
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4, 2, 1 }) //mip maps
 			{
