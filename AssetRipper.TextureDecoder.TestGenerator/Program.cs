@@ -1,7 +1,7 @@
 ﻿using AssetRipper.TextureDecoder.Rgb.Formats;
 using System.CodeDom.Compiler;
 
-namespace TestSourceGenerator
+namespace AssetRipper.TextureDecoder.TestGenerator
 {
 	internal static class Program
 	{

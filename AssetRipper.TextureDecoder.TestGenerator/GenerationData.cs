@@ -1,4 +1,4 @@
-﻿namespace TestSourceGenerator
+﻿namespace AssetRipper.TextureDecoder.TestGenerator
 {
 	internal struct GenerationData
 	{
