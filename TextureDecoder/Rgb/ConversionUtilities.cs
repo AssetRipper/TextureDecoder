@@ -8,7 +8,11 @@ namespace AssetRipper.TextureDecoder.Rgb
 			where TFrom : unmanaged
 			where TTo : unmanaged
 		{
-			if (typeof(TFrom) == typeof(byte))
+			if (typeof(TFrom) == typeof(TTo))
+			{
+				return Unsafe.As<TFrom, TTo>(ref value);
+			}
+			else if(typeof(TFrom) == typeof(byte))
 			{
 				return ConvertUInt8<TTo>(Unsafe.As<TFrom, byte>(ref value));
 			}
@@ -23,6 +27,10 @@ namespace AssetRipper.TextureDecoder.Rgb
 			else if (typeof(TFrom) == typeof(float))
 			{
 				return ConvertSingle<TTo>(Unsafe.As<TFrom, float>(ref value));
+			}
+			else if (typeof(TFrom) == typeof(double))
+			{
+				return ConvertDouble<TTo>(Unsafe.As<TFrom, double>(ref value));
 			}
 			else
 			{
@@ -51,6 +59,11 @@ namespace AssetRipper.TextureDecoder.Rgb
 				float converted = (float)(value / (float)byte.MaxValue);
 				return Unsafe.As<float, TTo>(ref converted);
 			}
+			else if (typeof(TTo) == typeof(double))
+			{
+				double converted = (double)(value / (double)byte.MaxValue);
+				return Unsafe.As<double, TTo>(ref converted);
+			}
 			else
 			{
 				return default; //exceptions prevent inlining
@@ -78,6 +91,11 @@ namespace AssetRipper.TextureDecoder.Rgb
 				float converted = (float)(value / (float)ushort.MaxValue);
 				return Unsafe.As<float, TTo>(ref converted);
 			}
+			else if (typeof(TTo) == typeof(double))
+			{
+				double converted = (double)(value / (double)ushort.MaxValue);
+				return Unsafe.As<double, TTo>(ref converted);
+			}
 			else
 			{
 				return default; //exceptions prevent inlining
@@ -88,7 +106,7 @@ namespace AssetRipper.TextureDecoder.Rgb
 		{
 			if (typeof(TTo) == typeof(byte))
 			{
-				byte converted = ClampByte((float)value * byte.MaxValue);
+				byte converted = ClampUInt8((float)value * byte.MaxValue);
 				return Unsafe.As<byte, TTo>(ref converted);
 			}
 			else if (typeof(TTo) == typeof(ushort))
@@ -105,6 +123,11 @@ namespace AssetRipper.TextureDecoder.Rgb
 				float converted = (float)value;
 				return Unsafe.As<float, TTo>(ref converted);
 			}
+			else if (typeof(TTo) == typeof(double))
+			{
+				double converted = (double)value;
+				return Unsafe.As<double, TTo>(ref converted);
+			}
 			else
 			{
 				return default; //exceptions prevent inlining
@@ -115,7 +138,7 @@ namespace AssetRipper.TextureDecoder.Rgb
 		{
 			if (typeof(TTo) == typeof(byte))
 			{
-				byte converted = ClampByte(value * byte.MaxValue);
+				byte converted = ClampUInt8(value * byte.MaxValue);
 				return Unsafe.As<byte, TTo>(ref converted);
 			}
 			else if (typeof(TTo) == typeof(ushort))
@@ -132,6 +155,43 @@ namespace AssetRipper.TextureDecoder.Rgb
 			{
 				return Unsafe.As<float, TTo>(ref value);
 			}
+			else if (typeof(TTo) == typeof(double))
+			{
+				double converted = (double)value;
+				return Unsafe.As<double, TTo>(ref converted);
+			}
+			else
+			{
+				return default; //exceptions prevent inlining
+			}
+		}
+
+		private static TTo ConvertDouble<TTo>(double value) where TTo : unmanaged
+		{
+			if (typeof(TTo) == typeof(byte))
+			{
+				byte converted = ClampUInt8(value * byte.MaxValue);
+				return Unsafe.As<byte, TTo>(ref converted);
+			}
+			else if (typeof(TTo) == typeof(ushort))
+			{
+				ushort converted = ClampUInt16(value * ushort.MaxValue);
+				return Unsafe.As<ushort, TTo>(ref converted);
+			}
+			else if (typeof(TTo) == typeof(Half))
+			{
+				Half converted = (Half)value;
+				return Unsafe.As<Half, TTo>(ref converted);
+			}
+			else if (typeof(TTo) == typeof(float))
+			{
+				float converted = (float)value;
+				return Unsafe.As<float, TTo>(ref converted);
+			}
+			else if (typeof(TTo) == typeof(double))
+			{
+				return Unsafe.As<double, TTo>(ref value);
+			}
 			else
 			{
 				return default; //exceptions prevent inlining
@@ -139,13 +199,25 @@ namespace AssetRipper.TextureDecoder.Rgb
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static byte ClampByte(float x)
+		private static byte ClampUInt8(float x)
+		{
+			return byte.MaxValue < x ? byte.MaxValue : (x > byte.MinValue ? (byte)x : byte.MinValue);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static byte ClampUInt8(double x)
 		{
 			return byte.MaxValue < x ? byte.MaxValue : (x > byte.MinValue ? (byte)x : byte.MinValue);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static ushort ClampUInt16(float x)
+		{
+			return ushort.MaxValue < x ? ushort.MaxValue : (x > ushort.MinValue ? (ushort)x : ushort.MinValue);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static ushort ClampUInt16(double x)
 		{
 			return ushort.MaxValue < x ? ushort.MaxValue : (x > ushort.MinValue ? (ushort)x : ushort.MinValue);
 		}
