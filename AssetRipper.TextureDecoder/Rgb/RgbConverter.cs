@@ -1,17 +1,18 @@
 using System.Buffers.Binary;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace AssetRipper.TextureDecoder.Rgb
 {
 	public static class RgbConverter
 	{
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int A8ToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			output = new byte[width * height * 4];
 			return A8ToBGRA32(input, width, height, output);
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int A8ToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int io = 0;
@@ -31,12 +32,14 @@ namespace AssetRipper.TextureDecoder.Rgb
 			return io;
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int ARGB16ToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			output = new byte[width * height * 4];
 			return ARGB16ToBGRA32(input, width, height, output);
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int ARGB16ToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int io = 0;
@@ -56,12 +59,14 @@ namespace AssetRipper.TextureDecoder.Rgb
 			return io;
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RGB24ToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			output = new byte[width * height * 4];
 			return RGB24ToBGRA32(input, width, height, output);
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RGB24ToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int io = 0;
@@ -81,12 +86,14 @@ namespace AssetRipper.TextureDecoder.Rgb
 			return io;
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RGBA32ToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			output = new byte[width * height * 4];
 			return RGBA32ToBGRA32(input, width, height, output);
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RGBA32ToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int io = 0;
@@ -106,12 +113,14 @@ namespace AssetRipper.TextureDecoder.Rgb
 			return io;
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int ARGB32ToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			output = new byte[width * height * 4];
 			return ARGB32ToBGRA32(input, width, height, output);
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int ARGB32ToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int io = 0;
@@ -131,12 +140,14 @@ namespace AssetRipper.TextureDecoder.Rgb
 			return io;
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RGB16ToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			output = new byte[width * height * 4];
 			return RGB16ToBGRA32(input, width, height, output);
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RGB16ToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int io = 0;
@@ -159,12 +170,14 @@ namespace AssetRipper.TextureDecoder.Rgb
 			return io;
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int R16ToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			output = new byte[width * height * 4];
 			return R16ToBGRA32(input, width, height, output);
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int R16ToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int io = 0;
@@ -184,12 +197,14 @@ namespace AssetRipper.TextureDecoder.Rgb
 			return io;
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RGBA16ToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			output = new byte[width * height * 4];
 			return RGBA16ToBGRA32(input, width, height, output);
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RGBA16ToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int io = 0;
@@ -209,12 +224,14 @@ namespace AssetRipper.TextureDecoder.Rgb
 			return io;
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RG16ToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			output = new byte[width * height * 4];
 			return RG16ToBGRA32(input, width, height, output);
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RG16ToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int io = 0;
@@ -234,12 +251,14 @@ namespace AssetRipper.TextureDecoder.Rgb
 			return io;
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int R8ToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			output = new byte[width * height * 4];
 			return R8ToBGRA32(input, width, height, output);
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int R8ToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int io = 0;
@@ -259,12 +278,14 @@ namespace AssetRipper.TextureDecoder.Rgb
 			return io;
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RHalfToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			output = new byte[width * height * 4];
 			return RHalfToBGRA32(input, width, height, output);
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RHalfToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int io = 0;
@@ -285,12 +306,14 @@ namespace AssetRipper.TextureDecoder.Rgb
 			return io;
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RGHalfToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			output = new byte[width * height * 4];
 			return RGHalfToBGRA32(input, width, height, output);
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RGHalfToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int io = 0;
@@ -312,12 +335,14 @@ namespace AssetRipper.TextureDecoder.Rgb
 			return io;
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RGBAHalfToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			output = new byte[width * height * 4];
 			return RGBAHalfToBGRA32(input, width, height, output);
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RGBAHalfToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int io = 0;
@@ -341,12 +366,14 @@ namespace AssetRipper.TextureDecoder.Rgb
 			return io;
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RFloatToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			output = new byte[width * height * 4];
 			return RFloatToBGRA32(input, width, height, output);
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RFloatToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int io = 0;
@@ -367,12 +394,14 @@ namespace AssetRipper.TextureDecoder.Rgb
 			return io;
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RGFloatToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			output = new byte[width * height * 4];
 			return RGFloatToBGRA32(input, width, height, output);
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RGFloatToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int io = 0;
@@ -394,12 +423,14 @@ namespace AssetRipper.TextureDecoder.Rgb
 			return io;
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RGBAFloatToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			output = new byte[width * height * 4];
 			return RGBAFloatToBGRA32(input, width, height, output);
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RGBAFloatToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int io = 0;
@@ -423,12 +454,14 @@ namespace AssetRipper.TextureDecoder.Rgb
 			return io;
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RGB9e5FloatToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			output = new byte[width * height * 4];
 			return RGB9e5FloatToBGRA32(input, width, height, output);
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RGB9e5FloatToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int io = 0;
@@ -453,12 +486,14 @@ namespace AssetRipper.TextureDecoder.Rgb
 			return io;
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RG32ToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			output = new byte[width * height * 4];
 			return RG32ToBGRA32(input, width, height, output);
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RG32ToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int io = 0;
@@ -478,12 +513,14 @@ namespace AssetRipper.TextureDecoder.Rgb
 			return io;
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RGB48ToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			output = new byte[width * height * 4];
 			return RGB48ToBGRA32(input, width, height, output);
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RGB48ToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int io = 0;
@@ -503,12 +540,14 @@ namespace AssetRipper.TextureDecoder.Rgb
 			return io;
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RGBA64ToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			output = new byte[width * height * 4];
 			return RGBA64ToBGRA32(input, width, height, output);
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RGBA64ToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int io = 0;
@@ -528,6 +567,7 @@ namespace AssetRipper.TextureDecoder.Rgb
 			return io;
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int Convert<TSource, TSourceArg, TDestination, TDestinationArg>(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 			where TSourceArg : unmanaged
 			where TSource : unmanaged, IColor<TSourceArg>
@@ -538,6 +578,7 @@ namespace AssetRipper.TextureDecoder.Rgb
 			return Convert<TSource, TSourceArg, TDestination, TDestinationArg>(input, width, height, output);
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int Convert<TSource, TSourceArg, TDestination, TDestinationArg>(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 			where TSourceArg : unmanaged
 			where TSource : unmanaged, IColor<TSourceArg>
@@ -550,6 +591,7 @@ namespace AssetRipper.TextureDecoder.Rgb
 			return width * height * Unsafe.SizeOf<TSource>();
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static void Convert<TSource, TSourceArg, TDestination, TDestinationArg>(ReadOnlySpan<TSource> sourceSpan, Span<TDestination> destinationSpan)
 			where TSourceArg : unmanaged
 			where TSource : unmanaged, IColor<TSourceArg>
@@ -566,6 +608,7 @@ namespace AssetRipper.TextureDecoder.Rgb
 			}
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		private static float ToHalf(ReadOnlySpan<byte> input, int offset)
 		{
 #if NET6_0_OR_GREATER
@@ -576,6 +619,7 @@ namespace AssetRipper.TextureDecoder.Rgb
 #endif
 		}
 
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		private static float ToSingle(ReadOnlySpan<byte> input, int offset)
 		{
 #if NET5_0_OR_GREATER
@@ -586,13 +630,13 @@ namespace AssetRipper.TextureDecoder.Rgb
 #endif
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		private static byte ClampByte(float x)
 		{
 			return byte.MaxValue < x ? byte.MaxValue : (x > byte.MinValue ? (byte)x : byte.MinValue);
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		private static byte ClampByte(double x)
 		{
 			return byte.MaxValue < x ? byte.MaxValue : (x > byte.MinValue ? (byte)x : byte.MinValue);

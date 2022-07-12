@@ -25,6 +25,7 @@
 
 	internal static class ColorExtensions
 	{
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		internal static void SetConvertedChannels<TThis, TThisArg, TSourceArg>(this ref TThis color, TSourceArg r, TSourceArg g, TSourceArg b, TSourceArg a)
 			where TThisArg : unmanaged
 			where TSourceArg : unmanaged

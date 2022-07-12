@@ -1,7 +1,6 @@
 //#define DISABLE_TWINDDLING_ROUTINE
 #define ASSUME_IMAGE_TILING
 
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace AssetRipper.TextureDecoder.Pvrtc
@@ -17,6 +16,7 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 		/// <param name="output">The decompressed texture data</param>
 		/// <param name="do2bitMode">Signifies whether the data is PVRTC2 or PVRTC4</param>
 		/// <returns>The number of bytes read from <paramref name="input"/></returns>
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int DecompressPVRTC(ReadOnlySpan<byte> input, int xDim, int yDim, bool do2bitMode, out byte[] output)
 		{
 			output = new byte[xDim * yDim * sizeof(uint)];
@@ -32,6 +32,7 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 		/// <param name="output">The decompressed texture data</param>
 		/// <param name="do2bitMode">Signifies whether the data is PVRTC2 or PVRTC4</param>
 		/// <returns>The number of bytes read from <paramref name="input"/></returns>
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int DecompressPVRTC(ReadOnlySpan<byte> input, int xDim, int yDim, bool do2bitMode, Span<byte> output)
 		{
 			int xBlockSize = do2bitMode ? BlockX2bpp : BlockX4bpp;
@@ -453,8 +454,8 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 				}
 			}
 		}
-		
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		private static Span<int> GetIntSpanForColor(this Span<Colours5554> colorSpan, int index)
 		{
 			return MemoryMarshal.Cast<Colours5554, int>(colorSpan.Slice(index, 1));
@@ -465,7 +466,7 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 		/// </summary>
 		/// <param name="input">A number</param>
 		/// <returns>True if the number is an integer power of two, else false</returns>
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		private static bool IsPowerOf2(uint input)
 		{
 			if (input == 0)
@@ -480,7 +481,7 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 		/// <summary>
 		/// Define an expression to either wrap or clamp large or small vals to the legal coordinate range
 		/// </summary>
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		private static int LimitCoord(int value, int size)
 		{
 #if ASSUME_IMAGE_TILING

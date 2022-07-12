@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace AssetRipper.TextureDecoder.Astc
 {
 	public static partial class AstcDecoder
