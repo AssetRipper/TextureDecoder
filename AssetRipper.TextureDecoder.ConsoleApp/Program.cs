@@ -5,7 +5,6 @@ using AssetRipper.TextureDecoder.Etc;
 using AssetRipper.TextureDecoder.Pvrtc;
 using AssetRipper.TextureDecoder.Rgb;
 using AssetRipper.TextureDecoder.Yuy2;
-using System.Drawing.Imaging;
 
 namespace AssetRipper.TextureDecoder.ConsoleApp;
 
@@ -26,7 +25,7 @@ internal static class Program
 		string args5 = args.GetArgument(5);
 		byte[] data = File.ReadAllBytes(path);
 
-		using DirectBitmap bitmap = new DirectBitmap(width, height);
+		DirectBitmap bitmap = new DirectBitmap(width, height);
 		switch (type)
 		{
 			case "astc":
@@ -59,8 +58,8 @@ internal static class Program
 		string newPath = Path.Combine(dirPath, name + ".png");
 		if (OperatingSystem.IsWindows())
 		{
-			bitmap.Bitmap.RotateFlip(System.Drawing.RotateFlipType.RotateNoneFlipY);
-			bitmap.Bitmap.Save(newPath, ImageFormat.Png);
+			bitmap.FlipY();
+			bitmap.SaveAsPng(newPath);
 		}
 		else
 		{

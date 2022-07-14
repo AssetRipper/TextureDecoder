@@ -1,68 +1,44 @@
-using System.Drawing;
-using System.Drawing.Imaging;
+using AssetRipper.TextureDecoder.Rgb;
+using AssetRipper.TextureDecoder.Rgb.Formats;
+using StbImageWriteSharp;
 using System.Runtime.InteropServices;
 
 namespace AssetRipper.TextureDecoder.ConsoleApp;
 
-public sealed class DirectBitmap : IDisposable
+public sealed class DirectBitmap
 {
 	public DirectBitmap(int width, int height)
 	{
 		Width = width;
 		Height = height;
-		Bits = new byte[width * height * 4];
-		m_bitsHandle = GCHandle.Alloc(Bits, GCHandleType.Pinned);
-		Bitmap = new Bitmap(Width, Height, Stride, PixelFormat.Format32bppArgb, m_bitsHandle.AddrOfPinnedObject());
+		Data = new byte[width * height * 4];
 	}
 
-	~DirectBitmap()
+	public void FlipY()
 	{
-		Dispose(false);
-	}
-
-	public void SetPixel(int x, int y, Color color)
-	{
-		int index = x + y * Width;
-		unchecked
+		Span<uint> pixels = MemoryMarshal.Cast<byte, uint>(Bits);
+		for (int row = 0, irow = Height - 1; row < irow; row++, irow--)
 		{
-			uint value = (uint)color.ToArgb();
-			Bits[index + 0] = (byte)(value >> 0);
-			Bits[index + 1] = (byte)(value >> 8);
-			Bits[index + 2] = (byte)(value >> 16);
-			Bits[index + 3] = (byte)(value >> 24);
+			Span<uint> rowTop = pixels.Slice(row * Width, Width);
+			Span<uint> rowBottom = pixels.Slice(irow * Width, Width);
+			for (int i = 0; i < Width; i++)
+			{
+				(rowTop[i], rowBottom[i]) = (rowBottom[i], rowTop[i]);
+			}
 		}
 	}
 
-	public Color GetPixel(int x, int y)
+	public void SaveAsPng(string path)
 	{
-		int index = x + y * Width;
-		uint col = BitConverter.ToUInt32(Bits, index);
-		return Color.FromArgb(unchecked((int)col));
-	}
-
-	public void Dispose()
-	{
-		GC.SuppressFinalize(this);
-		Dispose(true);
-	}
-
-	private void Dispose(bool disposing)
-	{
-		if (!m_disposed)
-		{
-			Bitmap.Dispose();
-			m_bitsHandle.Free();
-			m_disposed = true;
-		}
+		using Stream stream = File.OpenWrite(path);
+		ImageWriter writer = new ImageWriter();
+		RgbConverter.Convert<ColorBGRA32, byte, ColorRGBA32, byte>(Bits, Width, Height, out byte[] output);
+		writer.WritePng(output, Width, Height, ColorComponents.RedGreenBlueAlpha, stream);
 	}
 
 	public int Height { get; }
 	public int Width { get; }
-	public int Stride => Width * 4;
-	public Bitmap Bitmap { get; }
-	public byte[] Bits { get; }
-	public IntPtr BitsPtr => m_bitsHandle.AddrOfPinnedObject();
-
-	private readonly GCHandle m_bitsHandle;
-	private bool m_disposed;
+	public int Size => Width * Height * 4;
+	public Span<byte> Bits => new Span<byte>(Data, 0, Size);
+	private byte[] Data { get; }
 }
