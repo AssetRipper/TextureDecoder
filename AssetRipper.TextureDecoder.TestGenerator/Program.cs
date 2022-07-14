@@ -28,6 +28,8 @@ namespace AssetRipper.TextureDecoder.TestGenerator
 			new GenerationData(typeof(ColorRGBA64), typeof(ushort), 8),
 			new GenerationData(typeof(ColorRGBAHalf), typeof(Half), 8),
 			new GenerationData(typeof(ColorRGBASingle), typeof(float), 16),
+			new GenerationData(typeof(ColorRGBHalf), typeof(Half), 6),
+			new GenerationData(typeof(ColorRGBSingle), typeof(float), 12),
 			new GenerationData(typeof(ColorRGHalf), typeof(Half), 4),
 			new GenerationData(typeof(ColorRGSingle), typeof(float), 8),
 			new GenerationData(typeof(ColorRHalf), typeof(Half), 2),
