@@ -5,13 +5,20 @@ using System.Runtime.InteropServices;
 
 namespace AssetRipper.TextureDecoder.ConsoleApp;
 
-public sealed class DirectBitmap
+public struct DirectBitmap
 {
 	public DirectBitmap(int width, int height)
 	{
 		Width = width;
 		Height = height;
 		Data = new byte[width * height * 4];
+	}
+
+	public DirectBitmap(int width, int height, byte[] data)
+	{
+		Width = width;
+		Height = height;
+		Data = data;
 	}
 
 	public void FlipY()
