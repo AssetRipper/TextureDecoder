@@ -4,6 +4,7 @@ using AssetRipper.TextureDecoder.Dxt;
 using AssetRipper.TextureDecoder.Etc;
 using AssetRipper.TextureDecoder.Pvrtc;
 using AssetRipper.TextureDecoder.Rgb;
+using AssetRipper.TextureDecoder.Rgb.Formats;
 using AssetRipper.TextureDecoder.Yuy2;
 
 namespace AssetRipper.TextureDecoder.ConsoleApp;
@@ -25,7 +26,7 @@ internal static class Program
 		string args5 = args.GetArgument(5);
 		byte[] data = File.ReadAllBytes(path);
 
-		DirectBitmap bitmap = new DirectBitmap(width, height);
+		DirectBitmap<ColorBGRA32, byte> bitmap = new DirectBitmap<ColorBGRA32, byte>(width, height);
 		switch (type)
 		{
 			case "astc":
