@@ -17,6 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Licenses", "Licenses", "{0BFF6817-43C8-43EE-8EE8-1A03B7ECEA1A}"
 	ProjectSection(SolutionItems) = preProject
+		Licenses\bcdec.md = Licenses\bcdec.md
 		Licenses\uTinyRipper.md = Licenses\uTinyRipper.md
 	EndProjectSection
 EndProject
@@ -26,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssetRipper.TextureDecoder"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssetRipper.TextureDecoder.TestGenerator", "AssetRipper.TextureDecoder.TestGenerator\AssetRipper.TextureDecoder.TestGenerator.csproj", "{0074908C-35A8-4C71-8F74-A83A4095ACEA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssetRipper.TextureDecoder.ConsoleApp", "AssetRipper.TextureDecoder.ConsoleApp\AssetRipper.TextureDecoder.ConsoleApp.csproj", "{FFC8EEF8-8BF1-4B65-ADDA-A949EDDF4CB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssetRipper.TextureDecoder.ConsoleApp", "AssetRipper.TextureDecoder.ConsoleApp\AssetRipper.TextureDecoder.ConsoleApp.csproj", "{FFC8EEF8-8BF1-4B65-ADDA-A949EDDF4CB4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssetRipper.TextureDecoder.Benchmarks", "AssetRipper.TextureDecoder.Benchmarks\AssetRipper.TextureDecoder.Benchmarks.csproj", "{F85804F4-4864-412E-BDC6-8B6E2B5646A7}"
 EndProject

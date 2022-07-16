@@ -1,5 +1,6 @@
 ﻿using AssetRipper.TextureDecoder.Astc;
 using AssetRipper.TextureDecoder.Atc;
+using AssetRipper.TextureDecoder.Bc;
 using AssetRipper.TextureDecoder.Dxt;
 using AssetRipper.TextureDecoder.Etc;
 using AssetRipper.TextureDecoder.Pvrtc;
@@ -34,6 +35,9 @@ internal static class Program
 				break;
 			case "atc":
 				DecodeAtc(data, width, height, args4, bitmap.Bits);
+				break;
+			case "bc":
+				DecodeBc(data, width, height, args4, args5, bitmap.Bits);
 				break;
 			case "dxt":
 				DecodeDxt(data, width, height, args4, bitmap.Bits);
@@ -97,6 +101,47 @@ internal static class Program
 				break;
 			case 1:
 				AtcDecoder.DecompressAtcRgba8(input, width, height, output);
+				break;
+
+			default:
+				throw new NotSupportedException(mode.ToString());
+		}
+	}
+
+	private static void DecodeBc(ReadOnlySpan<byte> input, int width, int height, string modeString, string isSignedString, Span<byte> output)
+	{
+		Console.WriteLine("Arg at index 4 : mode");
+		Console.WriteLine("  1 - BC1");
+		Console.WriteLine("  2 - BC2");
+		Console.WriteLine("  3 - BC3");
+		Console.WriteLine("  4 - BC4");
+		Console.WriteLine("  5 - BC5");
+		Console.WriteLine("  6 - BC6H");
+		Console.WriteLine("  7 - BC7");
+		Console.WriteLine("Arg at index 5 : isSigned (BC6H only)");
+		int mode = int.Parse(modeString);
+		switch (mode)
+		{
+			case 1:
+				BcDecoder.DecompressBC1(input, width, height, output);
+				break;
+			case 2:
+				BcDecoder.DecompressBC2(input, width, height, output);
+				break;
+			case 3:
+				BcDecoder.DecompressBC3(input, width, height, output);
+				break;
+			case 4:
+				BcDecoder.DecompressBC4(input, width, height, output);
+				break;
+			case 5:
+				BcDecoder.DecompressBC5(input, width, height, output);
+				break;
+			case 6:
+				BcDecoder.DecompressBC6H(input, width, height, bool.Parse(isSignedString), output);
+				break;
+			case 7:
+				BcDecoder.DecompressBC7(input, width, height, output);
 				break;
 
 			default:
