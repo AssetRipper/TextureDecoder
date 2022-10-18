@@ -40,7 +40,7 @@ internal unsafe static class BcHelpers
 		SmoothAlphaBlock(compressedBlock.Slice(8), decompressedBlock.Slice(1), destinationPitch, 2);
 	}
 
-	public static void DecompressBc6h_Float(byte* compressedBlock, byte* decompressedBlock, int destinationPitch, int isSigned)
+	public static void DecompressBc6h_Float(byte* compressedBlock, byte* decompressedBlock, int destinationPitch, bool isSigned)
 	{
 		ushort* block = stackalloc ushort[16 * 3];
 
@@ -60,7 +60,7 @@ internal unsafe static class BcHelpers
 		}
 	}
 
-	public static void DecompressBc6h_Half(byte* compressedBlock, byte* decompressedBlock, int destinationPitch, int isSigned)
+	public static void DecompressBc6h_Half(byte* compressedBlock, byte* decompressedBlock, int destinationPitch, bool isSigned)
 	{
 		BitStream bstream = new BitStream();
 		int mode;
@@ -513,7 +513,7 @@ internal unsafe static class BcHelpers
 			numPartitions = 1;
 		}
 
-		if (isSigned != 0)
+		if (isSigned)
 		{
 			r[0] = ExtendSign(r[0], Bc6hTables.ActualBitsCount[0][mode]);
 			g[0] = ExtendSign(g[0], Bc6hTables.ActualBitsCount[0][mode]);
@@ -522,7 +522,7 @@ internal unsafe static class BcHelpers
 
 		/* Mode 11 (like Mode 10) does not use delta compression,
 		   and instead stores both color endpoints explicitly.  */
-		if ((mode != 9 && mode != 10) || isSigned != 0)
+		if ((mode != 9 && mode != 10) || isSigned)
 		{
 			for (i = 1; i < (numPartitions + 1) * 2; ++i)
 			{
@@ -970,12 +970,12 @@ internal unsafe static class BcHelpers
 		return (val << (32 - bits)) >> (32 - bits);
 	}
 
-	public static int TransformInverse(int val, int a0, int bits, int isSigned)
+	public static int TransformInverse(int val, int a0, int bits, bool isSigned)
 	{
 		/* If the precision of A0 is "p" bits, then the transform algorithm is:
 		   B0 = (B0 + A0) & ((1 << p) - 1) */
 		val = (val + a0) & ((1 << bits) - 1);
-		if (isSigned != 0)
+		if (isSigned)
 		{
 			val = ExtendSign(val, bits);
 		}
@@ -989,12 +989,12 @@ internal unsafe static class BcHelpers
 	/// <param name="bits"></param>
 	/// <param name="isSigned"></param>
 	/// <returns></returns>
-	public static int Unquantize(int val, int bits, int isSigned)
+	public static int Unquantize(int val, int bits, bool isSigned)
 	{
 		int unq;
 		int s = 0;
 
-		if (isSigned == 0)
+		if (!isSigned)
 		{
 			if (bits >= 15)
 			{
@@ -1054,9 +1054,9 @@ internal unsafe static class BcHelpers
 		return ((a * (64 - weights[index])) + (b * weights[index]) + 32) >> 6;
 	}
 
-	public static ushort FinishUnquantize(int val, int isSigned)
+	public static ushort FinishUnquantize(int val, bool isSigned)
 	{
-		if (isSigned == 0)
+		if (!isSigned)
 		{
 			return (ushort)((val * 31) >> 6); // scale the magnitude by 31 / 64
 		}

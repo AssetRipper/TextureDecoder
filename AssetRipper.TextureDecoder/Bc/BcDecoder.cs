@@ -146,7 +146,7 @@ namespace AssetRipper.TextureDecoder.Bc
 				for (int j = 0; j < width; j += 4)
 				{
 					int outputOffset = ((i * width) + j) * Unsafe.SizeOf<ColorRGBSingle>();
-					BcHelpers.DecompressBc6h_Float(input + inputOffset, output + outputOffset, width * 3, isSigned ? 1 : 0);
+					BcHelpers.DecompressBc6h_Float(input + inputOffset, output + outputOffset, width * 3, isSigned);
 					inputOffset += DefineConstants.BCDEC_BC6H_BLOCK_SIZE;
 				}
 			}
