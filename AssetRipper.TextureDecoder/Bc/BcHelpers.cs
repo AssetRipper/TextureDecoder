@@ -1078,29 +1078,7 @@ internal unsafe static class BcHelpers
 	
 	public static float HalfToFloatQuick(ushort half)
 	{
-
-		FP32 magic = new FP32() { u = 113 << 23 };
-		uint shifted_exp = (uint)(0x7c00 << 13); // exponent mask after shift
-		FP32 o = new FP32();
-		uint exp;
-
-		o.u = (uint)((half & 0x7fff) << 13); // exponent/mantissa bits
-		exp = shifted_exp & o.u; // just the exponent
-		o.u += (127 - 15) << 23; // exponent adjust
-
-		/* handle exponent special cases */
-		if (exp == shifted_exp)
-		{ // Inf/NaN?
-			o.u += (128 - 16) << 23; // extra exp adjust
-		}
-		else if (exp == 0)
-		{ // Zero/Denormal?
-			o.u += 1 << 23; // extra exp adjust
-			o.f -= magic.f; // renormalize
-		}
-
-		o.u |= (half & 0x8000u) << 16; // sign bit
-		return o.f;
+		return (float)Unsafe.As<ushort, Half>(ref half);
 	}
 
 	public static void SwapValues(ref int a, ref int b)
