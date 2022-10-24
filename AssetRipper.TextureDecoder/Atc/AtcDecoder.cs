@@ -12,16 +12,13 @@ namespace AssetRipper.TextureDecoder.Atc
 
 		public unsafe static int DecompressAtcRgb4(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
-			fixed (byte* inputPtr = input)
+			fixed (byte* outputPtr = output)
 			{
-				fixed (byte* outputPtr = output)
-				{
-					return DecompressAtcRgb4(inputPtr, width, height, outputPtr);
-				}
+				return DecompressAtcRgb4(input, width, height, outputPtr);
 			}
 		}
 
-		private unsafe static int DecompressAtcRgb4(byte* input, int width, int height, byte* output)
+		private unsafe static int DecompressAtcRgb4(ReadOnlySpan<byte> input, int width, int height, byte* output)
 		{
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
@@ -32,7 +29,7 @@ namespace AssetRipper.TextureDecoder.Atc
 			{
 				for (int s = 0; s < bcw; s++, inputOffset += 8)
 				{
-					DecodeAtcRgb4Block(new ReadOnlySpan<byte>(input + inputOffset, 8), new Span<uint>(buf, 16));
+					DecodeAtcRgb4Block(input.Slice(inputOffset, 8), new Span<uint>(buf, 16));
 					int clen = s < bcw - 1 ? 4 : clen_last;
 					uint* outputPtr = (uint*)(output + (t * 16 * width + s * 16));
 					uint* bufPtr = buf;
@@ -59,16 +56,13 @@ namespace AssetRipper.TextureDecoder.Atc
 
 		public unsafe static int DecompressAtcRgba8(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
-			fixed (byte* inputPtr = input)
+			fixed (byte* outputPtr = output)
 			{
-				fixed (byte* outputPtr = output)
-				{
-					return DecompressAtcRgba8(inputPtr, width, height, outputPtr);
-				}
+				return DecompressAtcRgba8(input, width, height, outputPtr);
 			}
 		}
 
-		private unsafe static int DecompressAtcRgba8(byte* input, int width, int height, byte* output)
+		private unsafe static int DecompressAtcRgba8(ReadOnlySpan<byte> input, int width, int height, byte* output)
 		{
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
@@ -79,7 +73,7 @@ namespace AssetRipper.TextureDecoder.Atc
 			{
 				for (int s = 0; s < bcw; s++, inputOffset += 16)
 				{
-					DecodeAtcRgba8Block(new ReadOnlySpan<byte>(input + inputOffset, 16), new Span<uint>(buf, 16));
+					DecodeAtcRgba8Block(input.Slice(inputOffset, 16), new Span<uint>(buf, 16));
 					int clen = s < bcw - 1 ? 4 : clen_last;
 					uint* outputPtr = (uint*)(output + (t * 16 * width + s * 16));
 					uint* bufPtr = buf;

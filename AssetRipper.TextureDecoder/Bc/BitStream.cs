@@ -8,11 +8,11 @@ internal struct BitStream
 	public int ReadBits(int numBits)
 	{
 		uint mask = (uint)((1 << numBits) - 1);
-		/* Read the low N bits */
+		// Read the low N bits
 		uint bits = (uint)(this.low & mask);
 
 		this.low >>= numBits;
-		/* Put the low N bits of "high" into the high 64-N bits of "low". */
+		// Put the low N bits of "high" into the high 64-N bits of "low".
 		this.low |= (this.high & mask) << ((sizeof(ulong) * 8) - numBits);
 		this.high >>= numBits;
 
@@ -32,7 +32,7 @@ internal struct BitStream
 	public int ReadBitsReversed(int numBits)
 	{
 		int bits = this.ReadBits(numBits);
-		/* Reverse the bits. */
+		// Reverse the bits.
 		int result = 0;
 		while (numBits-- != 0)
 		{
