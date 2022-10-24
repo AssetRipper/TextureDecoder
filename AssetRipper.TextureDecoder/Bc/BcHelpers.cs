@@ -817,17 +817,17 @@ internal unsafe static class BcHelpers
 				{
 					case 1:
 						{ // 01 – Block format is Scalar(R) Vector(AGB) - swap A and R
-							SwapValues(&a, &r);
+							SwapValues(ref a, ref r);
 						}
 						break;
 					case 2:
 						{ // 10 – Block format is Scalar(G) Vector(RAB) - swap A and G
-							SwapValues(&a, &g);
+							SwapValues(ref a, ref g);
 						}
 						break;
 					case 3:
 						{ // 11 - Block format is Scalar(B) Vector(RGA) - swap A and B
-							SwapValues(&a, &b);
+							SwapValues(ref a, ref b);
 						}
 						break;
 				}
@@ -1100,11 +1100,9 @@ internal unsafe static class BcHelpers
 		return o.f;
 	}
 
-	public static void SwapValues(int* a, int* b)
+	public static void SwapValues(ref int a, ref int b)
 	{
-		a[0] ^= b[0];
-		b[0] ^= a[0];
-		a[0] ^= b[0];
+		(a, b) = (b, a);
 	}
 
 	public static T[][] CreateRectangularArray<T>(int size1, int size2)
