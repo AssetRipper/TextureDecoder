@@ -40,7 +40,7 @@ internal unsafe static class BcHelpers
 		SmoothAlphaBlock(compressedBlock.Slice(8), decompressedBlock.Slice(1), destinationPitch, 2);
 	}
 
-	public static void DecompressBc6h_Float(byte* compressedBlock, byte* decompressedBlock, int destinationPitch, bool isSigned)
+	public static void DecompressBc6h_Float(ReadOnlySpan<byte> compressedBlock, byte* decompressedBlock, int destinationPitch, bool isSigned)
 	{
 		ushort* block = stackalloc ushort[16 * 3];
 
@@ -60,7 +60,7 @@ internal unsafe static class BcHelpers
 		}
 	}
 
-	public static void DecompressBc6h_Half(byte* compressedBlock, byte* decompressedBlock, int destinationPitch, bool isSigned)
+	public static void DecompressBc6h_Half(ReadOnlySpan<byte> compressedBlock, byte* decompressedBlock, int destinationPitch, bool isSigned)
 	{
 		BitStream bstream = new BitStream();
 		int mode;
@@ -81,8 +81,9 @@ internal unsafe static class BcHelpers
 
 		decompressed = (ushort*)decompressedBlock;
 
-		bstream.low = ((ulong*)compressedBlock)[0];
-		bstream.high = ((ulong*)compressedBlock)[1];
+		ReadOnlySpan<ulong> compressedBlockSpan = MemoryMarshal.Cast<byte, ulong>(compressedBlock);
+		bstream.low = compressedBlockSpan[0];
+		bstream.high = compressedBlockSpan[1];
 
 		r[0] = r[1] = r[2] = r[3] = 0;
 		g[0] = g[1] = g[2] = g[3] = 0;
