@@ -575,7 +575,7 @@ internal unsafe static class BcHelpers
 		}
 	}
 
-	public static void DecompressBc7(ReadOnlySpan<byte> compressedBlock, byte* decompressedBlock, int destinationPitch)
+	public static void DecompressBc7(ReadOnlySpan<byte> compressedBlock, Span<byte> decompressedBlock, int destinationPitch)
 	{
 		BitStream bstream = new BitStream();
 		int mode;
@@ -602,7 +602,7 @@ internal unsafe static class BcHelpers
 		int[] weights;
 		int[] weights2;
 		
-		byte* decompressed = decompressedBlock;
+		int decompressedOffset = 0;
 
 		ReadOnlySpan<ulong> compressedBlockSpan = MemoryMarshal.Cast<byte, ulong>(compressedBlock);
 		bstream.low = compressedBlockSpan[0];
@@ -620,12 +620,12 @@ internal unsafe static class BcHelpers
 			{
 				for (j = 0; j < 4; ++j)
 				{
-					decompressed[(j * 4) + 0] = 0;
-					decompressed[(j * 4) + 1] = 0;
-					decompressed[(j * 4) + 2] = 0;
-					decompressed[(j * 4) + 3] = 0;
+					decompressedBlock[decompressedOffset + (j * 4) + 0] = 0;
+					decompressedBlock[decompressedOffset + (j * 4) + 1] = 0;
+					decompressedBlock[decompressedOffset + (j * 4) + 2] = 0;
+					decompressedBlock[decompressedOffset + (j * 4) + 3] = 0;
 				}
-				decompressed += destinationPitch;
+				decompressedOffset += destinationPitch;
 			}
 
 			return;
@@ -833,13 +833,13 @@ internal unsafe static class BcHelpers
 						break;
 				}
 
-				decompressed[(j * 4) + 0] = (byte)r;
-				decompressed[(j * 4) + 1] = (byte)g;
-				decompressed[(j * 4) + 2] = (byte)b;
-				decompressed[(j * 4) + 3] = (byte)a;
+				decompressedBlock[decompressedOffset + (j * 4) + 0] = (byte)r;
+				decompressedBlock[decompressedOffset + (j * 4) + 1] = (byte)g;
+				decompressedBlock[decompressedOffset + (j * 4) + 2] = (byte)b;
+				decompressedBlock[decompressedOffset + (j * 4) + 3] = (byte)a;
 			}
 
-			decompressed += destinationPitch;
+			decompressedOffset += destinationPitch;
 		}
 	}
 
