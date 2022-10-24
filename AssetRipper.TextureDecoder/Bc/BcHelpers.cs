@@ -575,7 +575,7 @@ internal unsafe static class BcHelpers
 		}
 	}
 
-	public static void DecompressBc7(byte* compressedBlock, byte* decompressedBlock, int destinationPitch)
+	public static void DecompressBc7(ReadOnlySpan<byte> compressedBlock, byte* decompressedBlock, int destinationPitch)
 	{
 		BitStream bstream = new BitStream();
 		int mode;
@@ -604,8 +604,9 @@ internal unsafe static class BcHelpers
 		
 		byte* decompressed = decompressedBlock;
 
-		bstream.low = ((ulong*)compressedBlock)[0];
-		bstream.high = ((ulong*)compressedBlock)[1];
+		ReadOnlySpan<ulong> compressedBlockSpan = MemoryMarshal.Cast<byte, ulong>(compressedBlock);
+		bstream.low = compressedBlockSpan[0];
+		bstream.high = compressedBlockSpan[1];
 
 		for (mode = 0; mode < 8 && (0 == bstream.ReadBit()); ++mode)
 		{

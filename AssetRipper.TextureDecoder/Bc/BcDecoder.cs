@@ -162,18 +162,15 @@ namespace AssetRipper.TextureDecoder.Bc
 		public unsafe static int DecompressBC7(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int bytesRead;
-			fixed (byte* inputPtr = input)
+			fixed (byte* outputPtr = output)
 			{
-				fixed (byte* outputPtr = output)
-				{
-					bytesRead = DecompressBC7(inputPtr, width, height, outputPtr);
-				}
+				bytesRead = DecompressBC7(input, width, height, outputPtr);
 			}
 			RgbConverter.Convert<ColorRGBA32, byte, ColorBGRA32, byte>(output, width, height, output);
 			return bytesRead;
 		}
 
-		private unsafe static int DecompressBC7(byte* input, int width, int height, byte* output)
+		private unsafe static int DecompressBC7(ReadOnlySpan<byte> input, int width, int height, byte* output)
 		{
 			int inputOffset = 0;
 			for (int i = 0; i < height; i += 4)
@@ -181,7 +178,7 @@ namespace AssetRipper.TextureDecoder.Bc
 				for (int j = 0; j < width; j += 4)
 				{
 					int outputOffset = ((i * width) + j) * Unsafe.SizeOf<ColorRGBA32>();
-					BcHelpers.DecompressBc7(input + inputOffset, output + outputOffset, width * 4);
+					BcHelpers.DecompressBc7(input.Slice(inputOffset, 16), output + outputOffset, width * 4);
 					inputOffset += DefineConstants.BCDEC_BC7_BLOCK_SIZE;
 				}
 			}
