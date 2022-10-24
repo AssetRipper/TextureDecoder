@@ -1,5 +1,6 @@
 ﻿using AssetRipper.TextureDecoder.Rgb;
 using AssetRipper.TextureDecoder.Rgb.Formats;
+using System.Buffers;
 
 namespace AssetRipper.TextureDecoder.Bc
 {
@@ -123,20 +124,11 @@ namespace AssetRipper.TextureDecoder.Bc
 			return DecompressBC6H(input, width, height, isSigned, output);
 		}
 
-		public unsafe static int DecompressBC6H(ReadOnlySpan<byte> input, int width, int height, bool isSigned, Span<byte> output)
+		public static int DecompressBC6H(ReadOnlySpan<byte> input, int width, int height, bool isSigned, Span<byte> output)
 		{
-			int bytesRead;
-			byte[] buffer = new byte[width * height * Unsafe.SizeOf<ColorRGBSingle>()];
-			fixed (byte* bufferPtr = buffer)
-			{
-				bytesRead = DecompressBC6H(input, width, height, isSigned, bufferPtr);
-			}
-			RgbConverter.Convert<ColorRGBSingle, float, ColorBGRA32, byte>(buffer, width, height, output);
-			return bytesRead;
-		}
-
-		private unsafe static int DecompressBC6H(ReadOnlySpan<byte> input, int width, int height, bool isSigned, byte* output)
-		{
+			int bufferSize = width * height * Unsafe.SizeOf<ColorRGBSingle>();
+			byte[] bufferArray = ArrayPool<byte>.Shared.Rent(bufferSize);
+			Span<byte> buffer = new Span<byte>(bufferArray, 0, bufferSize);
 			int inputOffset = 0;
 			for (int i = 0; i < height; i += 4)
 			{
@@ -145,12 +137,14 @@ namespace AssetRipper.TextureDecoder.Bc
 					int outputOffset = ((i * width) + j) * Unsafe.SizeOf<ColorRGBSingle>();
 					BcHelpers.DecompressBc6h_Float(
 						input.Slice(inputOffset, DefineConstants.BCDEC_BC6H_BLOCK_SIZE),
-						output + outputOffset,
+						buffer.Slice(outputOffset),
 						width * 3,
 						isSigned);
 					inputOffset += DefineConstants.BCDEC_BC6H_BLOCK_SIZE;
 				}
 			}
+			RgbConverter.Convert<ColorRGBSingle, float, ColorBGRA32, byte>(buffer, width, height, output);
+			ArrayPool<byte>.Shared.Return(bufferArray);
 			return inputOffset;
 		}
 
@@ -160,7 +154,7 @@ namespace AssetRipper.TextureDecoder.Bc
 			return DecompressBC7(input, width, height, output);
 		}
 
-		public unsafe static int DecompressBC7(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		public static int DecompressBC7(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int inputOffset = 0;
 			for (int i = 0; i < height; i += 4)

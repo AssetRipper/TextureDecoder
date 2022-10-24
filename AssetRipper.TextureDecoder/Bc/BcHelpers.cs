@@ -40,27 +40,29 @@ internal unsafe static class BcHelpers
 		SmoothAlphaBlock(compressedBlock.Slice(8), decompressedBlock.Slice(1), destinationPitch, 2);
 	}
 
-	public static void DecompressBc6h_Float(ReadOnlySpan<byte> compressedBlock, byte* decompressedBlock, int destinationPitch, bool isSigned)
+	public static void DecompressBc6h_Float(ReadOnlySpan<byte> compressedBlock, Span<byte> decompressedBlock, int destinationPitch, bool isSigned)
 	{
-		ushort* block = stackalloc ushort[16 * 3];
+		Span<ushort> block = stackalloc ushort[16 * 3];
 
-		DecompressBc6h_Half(compressedBlock, (byte*)block, 4 * 3, isSigned);
+		DecompressBc6h_Half(compressedBlock, block, 4 * 3, isSigned);
 		
-		ushort* b = block;
-		float* decompressed = (float*)decompressedBlock;
+		int blockOffset = 0;
+		int decompressedOffset = 0;
+		Span<float> decompressed = MemoryMarshal.Cast<byte, float>(decompressedBlock);
 		for (int i = 0; i < 4; ++i)
 		{
 			for (int j = 0; j < 4; ++j)
 			{
-				decompressed[(j * 3) + 0] = HalfToFloatQuick(*b++);//R
-				decompressed[(j * 3) + 1] = HalfToFloatQuick(*b++);//G
-				decompressed[(j * 3) + 2] = HalfToFloatQuick(*b++);//B
+				decompressed[decompressedOffset + (j * 3) + 0] = HalfToFloatQuick(block[blockOffset + 0]);//R
+				decompressed[decompressedOffset + (j * 3) + 1] = HalfToFloatQuick(block[blockOffset + 1]);//G
+				decompressed[decompressedOffset + (j * 3) + 2] = HalfToFloatQuick(block[blockOffset + 2]);//B
+				blockOffset += 3;
 			}
-			decompressed += destinationPitch;
+			decompressedOffset += destinationPitch;
 		}
 	}
 
-	public static void DecompressBc6h_Half(ReadOnlySpan<byte> compressedBlock, byte* decompressedBlock, int destinationPitch, bool isSigned)
+	public static void DecompressBc6h_Half(ReadOnlySpan<byte> compressedBlock, Span<ushort> decompressedBlock, int destinationPitch, bool isSigned)
 	{
 		BitStream bstream = new BitStream();
 		int mode;
@@ -77,9 +79,8 @@ internal unsafe static class BcHelpers
 		int[] epR = new int[2]; // endpoints A and B
 		int[] epG = new int[2];
 		int[] epB = new int[2];
-		ushort* decompressed;
 
-		decompressed = (ushort*)decompressedBlock;
+		int decompressedOffset = 0;
 
 		ReadOnlySpan<ulong> compressedBlockSpan = MemoryMarshal.Cast<byte, ulong>(compressedBlock);
 		bstream.low = compressedBlockSpan[0];
@@ -493,11 +494,11 @@ internal unsafe static class BcHelpers
 					{
 						for (j = 0; j < 4; ++j)
 						{
-							decompressed[(j * 3) + 0] = 0;
-							decompressed[(j * 3) + 1] = 0;
-							decompressed[(j * 3) + 2] = 0;
+							decompressedBlock[decompressedOffset + (j * 3) + 0] = 0;
+							decompressedBlock[decompressedOffset + (j * 3) + 1] = 0;
+							decompressedBlock[decompressedOffset + (j * 3) + 2] = 0;
 						}
-						decompressed += destinationPitch;
+						decompressedOffset += destinationPitch;
 					}
 
 					return;
@@ -567,12 +568,12 @@ internal unsafe static class BcHelpers
 				epG[1] = Unquantize(g[(partitionSet * 2) + 1], Bc6hTables.ActualBitsCount[0][mode], isSigned);
 				epB[1] = Unquantize(b[(partitionSet * 2) + 1], Bc6hTables.ActualBitsCount[0][mode], isSigned);
 
-				decompressed[(j * 3) + 0] = FinishUnquantize(Interpolate(epR[0], epR[1], (mode >= 10) ? Bc6hTables.AWeight4 : Bc6hTables.AWeight3, index), isSigned);
-				decompressed[(j * 3) + 1] = FinishUnquantize(Interpolate(epG[0], epG[1], (mode >= 10) ? Bc6hTables.AWeight4 : Bc6hTables.AWeight3, index), isSigned);
-				decompressed[(j * 3) + 2] = FinishUnquantize(Interpolate(epB[0], epB[1], (mode >= 10) ? Bc6hTables.AWeight4 : Bc6hTables.AWeight3, index), isSigned);
+				decompressedBlock[decompressedOffset + (j * 3) + 0] = FinishUnquantize(Interpolate(epR[0], epR[1], (mode >= 10) ? Bc6hTables.AWeight4 : Bc6hTables.AWeight3, index), isSigned);
+				decompressedBlock[decompressedOffset + (j * 3) + 1] = FinishUnquantize(Interpolate(epG[0], epG[1], (mode >= 10) ? Bc6hTables.AWeight4 : Bc6hTables.AWeight3, index), isSigned);
+				decompressedBlock[decompressedOffset + (j * 3) + 2] = FinishUnquantize(Interpolate(epB[0], epB[1], (mode >= 10) ? Bc6hTables.AWeight4 : Bc6hTables.AWeight3, index), isSigned);
 			}
 
-			decompressed += destinationPitch;
+			decompressedOffset += destinationPitch;
 		}
 	}
 
