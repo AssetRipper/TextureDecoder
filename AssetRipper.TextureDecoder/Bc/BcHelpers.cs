@@ -45,7 +45,7 @@ internal unsafe static class BcHelpers
 		Span<ushort> block = stackalloc ushort[16 * 3];
 
 		DecompressBc6h_Half(compressedBlock, block, 4 * 3, isSigned);
-		
+
 		int blockOffset = 0;
 		int decompressedOffset = 0;
 		Span<float> decompressed = MemoryMarshal.Cast<byte, float>(decompressedBlock);
@@ -91,12 +91,12 @@ internal unsafe static class BcHelpers
 		int partition = default;
 		switch (mode)
 		{
-			/* mode 1 */
+			// mode 1 
 			case 0b00:
 				{
-					/* Partitition indices: 46 bits
-					   Partition: 5 bits
-					   Color Endpoints: 75 bits (10.555, 10.555, 10.555) */
+					// Partitition indices: 46 bits
+					// Partition: 5 bits
+					// Color Endpoints: 75 bits (10.555, 10.555, 10.555)
 					g[2] |= bstream.ReadBit() << 4; // gy[4]
 					b[2] |= bstream.ReadBit() << 4; // by[4]
 					b[3] |= bstream.ReadBit() << 4; // bz[4]
@@ -121,12 +121,12 @@ internal unsafe static class BcHelpers
 				}
 				break;
 
-			/* mode 2 */
+			// mode 2 
 			case 0b01:
 				{
-					/* Partitition indices: 46 bits
-					   Partition: 5 bits
-					   Color Endpoints: 75 bits (7666, 7666, 7666) */
+					// Partitition indices: 46 bits
+					// Partition: 5 bits
+					// Color Endpoints: 75 bits (7666, 7666, 7666)
 					g[2] |= bstream.ReadBit() << 5; // gy[5]
 					g[3] |= bstream.ReadBit() << 4; // gz[4]
 					g[3] |= bstream.ReadBit() << 5; // gz[5]
@@ -155,12 +155,12 @@ internal unsafe static class BcHelpers
 				}
 				break;
 
-			/* mode 3 */
+			// mode 3 
 			case 0b00010:
 				{
-					/* Partitition indices: 46 bits
-					   Partition: 5 bits
-					   Color Endpoints: 72 bits (11.555, 11.444, 11.444) */
+					// Partitition indices: 46 bits
+					// Partition: 5 bits
+					// Color Endpoints: 72 bits (11.555, 11.444, 11.444)
 					r[0] |= bstream.ReadBits(10); // rw[9:0]
 					g[0] |= bstream.ReadBits(10); // gw[9:0]
 					b[0] |= bstream.ReadBits(10); // bw[9:0]
@@ -184,12 +184,12 @@ internal unsafe static class BcHelpers
 				}
 				break;
 
-			/* mode 4 */
+			// mode 4 
 			case 0b00110:
 				{
-					/* Partitition indices: 46 bits
-					   Partition: 5 bits
-					   Color Endpoints: 72 bits (11.444, 11.555, 11.444) */
+					// Partitition indices: 46 bits
+					// Partition: 5 bits
+					// Color Endpoints: 72 bits (11.444, 11.555, 11.444)
 					r[0] |= bstream.ReadBits(10); // rw[9:0]
 					g[0] |= bstream.ReadBits(10); // gw[9:0]
 					b[0] |= bstream.ReadBits(10); // bw[9:0]
@@ -215,12 +215,12 @@ internal unsafe static class BcHelpers
 				}
 				break;
 
-			/* mode 5 */
+			// mode 5 
 			case 0b01010:
 				{
-					/* Partitition indices: 46 bits
-					   Partition: 5 bits
-					   Color Endpoints: 72 bits (11.444, 11.444, 11.555) */
+					// Partitition indices: 46 bits
+					// Partition: 5 bits
+					// Color Endpoints: 72 bits (11.444, 11.444, 11.555)
 					r[0] |= bstream.ReadBits(10); // rw[9:0]
 					g[0] |= bstream.ReadBits(10); // gw[9:0]
 					b[0] |= bstream.ReadBits(10); // bw[9:0]
@@ -246,12 +246,12 @@ internal unsafe static class BcHelpers
 				}
 				break;
 
-			/* mode 6 */
+			// mode 6 
 			case 0b01110:
 				{
-					/* Partitition indices: 46 bits
-					   Partition: 5 bits
-					   Color Endpoints: 72 bits (9555, 9555, 9555) */
+					// Partitition indices: 46 bits
+					// Partition: 5 bits
+					// Color Endpoints: 72 bits (9555, 9555, 9555)
 					r[0] |= bstream.ReadBits(9); // rw[8:0]
 					b[2] |= bstream.ReadBit() << 4; // by[4]
 					g[0] |= bstream.ReadBits(9); // gw[8:0]
@@ -276,12 +276,12 @@ internal unsafe static class BcHelpers
 				}
 				break;
 
-			/* mode 7 */
+			// mode 7 
 			case 0b10010:
 				{
-					/* Partitition indices: 46 bits
-					   Partition: 5 bits
-					   Color Endpoints: 72 bits (8666, 8555, 8555) */
+					// Partitition indices: 46 bits
+					// Partition: 5 bits
+					// Color Endpoints: 72 bits (8666, 8555, 8555)
 					r[0] |= bstream.ReadBits(8); // rw[7:0]
 					g[3] |= bstream.ReadBit() << 4; // gz[4]
 					b[2] |= bstream.ReadBit() << 4; // by[4]
@@ -306,12 +306,12 @@ internal unsafe static class BcHelpers
 				}
 				break;
 
-			/* mode 8 */
+			// mode 8 
 			case 0b10110:
 				{
-					/* Partitition indices: 46 bits
-					   Partition: 5 bits
-					   Color Endpoints: 72 bits (8555, 8666, 8555) */
+					// Partitition indices: 46 bits
+					// Partition: 5 bits
+					// Color Endpoints: 72 bits (8555, 8666, 8555)
 					r[0] |= bstream.ReadBits(8); // rw[7:0]
 					b[3] |= bstream.ReadBit(); // bz[0]
 					b[2] |= bstream.ReadBit() << 4; // by[4]
@@ -338,12 +338,12 @@ internal unsafe static class BcHelpers
 				}
 				break;
 
-			/* mode 9 */
+			// mode 9 
 			case 0b11010:
 				{
-					/* Partitition indices: 46 bits
-					   Partition: 5 bits
-					   Color Endpoints: 72 bits (8555, 8555, 8666) */
+					// Partitition indices: 46 bits
+					// Partition: 5 bits
+					// Color Endpoints: 72 bits (8555, 8555, 8666)
 					r[0] |= bstream.ReadBits(8); // rw[7:0]
 					b[3] |= bstream.ReadBit() << 1; // bz[1]
 					b[2] |= bstream.ReadBit() << 4; // by[4]
@@ -370,12 +370,12 @@ internal unsafe static class BcHelpers
 				}
 				break;
 
-			/* mode 10 */
+			// mode 10 
 			case 0b11110:
 				{
-					/* Partitition indices: 46 bits
-					   Partition: 5 bits
-					   Color Endpoints: 72 bits (6666, 6666, 6666) */
+					// Partitition indices: 46 bits
+					// Partition: 5 bits
+					// Color Endpoints: 72 bits (6666, 6666, 6666)
 					r[0] |= bstream.ReadBits(6); // rw[5:0]
 					g[3] |= bstream.ReadBit() << 4; // gz[4]
 					b[3] |= bstream.ReadBit(); // bz[0]
@@ -404,12 +404,12 @@ internal unsafe static class BcHelpers
 				}
 				break;
 
-			/* mode 11 */
+			// mode 11 
 			case 0b00011:
 				{
-					/* Partitition indices: 63 bits
-					   Partition: 0 bits
-					   Color Endpoints: 60 bits (10.10, 10.10, 10.10) */
+					// Partitition indices: 63 bits
+					// Partition: 0 bits
+					// Color Endpoints: 60 bits (10.10, 10.10, 10.10)
 					r[0] |= bstream.ReadBits(10); // rw[9:0]
 					g[0] |= bstream.ReadBits(10); // gw[9:0]
 					b[0] |= bstream.ReadBits(10); // bw[9:0]
@@ -420,12 +420,12 @@ internal unsafe static class BcHelpers
 				}
 				break;
 
-			/* mode 12 */
+			// mode 12 
 			case 0b00111:
 				{
-					/* Partitition indices: 63 bits
-					   Partition: 0 bits
-					   Color Endpoints: 60 bits (11.9, 11.9, 11.9) */
+					// Partitition indices: 63 bits
+					// Partition: 0 bits
+					// Color Endpoints: 60 bits (11.9, 11.9, 11.9)
 					r[0] |= bstream.ReadBits(10); // rw[9:0]
 					g[0] |= bstream.ReadBits(10); // gw[9:0]
 					b[0] |= bstream.ReadBits(10); // bw[9:0]
@@ -439,12 +439,12 @@ internal unsafe static class BcHelpers
 				}
 				break;
 
-			/* mode 13 */
+			// mode 13 
 			case 0b01011:
 				{
-					/* Partitition indices: 63 bits
-					   Partition: 0 bits
-					   Color Endpoints: 60 bits (12.8, 12.8, 12.8) */
+					// Partitition indices: 63 bits
+					// Partition: 0 bits
+					// Color Endpoints: 60 bits (12.8, 12.8, 12.8)
 					r[0] |= bstream.ReadBits(10); // rw[9:0]
 					g[0] |= bstream.ReadBits(10); // gw[9:0]
 					b[0] |= bstream.ReadBits(10); // bw[9:0]
@@ -458,12 +458,12 @@ internal unsafe static class BcHelpers
 				}
 				break;
 
-			/* mode 14 */
+			// mode 14 
 			case 0b01111:
 				{
-					/* Partitition indices: 63 bits
-					   Partition: 0 bits
-					   Color Endpoints: 60 bits (16.4, 16.4, 16.4) */
+					// Partitition indices: 63 bits
+					// Partition: 0 bits
+					// Color Endpoints: 60 bits (16.4, 16.4, 16.4)
 					r[0] |= bstream.ReadBits(10); // rw[9:0]
 					g[0] |= bstream.ReadBits(10); // gw[9:0]
 					b[0] |= bstream.ReadBits(10); // bw[9:0]
@@ -479,10 +479,10 @@ internal unsafe static class BcHelpers
 
 			default:
 				{
-					/* Modes 10011, 10111, 11011, and 11111 (not shown) are reserved.
-					   Do not use these in your encoder. If the hardware is passed blocks
-					   with one of these modes specified, the resulting decompressed block
-					   must contain all zeroes in all channels except for the alpha channel. */
+					// Modes 10011, 10111, 11011, and 11111(not shown) are reserved.
+					// Do not use these in your encoder. If the hardware is passed blocks
+					// with one of these modes specified, the resulting decompressed block
+					// must contain all zeroes in all channels except for the alpha channel.
 					for (int i = 0; i < 4; ++i)
 					{
 						for (int j = 0; j < 4; ++j)
@@ -516,8 +516,8 @@ internal unsafe static class BcHelpers
 			b[0] = ExtendSign(b[0], Bc6hTables.ActualBitsCount[0][mode]);
 		}
 
-		/* Mode 11 (like Mode 10) does not use delta compression,
-		   and instead stores both color endpoints explicitly.  */
+		// Mode 11 (like Mode 10) does not use delta compression,
+		// and instead stores both color endpoints explicitly.
 		if ((mode != 9 && mode != 10) || isSigned)
 		{
 			for (int i = 1; i < (numPartitions + 1) * 2; ++i)
@@ -545,8 +545,8 @@ internal unsafe static class BcHelpers
 				int partitionSet = (mode >= 10) ? ((i | j) != 0 ? 0 : 128) : Bc6hTables.PartitionSets[partition][i][j];
 
 				int indexBits = (mode >= 10) ? 4 : 3;
-				/* fix-up index is specified with one less bit */
-				/* The fix-up index for subset 0 is always index 0 */
+				// fix-up index is specified with one less bit 
+				// The fix-up index for subset 0 is always index 0 
 				if ((partitionSet & 0x80) != 0)
 				{
 					indexBits--;
@@ -576,7 +576,7 @@ internal unsafe static class BcHelpers
 		BitStream bstream = new BitStream();
 		int[][] endpoints = CreateRectangularArray<int>(6, 4);
 		int[][] indices = CreateRectangularArray<int>(4, 4);
-		
+
 		int decompressedOffset = 0;
 
 		ReadOnlySpan<ulong> compressedBlockSpan = MemoryMarshal.Cast<byte, ulong>(compressedBlock);
@@ -589,7 +589,7 @@ internal unsafe static class BcHelpers
 			;
 		}
 
-		/* unexpected mode, clear the block (transparent black) */
+		// unexpected mode, clear the block (transparent black)
 		if (mode >= 8)
 		{
 			for (int i = 0; i < 4; ++i)
@@ -630,8 +630,8 @@ internal unsafe static class BcHelpers
 			}
 		}
 
-		/* Extract endpoints */
-		/* RGB */
+		// Extract endpoints 
+		// RGB 
 		for (int i = 0; i < 3; ++i)
 		{
 			for (int j = 0; j < numEndpoints; ++j)
@@ -639,7 +639,7 @@ internal unsafe static class BcHelpers
 				endpoints[j][i] = bstream.ReadBits(Bc7Tables.bcdec_bc7_actual_bits_count[0][mode]);
 			}
 		}
-		/* Alpha (if any) */
+		// Alpha (if any) 
 		if (Bc7Tables.bcdec_bc7_actual_bits_count[1][mode] > 0)
 		{
 			for (int j = 0; j < numEndpoints; ++j)
@@ -648,26 +648,26 @@ internal unsafe static class BcHelpers
 			}
 		}
 
-		/* Fully decode endpoints */
-		/* First handle modes that have P-bits */
+		// Fully decode endpoints 
+		// First handle modes that have P-bits 
 		if (mode == 0 || mode == 1 || mode == 3 || mode == 6 || mode == 7)
 		{
 			for (int i = 0; i < numEndpoints; ++i)
 			{
-				/* component-wise left-shift */
+				// component-wise left-shift 
 				for (int j = 0; j < 4; ++j)
 				{
 					endpoints[i][j] <<= 1;
 				}
 			}
 
-			/* if P-bit is shared */
+			// if P-bit is shared 
 			if (mode == 1)
 			{
 				int i = bstream.ReadBit();
 				int j = bstream.ReadBit();
 
-				/* rgb component-wise insert pbits */
+				// rgb component-wise insert pbits 
 				for (int k = 0; k < 3; ++k)
 				{
 					endpoints[0][k] |= i;
@@ -678,7 +678,7 @@ internal unsafe static class BcHelpers
 			}
 			else if ((Bc7Tables.bcdec_bc7_sModeHasPBits & (1 << mode)) != 0)
 			{
-				/* unique P-bit per endpoint */
+				// unique P-bit per endpoint 
 				for (int i = 0; i < numEndpoints; ++i)
 				{
 					int j = bstream.ReadBit();
@@ -692,28 +692,28 @@ internal unsafe static class BcHelpers
 
 		for (int i = 0; i < numEndpoints; ++i)
 		{
-			/* get color components precision including pbit */
+			// get color components precision including pbit 
 			int j = Bc7Tables.bcdec_bc7_actual_bits_count[0][mode] + ((Bc7Tables.bcdec_bc7_sModeHasPBits >> mode) & 1);
 
 			for (int k = 0; k < 3; ++k)
 			{
-				/* left shift endpoint components so that their MSB lies in bit 7 */
+				// left shift endpoint components so that their MSB lies in bit 7 
 				endpoints[i][k] = endpoints[i][k] << (8 - j);
-				/* Replicate each component's MSB into the LSBs revealed by the left-shift operation above */
+				// Replicate each component's MSB into the LSBs revealed by the left-shift operation above 
 				endpoints[i][k] = endpoints[i][k] | (endpoints[i][k] >> j);
 			}
 
-			/* get alpha component precision including pbit */
+			// get alpha component precision including pbit 
 			j = Bc7Tables.bcdec_bc7_actual_bits_count[1][mode] + ((Bc7Tables.bcdec_bc7_sModeHasPBits >> mode) & 1);
 
-			/* left shift endpoint components so that their MSB lies in bit 7 */
+			// left shift endpoint components so that their MSB lies in bit 7 
 			endpoints[i][3] = endpoints[i][3] << (8 - j);
-			/* Replicate each component's MSB into the LSBs revealed by the left-shift operation above */
+			// Replicate each component's MSB into the LSBs revealed by the left-shift operation above 
 			endpoints[i][3] = endpoints[i][3] | (endpoints[i][3] >> j);
 		}
 
-		/* If this mode does not explicitly define the alpha component */
-		/* set alpha equal to 1.0 */
+		// If this mode does not explicitly define the alpha component 
+		// set alpha equal to 1.0 
 		if (Bc7Tables.bcdec_bc7_actual_bits_count[1][mode] == 0)
 		{
 			for (int j = 0; j < numEndpoints; ++j)
@@ -722,14 +722,14 @@ internal unsafe static class BcHelpers
 			}
 		}
 
-		/* Determine weights tables */
+		// Determine weights tables 
 		int indexBits = (mode == 0 || mode == 1) ? 3 : ((mode == 6) ? 4 : 2);
 		int indexBits2 = (mode == 4) ? 3 : ((mode == 5) ? 2 : 0);
 		int[] weights = (indexBits == 2) ? Bc7Tables.AWeight2 : ((indexBits == 3) ? Bc7Tables.AWeight3 : Bc7Tables.AWeight4);
 		int[] weights2 = (indexBits2 == 2) ? Bc7Tables.AWeight2 : Bc7Tables.AWeight3;
 
-		/* Quite inconvenient that indices aren't interleaved so we have to make 2 passes here */
-		/* Pass #1: collecting color indices */
+		// Quite inconvenient that indices aren't interleaved so we have to make 2 passes here 
+		// Pass #1: collecting color indices 
 		for (int i = 0; i < 4; ++i)
 		{
 			for (int j = 0; j < 4; ++j)
@@ -737,8 +737,8 @@ internal unsafe static class BcHelpers
 				int partitionSet = (numPartitions == 1) ? ((i | j) != 0 ? 0 : 128) : Bc7Tables.bcdec_bc7_partition_sets[numPartitions - 2][partition][i][j];
 
 				indexBits = (mode == 0 || mode == 1) ? 3 : ((mode == 6) ? 4 : 2);
-				/* fix-up index is specified with one less bit */
-				/* The fix-up index for subset 0 is always index 0 */
+				// fix-up index is specified with one less bit 
+				// The fix-up index for subset 0 is always index 0 
 				if ((partitionSet & 0x80) != 0)
 				{
 					indexBits--;
@@ -748,13 +748,13 @@ internal unsafe static class BcHelpers
 			}
 		}
 
-		/* Pass #2: reading alpha indices (if any) and interpolating & rotating */
+		// Pass #2: reading alpha indices (if any) and interpolating & rotating 
 		for (int i = 0; i < 4; ++i)
 		{
 			for (int j = 0; j < 4; ++j)
 			{
-				int partitionSet = (numPartitions == 1) 
-					? ((i | j) != 0 ? 0 : 128) 
+				int partitionSet = (numPartitions == 1)
+					? ((i | j) != 0 ? 0 : 128)
 					: Bc7Tables.bcdec_bc7_partition_sets[numPartitions - 2][partition][i][j];
 				partitionSet &= 0x03;
 
@@ -775,10 +775,11 @@ internal unsafe static class BcHelpers
 				else
 				{
 					int index2 = bstream.ReadBits((i | j) != 0 ? indexBits2 : (indexBits2 - 1));
-					/* The index value for interpolating color comes from the secondary index bits for the texel
-					   if the mode has an index selection bit and its value is one, and from the primary index bits otherwise.
-					   The alpha index comes from the secondary index bits if the block has a secondary index and
-					   the block either doesn't have an index selection bit or that bit is zero, and from the primary index bits otherwise. */
+					// The index value for interpolating color comes from the secondary index bits for the texel
+					// if the mode has an index selection bit and its value is one, and from the primary index bits otherwise.
+					// The alpha index comes from the secondary index bits if the block has a secondary index
+					// and the block either doesn't have an index selection bit or that bit is zero,
+					// and from the primary index bits otherwise.
 					if (indexSelectionBit == 0)
 					{
 						r = Interpolate(endpoints[partitionSet * 2][0], endpoints[(partitionSet * 2) + 1][0], weights, index);
@@ -798,17 +799,20 @@ internal unsafe static class BcHelpers
 				switch (rotation)
 				{
 					case 1:
-						{ // 01 – Block format is Scalar(R) Vector(AGB) - swap A and R
+						{
+							// 01 – Block format is Scalar(R) Vector(AGB) - swap A and R
 							SwapValues(ref a, ref r);
 						}
 						break;
 					case 2:
-						{ // 10 – Block format is Scalar(G) Vector(RAB) - swap A and G
+						{
+							// 10 – Block format is Scalar(G) Vector(RAB) - swap A and G
 							SwapValues(ref a, ref g);
 						}
 						break;
 					case 3:
-						{ // 11 - Block format is Scalar(B) Vector(RGA) - swap A and B
+						{
+							// 11 - Block format is Scalar(B) Vector(RGA) - swap A and B
 							SwapValues(ref a, ref b);
 						}
 						break;
@@ -832,7 +836,7 @@ internal unsafe static class BcHelpers
 		ushort c0 = MemoryMarshal.Read<ushort>(compressedBlock);
 		ushort c1 = MemoryMarshal.Read<ushort>(compressedBlock.Slice(sizeof(ushort)));
 
-		/* Expand 565 ref colors to 888 */
+		// Expand 565 ref colors to 888 
 		uint r0 = (uint)(((((c0 >> 11) & 0x1F) * 527) + 23) >> 6);
 		uint g0 = (uint)(((((c0 >> 5) & 0x3F) * 259) + 33) >> 6);
 		uint b0 = (uint)((((c0 & 0x1F) * 527) + 23) >> 6);
@@ -848,9 +852,10 @@ internal unsafe static class BcHelpers
 		uint b;
 
 		if (c0 > c1 || onlyOpaqueMode != 0)
-		{ // Standard BC1 mode (also BC3 color block uses ONLY this mode)
-			/* color_2 = 2/3*color_0 + 1/3*color_1
-			   color_3 = 1/3*color_0 + 2/3*color_1 */
+		{
+			// Standard BC1 mode (also BC3 color block uses ONLY this mode)
+			// color_2 = 2/3*color_0 + 1/3*color_1
+			// color_3 = 1/3*color_0 + 2/3*color_1
 			r = (uint)(((2 * r0) + r1 + 1) / 3);
 			g = (uint)(((2 * g0) + g1 + 1) / 3);
 			b = (uint)(((2 * b0) + b1 + 1) / 3);
@@ -862,9 +867,10 @@ internal unsafe static class BcHelpers
 			refColors[3] = 0xFF000000 | (b << 16) | (g << 8) | r;
 		}
 		else
-		{ // Quite rare BC1A mode
-			/* color_2 = 1/2*color_0 + 1/2*color_1;
-			   color_3 = 0;                         */
+		{
+			// Quite rare BC1A mode
+			// color_2 = 1/2*color_0 + 1/2*color_1;
+			// color_3 = 0;
 			r = (uint)((r0 + r1 + 1) >> 1);
 			g = (uint)((g0 + g1 + 1) >> 1);
 			b = (uint)((b0 + b1 + 1) >> 1);
@@ -875,7 +881,7 @@ internal unsafe static class BcHelpers
 
 		uint colorIndices = MemoryMarshal.Read<uint>(compressedBlock.Slice(sizeof(ushort) + sizeof(ushort)));
 
-		/* Fill out the decompressed color block */
+		// Fill out the decompressed color block 
 		for (int i = 0; i < 4; ++i)
 		{
 			for (int j = 0; j < 4; ++j)
@@ -916,7 +922,7 @@ internal unsafe static class BcHelpers
 
 		if (alpha[0] > alpha[1])
 		{
-			/* 6 interpolated alpha values. */
+			// 6 interpolated alpha values. 
 			alpha[2] = (byte)(((6 * alpha[0]) + alpha[1] + 1) / 7); // 6/7*alpha_0 + 1/7*alpha_1
 			alpha[3] = (byte)(((5 * alpha[0]) + (2 * alpha[1]) + 1) / 7); // 5/7*alpha_0 + 2/7*alpha_1
 			alpha[4] = (byte)(((4 * alpha[0]) + (3 * alpha[1]) + 1) / 7); // 4/7*alpha_0 + 3/7*alpha_1
@@ -926,7 +932,7 @@ internal unsafe static class BcHelpers
 		}
 		else
 		{
-			/* 4 interpolated alpha values. */
+			// 4 interpolated alpha values. 
 			alpha[2] = (byte)(((4 * alpha[0]) + alpha[1] + 1) / 5); // 4/5*alpha_0 + 1/5*alpha_1
 			alpha[3] = (byte)(((3 * alpha[0]) + (2 * alpha[1]) + 1) / 5); // 3/5*alpha_0 + 2/5*alpha_1
 			alpha[4] = (byte)(((2 * alpha[0]) + (3 * alpha[1]) + 1) / 5); // 2/5*alpha_0 + 3/5*alpha_1
@@ -946,7 +952,7 @@ internal unsafe static class BcHelpers
 		}
 	}
 
-	/* http://graphics.stanford.edu/~seander/bithacks.html#VariableSignExtend */
+	// http://graphics.stanford.edu/~seander/bithacks.html#VariableSignExtend 
 	public static int ExtendSign(int val, int bits)
 	{
 		return (val << (32 - bits)) >> (32 - bits);
@@ -954,8 +960,8 @@ internal unsafe static class BcHelpers
 
 	public static int TransformInverse(int val, int a0, int bits, bool isSigned)
 	{
-		/* If the precision of A0 is "p" bits, then the transform algorithm is:
-		   B0 = (B0 + A0) & ((1 << p) - 1) */
+		// If the precision of A0 is "p" bits, then the transform algorithm is:
+		// B0 = (B0 + A0) & ((1 << p) - 1)
 		val = (val + a0) & ((1 << bits) - 1);
 		if (isSigned)
 		{
@@ -1054,7 +1060,7 @@ internal unsafe static class BcHelpers
 			return (ushort)(s | val);
 		}
 	}
-	
+
 	public static float HalfToFloatQuick(ushort half)
 	{
 		return (float)Unsafe.As<ushort, Half>(ref half);
