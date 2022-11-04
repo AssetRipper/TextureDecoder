@@ -33,7 +33,7 @@
 			}
 			else
 			{
-				return default; //exceptions prevent inlining
+				return ThrowOrReturnDefault<TTo>();
 			}
 		}
 
@@ -66,7 +66,7 @@
 			}
 			else
 			{
-				return default; //exceptions prevent inlining
+				return ThrowOrReturnDefault<TTo>();
 			}
 		}
 
@@ -99,7 +99,7 @@
 			}
 			else
 			{
-				return default; //exceptions prevent inlining
+				return ThrowOrReturnDefault<TTo>();
 			}
 		}
 
@@ -132,7 +132,7 @@
 			}
 			else
 			{
-				return default; //exceptions prevent inlining
+				return ThrowOrReturnDefault<TTo>();
 			}
 		}
 
@@ -165,7 +165,7 @@
 			}
 			else
 			{
-				return default; //exceptions prevent inlining
+				return ThrowOrReturnDefault<TTo>();
 			}
 		}
 
@@ -198,8 +198,18 @@
 			}
 			else
 			{
-				return default; //exceptions prevent inlining
+				return ThrowOrReturnDefault<TTo>();
 			}
+		}
+
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
+		private static T ThrowOrReturnDefault<T>() where T : unmanaged
+		{
+#if DEBUG
+			throw new InvalidCastException();
+#else
+			return default; //exceptions prevent inlining
+#endif
 		}
 
 		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
