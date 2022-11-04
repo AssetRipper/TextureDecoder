@@ -1,5 +1,24 @@
 ﻿namespace AssetRipper.TextureDecoder.Rgb
 {
+	/// <summary>
+	/// An <see langword="interface"/> for handling color formats with up to 4 channels.
+	/// </summary>
+	/// <remarks>
+	/// When used as a generic type constraint, the methods and properties get devirtualized by the JIT compiler.
+	/// This prevents boxing when the implementing type is a <see langword="struct"/>.
+	/// </remarks>
+	/// <typeparam name="T">
+	/// Supported types are:
+	/// <list type="bullet">
+	/// <item><see cref="sbyte"/></item>
+	/// <item><see cref="byte"/></item>
+	/// <item><see cref="short"/></item>
+	/// <item><see cref="ushort"/></item>
+	/// <item><see cref="Half"/></item>
+	/// <item><see cref="float"/></item>
+	/// <item><see cref="double"/></item>
+	/// </list>
+	/// </typeparam>
 	public interface IColor<T> where T : unmanaged
 	{
 		/// <summary>
