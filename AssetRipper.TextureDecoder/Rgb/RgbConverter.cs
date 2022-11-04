@@ -600,11 +600,7 @@ namespace AssetRipper.TextureDecoder.Rgb
 		{
 			for (int i = 0; i < sourceSpan.Length; i++)
 			{
-				TSource source = sourceSpan[i];
-				TDestination destination = default;
-				source.GetChannels(out TSourceArg r, out TSourceArg g, out TSourceArg b, out TSourceArg a);
-				destination.SetConvertedChannels<TDestination, TDestinationArg, TSourceArg>(r, g, b, a);
-				destinationSpan[i] = destination;
+				destinationSpan[i] = sourceSpan[i].Convert<TSource, TSourceArg, TDestination, TDestinationArg>();
 			}
 		}
 

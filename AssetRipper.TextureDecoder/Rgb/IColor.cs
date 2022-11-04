@@ -56,5 +56,25 @@
 					ConversionUtilities.ConvertValue<TSourceArg, TThisArg>(b),
 					ConversionUtilities.ConvertValue<TSourceArg, TThisArg>(a));
 		}
+
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
+		internal static TTarget Convert<TThis, TThisArg, TTarget, TTargetArg>(this TThis color)
+			where TThisArg : unmanaged
+			where TTargetArg : unmanaged
+			where TThis : unmanaged, IColor<TThisArg>
+			where TTarget : unmanaged, IColor<TTargetArg>
+		{
+			if (typeof(TThis) == typeof(TTarget))
+			{
+				return Unsafe.As<TThis, TTarget>(ref color);
+			}
+			else
+			{
+				TTarget destination = default;
+				color.GetChannels(out TThisArg r, out TThisArg g, out TThisArg b, out TThisArg a);
+				destination.SetConvertedChannels<TTarget, TTargetArg, TThisArg>(r, g, b, a);
+				return destination;
+			}
+		}
 	}
 }
