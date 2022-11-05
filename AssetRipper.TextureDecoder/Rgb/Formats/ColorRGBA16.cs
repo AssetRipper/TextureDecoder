@@ -2,28 +2,31 @@
 {
 	public partial struct ColorRGBA16 : IColor<byte>
 	{
-		private byte ba;
-		private byte rg;
+		private UInt4Pair ba;
+		private UInt4Pair rg;
+
+		public byte R
+		{
+			get => rg.HighValue;
+			set => rg.HighValue = value;
+		}
+
+		public byte G
+		{
+			get => rg.LowValue;
+			set => rg.LowValue = value;
+		}
 
 		public byte B
 		{
-			get => (byte)(ba & 0xF0u);
-			set => ba = (byte)((value & 0xF0u) | (ba & 0x0Fu));
+			get => ba.HighValue;
+			set => ba.HighValue = value;
 		}
-		public byte G
-		{
-			get => unchecked((byte)(rg << 4));
-			set => rg = unchecked((byte)(((uint)value >> 4) | (rg & 0xF0u)));
-		}
-		public byte R
-		{
-			get => (byte)(rg & 0xF0u);
-			set => rg = (byte)((value & 0xF0u) | (rg & 0x0Fu));
-		}
+
 		public byte A
 		{
-			get => unchecked((byte)(ba << 4));
-			set => ba = unchecked((byte)(((uint)value >> 4) | (ba & 0xF0u)));
+			get => ba.LowValue;
+			set => ba.LowValue = value;
 		}
 
 		public void GetChannels(out byte r, out byte g, out byte b, out byte a)
