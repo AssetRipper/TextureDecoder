@@ -1,3 +1,5 @@
+﻿using AssetRipper.TextureDecoder.Rgb;
+
 ﻿namespace AssetRipper.TextureDecoder.TestGenerator
 {
 	internal struct GenerationData
@@ -6,10 +8,10 @@
 		public Type ChannelType;
 		public int ColorSize;
 
-		public GenerationData(Type colorType, Type channelType, int colorSize)
+		public GenerationData(Type colorType, int colorSize)
 		{
 			ColorType = colorType;
-			ChannelType = channelType;
+			ChannelType = ColorType.GetInterfaces().Single(t => t.Name == $"{nameof(IColor<byte>)}`1").GenericTypeArguments[0];
 			ColorSize = colorSize;
 		}
 	}
