@@ -16,7 +16,7 @@
 		/// </summary>
 		public byte HighValue
 		{
-			get => (byte)(bits & 0xF0);
+			get => (byte)(bits & 0xF0u);
 			set => bits = (byte)((value & 0xF0u) | (bits & 0x0Fu));
 		}
 
