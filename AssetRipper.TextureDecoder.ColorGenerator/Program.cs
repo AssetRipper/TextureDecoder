@@ -40,39 +40,42 @@ internal class Program
 		{ typeof(double), "double" },
 	};
 
+	/// <summary>
+	/// Name, Type, Red, Blue, Green, Alpha
+	/// </summary>
 	private static readonly List<(string, Type, bool, bool, bool, bool)> Colors = new()
 	{
-		( "A8", typeof(byte), false, false, false, true ),
+		( "ColorA8", typeof(byte), false, false, false, true ),
 
-		( "R8", typeof(byte), true, false, false, false ),
-		( "RG16", typeof(byte), true, true, false, false ),
-		( "RGB24", typeof(byte), true, true, true, false ),
-		( "RGBA32", typeof(byte), true, true, true, true ),
+		( "ColorR8", typeof(byte), true, false, false, false ),
+		( "ColorRG16", typeof(byte), true, true, false, false ),
+		( "ColorRGB24", typeof(byte), true, true, true, false ),
+		( "ColorRGBA32", typeof(byte), true, true, true, true ),
 
-		( "R8Signed", typeof(sbyte), true, false, false, false ),
-		( "RG16Signed", typeof(sbyte), true, true, false, false ),
-		( "RGB24Signed", typeof(sbyte), true, true, true, false ),
-		( "RGBA32Signed", typeof(sbyte), true, true, true, true ),
+		( "ColorR8Signed", typeof(sbyte), true, false, false, false ),
+		( "ColorRG16Signed", typeof(sbyte), true, true, false, false ),
+		( "ColorRGB24Signed", typeof(sbyte), true, true, true, false ),
+		( "ColorRGBA32Signed", typeof(sbyte), true, true, true, true ),
 
-		( "R16", typeof(ushort), true, false, false, false ),
-		( "RG32", typeof(ushort), true, true, false, false ),
-		( "RGB48", typeof(ushort), true, true, true, false ),
-		( "RGBA64", typeof(ushort), true, true, true, true ),
+		( "ColorR16", typeof(ushort), true, false, false, false ),
+		( "ColorRG32", typeof(ushort), true, true, false, false ),
+		( "ColorRGB48", typeof(ushort), true, true, true, false ),
+		( "ColorRGBA64", typeof(ushort), true, true, true, true ),
 
-		( "R16Signed", typeof(short), true, false, false, false ),
-		( "RG32Signed", typeof(short), true, true, false, false ),
-		( "RGB48Signed", typeof(short), true, true, true, false ),
-		( "RGBA64Signed", typeof(short), true, true, true, true ),
+		( "ColorR16Signed", typeof(short), true, false, false, false ),
+		( "ColorRG32Signed", typeof(short), true, true, false, false ),
+		( "ColorRGB48Signed", typeof(short), true, true, true, false ),
+		( "ColorRGBA64Signed", typeof(short), true, true, true, true ),
 
-		( "RHalf", typeof(Half), true, false, false, false ),
-		( "RGHalf", typeof(Half), true, true, false, false ),
-		( "RGBHalf", typeof(Half), true, true, true, false ),
-		( "RGBAHalf", typeof(Half), true, true, true, true ),
+		( "ColorRHalf", typeof(Half), true, false, false, false ),
+		( "ColorRGHalf", typeof(Half), true, true, false, false ),
+		( "ColorRGBHalf", typeof(Half), true, true, true, false ),
+		( "ColorRGBAHalf", typeof(Half), true, true, true, true ),
 
-		( "RSingle", typeof(float), true, false, false, false ),
-		( "RGSingle", typeof(float), true, true, false, false ),
-		( "RGBSingle", typeof(float), true, true, true, false ),
-		( "RGBASingle", typeof(float), true, true, true, true ),
+		( "ColorRSingle", typeof(float), true, false, false, false ),
+		( "ColorRGSingle", typeof(float), true, true, false, false ),
+		( "ColorRGBSingle", typeof(float), true, true, true, false ),
+		( "ColorRGBASingle", typeof(float), true, true, true, true ),
 	};
 
 	static void Main()
@@ -86,12 +89,11 @@ internal class Program
 
 	private static void WriteStruct((string, Type, bool, bool, bool, bool) details)
 	{
-		string name = $"Color{details.Item1}";
+		(string name, Type type, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha) = details;
 		Console.WriteLine(name);
 		using FileStream stream = File.Create($"{OutputFolder}{name}.g.cs");
 		using StreamWriter streamWriter = new StreamWriter(stream);
 		using IndentedTextWriter writer = new IndentedTextWriter(streamWriter, "\t");
-		(_, Type type, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha) = details;
 		WriteStruct(writer, name, type, hasRed, hasGreen, hasBlue, hasAlpha);
 	}
 
