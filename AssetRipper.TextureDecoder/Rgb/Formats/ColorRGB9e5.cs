@@ -5,7 +5,7 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats
 	/// <summary>
 	/// 9 bits each for RGB and 5 bits for an exponent
 	/// </summary>
-	public struct ColorRGB9e5 : IColor<double>
+	public partial struct ColorRGB9e5 : IColor<double>
 	{
 		private uint bits;
 

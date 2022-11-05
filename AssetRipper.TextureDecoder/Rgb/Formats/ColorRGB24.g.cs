@@ -1,6 +1,10 @@
-//Auto-generated code. Do not modify.
+//This code is source generated. Do not edit manually.
+
+using AssetRipper.TextureDecoder.Attributes;
+
 namespace AssetRipper.TextureDecoder.Rgb.Formats
 {
+	[RgbaAttribute(RedChannel = true, GreenChannel = true, BlueChannel = true, AlphaChannel = false, FullyUtilizedChannels = true)]
 	public partial struct ColorRGB24 : IColor<byte>
 	{
 		public byte R { get; set; }

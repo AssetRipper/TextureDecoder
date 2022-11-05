@@ -2,8 +2,9 @@
 
 namespace AssetRipper.TextureDecoder.ColorGenerator;
 
-internal class Program
+internal static class Program
 {
+	private const string AttributeNamespace = "AssetRipper.TextureDecoder.Attributes";
 	private const string OutputNamespace = "AssetRipper.TextureDecoder.Rgb.Formats";
 	private const string OutputFolder = "../../../../AssetRipper.TextureDecoder/Rgb/Formats/";
 
@@ -78,33 +79,84 @@ internal class Program
 		( "ColorRGBASingle", typeof(float), true, true, true, true ),
 	};
 
+	/// <summary>
+	/// Name, Type, Red, Blue, Green, Alpha, Fully Utilized
+	/// </summary>
+	private static readonly List<(string, Type, bool, bool, bool, bool, bool)> OtherColors = new()
+	{
+		( "ColorARGB16", typeof(byte), true, true, true, true, false ),
+		( "ColorARGB32", typeof(byte), true, true, true, true, true ),
+		( "ColorBGRA32", typeof(byte), true, true, true, true, true ),
+		( "ColorRGB16", typeof(byte), true, true, true, false, false ),
+		( "ColorRGB9e5", typeof(double), true, true, true, false, false ),
+		( "ColorRGBA16", typeof(byte), true, true, true, true, false ),
+	};
+
 	static void Main()
 	{
-		foreach (var details in Colors)
+		foreach (var color in Colors)
 		{
-			WriteStruct(details);
+			WriteColor(color);
+		}
+		foreach (var otherColor in OtherColors)
+		{
+			WriteOtherColor(otherColor);
 		}
 		Console.WriteLine("Done!");
 	}
 
-	private static void WriteStruct((string, Type, bool, bool, bool, bool) details)
+	private static void WriteColor((string, Type, bool, bool, bool, bool) details)
 	{
 		(string name, Type type, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha) = details;
 		Console.WriteLine(name);
 		using FileStream stream = File.Create($"{OutputFolder}{name}.g.cs");
 		using StreamWriter streamWriter = new StreamWriter(stream);
 		using IndentedTextWriter writer = new IndentedTextWriter(streamWriter, "\t");
-		WriteStruct(writer, name, type, hasRed, hasGreen, hasBlue, hasAlpha);
+		WriteColor(writer, name, type, hasRed, hasGreen, hasBlue, hasAlpha);
 	}
 
-	private static void WriteStruct(IndentedTextWriter writer, string name, Type type, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha)
+	private static void WriteOtherColor((string, Type, bool, bool, bool, bool, bool) details)
+	{
+		(string name, Type type, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha, bool fullyUtilized) = details;
+		Console.WriteLine(name);
+		using FileStream stream = File.Create($"{OutputFolder}{name}.g.cs");
+		using StreamWriter streamWriter = new StreamWriter(stream);
+		using IndentedTextWriter writer = new IndentedTextWriter(streamWriter, "\t");
+		WriteOtherColor(writer, name, type, hasRed, hasGreen, hasBlue, hasAlpha, fullyUtilized);
+	}
+
+	private static void WriteOtherColor(IndentedTextWriter writer, string name, Type type, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha, bool fullyUtilized)
 	{
 		string typeName = TypeNames[type];
-		writer.WriteLine("//Auto-generated code. Do not modify.");
+		writer.WriteLine("//This code is source generated. Do not edit manually.");
+		writer.WriteLine();
+		writer.WriteLine($"using {AttributeNamespace};");
+		writer.WriteLine();
 		writer.WriteLine($"namespace {OutputNamespace}");
 		writer.WriteLine('{');
 		writer.Indent++;
 
+		writer.WriteLine($"[RgbaAttribute(RedChannel = {hasRed.ToLowerString()}, GreenChannel = {hasGreen.ToLowerString()}, BlueChannel = {hasBlue.ToLowerString()}, AlphaChannel = {hasAlpha.ToLowerString()}, FullyUtilizedChannels = {fullyUtilized.ToLowerString()})]");
+		writer.WriteLine($"public partial struct {name} : IColor<{typeName}>");
+		writer.WriteLine('{');
+		writer.WriteLine('}');
+
+		writer.Indent--;
+		writer.WriteLine('}');
+	}
+
+	private static void WriteColor(IndentedTextWriter writer, string name, Type type, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha)
+	{
+		string typeName = TypeNames[type];
+		writer.WriteLine("//This code is source generated. Do not edit manually.");
+		writer.WriteLine();
+		writer.WriteLine($"using {AttributeNamespace};");
+		writer.WriteLine();
+		writer.WriteLine($"namespace {OutputNamespace}");
+		writer.WriteLine('{');
+		writer.Indent++;
+
+		writer.WriteLine($"[RgbaAttribute(RedChannel = {hasRed.ToLowerString()}, GreenChannel = {hasGreen.ToLowerString()}, BlueChannel = {hasBlue.ToLowerString()}, AlphaChannel = {hasAlpha.ToLowerString()}, FullyUtilizedChannels = true)]");
 		writer.WriteLine($"public partial struct {name} : IColor<{typeName}>");
 		writer.WriteLine('{');
 		writer.Indent++;
@@ -165,5 +217,10 @@ internal class Program
 			writer.Indent--;
 			writer.WriteLine('}');
 		}
+	}
+
+	private static string ToLowerString(this bool value)
+	{
+		return value ? "true" : "false";
 	}
 }

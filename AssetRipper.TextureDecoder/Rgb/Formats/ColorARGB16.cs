@@ -1,6 +1,6 @@
 ﻿namespace AssetRipper.TextureDecoder.Rgb.Formats
 {
-	public struct ColorARGB16 : IColor<byte>
+	public partial struct ColorARGB16 : IColor<byte>
 	{
 		private byte gb;
 		private byte ar;
