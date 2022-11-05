@@ -1,5 +1,6 @@
 //This code is source generated. Do not edit manually.
 
+using AssetRipper.TextureDecoder.Rgb;
 using AssetRipper.TextureDecoder.Rgb.Formats;
 using System.Runtime.CompilerServices;
 
@@ -151,5 +152,41 @@ public partial class ColorRSingleTests
 			B = 0.95f,
 			A = 0.897f,
 		};
+	}
+	
+	[Test]
+	public void ConversionToColorRGBASingleIsLossless()
+	{
+		ColorRSingle original = MakeRandomColor();
+		ColorRGBASingle converted = original.Convert<ColorRSingle, float, ColorRGBASingle, float>();
+		ColorRSingle convertedBack = converted.Convert<ColorRGBASingle, float, ColorRSingle, float>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGBSingleIsLossless()
+	{
+		ColorRSingle original = MakeRandomColor();
+		ColorRGBSingle converted = original.Convert<ColorRSingle, float, ColorRGBSingle, float>();
+		ColorRSingle convertedBack = converted.Convert<ColorRGBSingle, float, ColorRSingle, float>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGSingleIsLossless()
+	{
+		ColorRSingle original = MakeRandomColor();
+		ColorRGSingle converted = original.Convert<ColorRSingle, float, ColorRGSingle, float>();
+		ColorRSingle convertedBack = converted.Convert<ColorRGSingle, float, ColorRSingle, float>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRSingleIsLossless()
+	{
+		ColorRSingle original = MakeRandomColor();
+		ColorRSingle converted = original.Convert<ColorRSingle, float, ColorRSingle, float>();
+		ColorRSingle convertedBack = converted.Convert<ColorRSingle, float, ColorRSingle, float>();
+		Assert.That(convertedBack, Is.EqualTo(original));
 	}
 }

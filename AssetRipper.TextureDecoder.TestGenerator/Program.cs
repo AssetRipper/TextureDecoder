@@ -1,4 +1,5 @@
-﻿using AssetRipper.TextureDecoder.Rgb.Formats;
+﻿using AssetRipper.TextureDecoder.Rgb;
+using AssetRipper.TextureDecoder.Rgb.Formats;
 using System.CodeDom.Compiler;
 
 namespace AssetRipper.TextureDecoder.TestGenerator
@@ -59,7 +60,7 @@ namespace AssetRipper.TextureDecoder.TestGenerator
 		static void Main()
 		{
 			Directory.CreateDirectory(OutputFolder);
-
+			
 			foreach (GenerationData data in dataList)
 			{
 				using MemoryStream memoryStream = new();
@@ -83,6 +84,15 @@ namespace AssetRipper.TextureDecoder.TestGenerator
 				textWriter.WriteLine();
 				textWriter.WriteMakeRandomColor(data);
 
+				foreach (GenerationData otherData in dataList)
+				{
+					if (otherData.Contains(data))
+					{
+						textWriter.WriteLine();
+						textWriter.WriteLosslessConversionTest(data, otherData);
+					}
+				}
+
 				textWriter.Indent -= 1;
 				textWriter.WriteClassDefinitionClose();
 
@@ -99,6 +109,7 @@ namespace AssetRipper.TextureDecoder.TestGenerator
 
 		private static void WriteNamespaceUsings(this IndentedTextWriter textWriter, GenerationData data)
 		{
+			textWriter.WriteLine($"using {typeof(ColorExtensions).Namespace};");
 			textWriter.WriteLine($"using {data.ColorType.Namespace};");
 			textWriter.WriteLine($"using {typeof(System.Runtime.CompilerServices.Unsafe).Namespace};");
 			textWriter.WriteLine();//An empty line after the usings
@@ -271,6 +282,25 @@ namespace AssetRipper.TextureDecoder.TestGenerator
 			textWriter.Indent -= 1;
 			textWriter.WriteLine("});");
 
+			textWriter.Indent -= 1;
+			textWriter.WriteLine("}");
+		}
+
+		private static void WriteLosslessConversionTest(this IndentedTextWriter textWriter, GenerationData currentData, GenerationData containingData)
+		{
+			string currentName = currentData.ColorType.Name;
+			string containingName = containingData.ColorType.Name;
+
+			textWriter.WriteLine("[Test]");
+			textWriter.WriteLine($"public void ConversionTo{containingName}IsLossless()");
+			textWriter.WriteLine("{");
+			textWriter.Indent += 1;
+
+			textWriter.WriteLine($"{currentName} original = MakeRandomColor();");
+			textWriter.WriteLine($"{containingName} converted = original.{nameof(ColorExtensions.Convert)}<{currentName}, {currentData.ChannelTypeName}, {containingName}, {containingData.ChannelTypeName}>();");
+			textWriter.WriteLine($"{currentName} convertedBack = converted.{nameof(ColorExtensions.Convert)}<{containingName}, {containingData.ChannelTypeName}, {currentName}, {currentData.ChannelTypeName}>();");
+			textWriter.WriteLine("Assert.That(convertedBack, Is.EqualTo(original));");
+			
 			textWriter.Indent -= 1;
 			textWriter.WriteLine("}");
 		}

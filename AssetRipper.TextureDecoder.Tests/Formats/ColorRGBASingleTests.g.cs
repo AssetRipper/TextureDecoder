@@ -1,5 +1,6 @@
 //This code is source generated. Do not edit manually.
 
+using AssetRipper.TextureDecoder.Rgb;
 using AssetRipper.TextureDecoder.Rgb.Formats;
 using System.Runtime.CompilerServices;
 
@@ -151,5 +152,14 @@ public partial class ColorRGBASingleTests
 			B = 0.95f,
 			A = 0.897f,
 		};
+	}
+	
+	[Test]
+	public void ConversionToColorRGBASingleIsLossless()
+	{
+		ColorRGBASingle original = MakeRandomColor();
+		ColorRGBASingle converted = original.Convert<ColorRGBASingle, float, ColorRGBASingle, float>();
+		ColorRGBASingle convertedBack = converted.Convert<ColorRGBASingle, float, ColorRGBASingle, float>();
+		Assert.That(convertedBack, Is.EqualTo(original));
 	}
 }

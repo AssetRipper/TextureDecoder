@@ -1,5 +1,6 @@
 //This code is source generated. Do not edit manually.
 
+using AssetRipper.TextureDecoder.Rgb;
 using AssetRipper.TextureDecoder.Rgb.Formats;
 using System.Runtime.CompilerServices;
 
@@ -151,5 +152,23 @@ public partial class ColorRGBA64SignedTests
 			B = -80,
 			A = 347,
 		};
+	}
+	
+	[Test]
+	public void ConversionToColorRGBA64IsLossless()
+	{
+		ColorRGBA64Signed original = MakeRandomColor();
+		ColorRGBA64 converted = original.Convert<ColorRGBA64Signed, short, ColorRGBA64, ushort>();
+		ColorRGBA64Signed convertedBack = converted.Convert<ColorRGBA64, ushort, ColorRGBA64Signed, short>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGBA64SignedIsLossless()
+	{
+		ColorRGBA64Signed original = MakeRandomColor();
+		ColorRGBA64Signed converted = original.Convert<ColorRGBA64Signed, short, ColorRGBA64Signed, short>();
+		ColorRGBA64Signed convertedBack = converted.Convert<ColorRGBA64Signed, short, ColorRGBA64Signed, short>();
+		Assert.That(convertedBack, Is.EqualTo(original));
 	}
 }

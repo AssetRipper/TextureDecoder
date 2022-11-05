@@ -1,5 +1,6 @@
 //This code is source generated. Do not edit manually.
 
+using AssetRipper.TextureDecoder.Rgb;
 using AssetRipper.TextureDecoder.Rgb.Formats;
 using System.Runtime.CompilerServices;
 
@@ -151,5 +152,59 @@ public partial class ColorRGHalfTests
 			B = (Half)0.95f,
 			A = (Half)0.897f,
 		};
+	}
+	
+	[Test]
+	public void ConversionToColorRGBAHalfIsLossless()
+	{
+		ColorRGHalf original = MakeRandomColor();
+		ColorRGBAHalf converted = original.Convert<ColorRGHalf, Half, ColorRGBAHalf, Half>();
+		ColorRGHalf convertedBack = converted.Convert<ColorRGBAHalf, Half, ColorRGHalf, Half>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGBASingleIsLossless()
+	{
+		ColorRGHalf original = MakeRandomColor();
+		ColorRGBASingle converted = original.Convert<ColorRGHalf, Half, ColorRGBASingle, float>();
+		ColorRGHalf convertedBack = converted.Convert<ColorRGBASingle, float, ColorRGHalf, Half>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGBHalfIsLossless()
+	{
+		ColorRGHalf original = MakeRandomColor();
+		ColorRGBHalf converted = original.Convert<ColorRGHalf, Half, ColorRGBHalf, Half>();
+		ColorRGHalf convertedBack = converted.Convert<ColorRGBHalf, Half, ColorRGHalf, Half>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGBSingleIsLossless()
+	{
+		ColorRGHalf original = MakeRandomColor();
+		ColorRGBSingle converted = original.Convert<ColorRGHalf, Half, ColorRGBSingle, float>();
+		ColorRGHalf convertedBack = converted.Convert<ColorRGBSingle, float, ColorRGHalf, Half>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGHalfIsLossless()
+	{
+		ColorRGHalf original = MakeRandomColor();
+		ColorRGHalf converted = original.Convert<ColorRGHalf, Half, ColorRGHalf, Half>();
+		ColorRGHalf convertedBack = converted.Convert<ColorRGHalf, Half, ColorRGHalf, Half>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGSingleIsLossless()
+	{
+		ColorRGHalf original = MakeRandomColor();
+		ColorRGSingle converted = original.Convert<ColorRGHalf, Half, ColorRGSingle, float>();
+		ColorRGHalf convertedBack = converted.Convert<ColorRGSingle, float, ColorRGHalf, Half>();
+		Assert.That(convertedBack, Is.EqualTo(original));
 	}
 }

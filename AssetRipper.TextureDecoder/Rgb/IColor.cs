@@ -42,7 +42,7 @@
 		void SetChannels(T r, T g, T b, T a);
 	}
 
-	internal static class ColorExtensions
+	public static class ColorExtensions
 	{
 		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		internal static void SetConvertedChannels<TThis, TThisArg, TSourceArg>(this ref TThis color, TSourceArg r, TSourceArg g, TSourceArg b, TSourceArg a)
@@ -58,7 +58,7 @@
 		}
 
 		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
-		internal static TTarget Convert<TThis, TThisArg, TTarget, TTargetArg>(this TThis color)
+		public static TTarget Convert<TThis, TThisArg, TTarget, TTargetArg>(this TThis color)
 			where TThisArg : unmanaged
 			where TTargetArg : unmanaged
 			where TThis : unmanaged, IColor<TThisArg>

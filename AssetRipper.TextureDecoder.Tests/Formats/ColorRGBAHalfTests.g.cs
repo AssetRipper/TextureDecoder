@@ -1,5 +1,6 @@
 //This code is source generated. Do not edit manually.
 
+using AssetRipper.TextureDecoder.Rgb;
 using AssetRipper.TextureDecoder.Rgb.Formats;
 using System.Runtime.CompilerServices;
 
@@ -151,5 +152,23 @@ public partial class ColorRGBAHalfTests
 			B = (Half)0.95f,
 			A = (Half)0.897f,
 		};
+	}
+	
+	[Test]
+	public void ConversionToColorRGBAHalfIsLossless()
+	{
+		ColorRGBAHalf original = MakeRandomColor();
+		ColorRGBAHalf converted = original.Convert<ColorRGBAHalf, Half, ColorRGBAHalf, Half>();
+		ColorRGBAHalf convertedBack = converted.Convert<ColorRGBAHalf, Half, ColorRGBAHalf, Half>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGBASingleIsLossless()
+	{
+		ColorRGBAHalf original = MakeRandomColor();
+		ColorRGBASingle converted = original.Convert<ColorRGBAHalf, Half, ColorRGBASingle, float>();
+		ColorRGBAHalf convertedBack = converted.Convert<ColorRGBASingle, float, ColorRGBAHalf, Half>();
+		Assert.That(convertedBack, Is.EqualTo(original));
 	}
 }

@@ -1,5 +1,6 @@
 //This code is source generated. Do not edit manually.
 
+using AssetRipper.TextureDecoder.Rgb;
 using AssetRipper.TextureDecoder.Rgb.Formats;
 using System.Runtime.CompilerServices;
 
@@ -151,5 +152,41 @@ public partial class ColorRGBHalfTests
 			B = (Half)0.95f,
 			A = (Half)0.897f,
 		};
+	}
+	
+	[Test]
+	public void ConversionToColorRGBAHalfIsLossless()
+	{
+		ColorRGBHalf original = MakeRandomColor();
+		ColorRGBAHalf converted = original.Convert<ColorRGBHalf, Half, ColorRGBAHalf, Half>();
+		ColorRGBHalf convertedBack = converted.Convert<ColorRGBAHalf, Half, ColorRGBHalf, Half>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGBASingleIsLossless()
+	{
+		ColorRGBHalf original = MakeRandomColor();
+		ColorRGBASingle converted = original.Convert<ColorRGBHalf, Half, ColorRGBASingle, float>();
+		ColorRGBHalf convertedBack = converted.Convert<ColorRGBASingle, float, ColorRGBHalf, Half>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGBHalfIsLossless()
+	{
+		ColorRGBHalf original = MakeRandomColor();
+		ColorRGBHalf converted = original.Convert<ColorRGBHalf, Half, ColorRGBHalf, Half>();
+		ColorRGBHalf convertedBack = converted.Convert<ColorRGBHalf, Half, ColorRGBHalf, Half>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGBSingleIsLossless()
+	{
+		ColorRGBHalf original = MakeRandomColor();
+		ColorRGBSingle converted = original.Convert<ColorRGBHalf, Half, ColorRGBSingle, float>();
+		ColorRGBHalf convertedBack = converted.Convert<ColorRGBSingle, float, ColorRGBHalf, Half>();
+		Assert.That(convertedBack, Is.EqualTo(original));
 	}
 }
