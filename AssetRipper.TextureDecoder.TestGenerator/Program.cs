@@ -34,6 +34,7 @@ namespace AssetRipper.TextureDecoder.TestGenerator
 			new GenerationData(typeof(ColorRGBA16), 2),
 			new GenerationData(typeof(ColorRGBA32), 4),
 			new GenerationData(typeof(ColorRGBA32Signed), 4),
+			new GenerationData(typeof(ColorRGB32Half), 4),
 			new GenerationData(typeof(ColorRGBA64), 8),
 			new GenerationData(typeof(ColorRGBA64Signed), 8),
 			new GenerationData(typeof(ColorRGBAHalf), 8),
@@ -60,7 +61,7 @@ namespace AssetRipper.TextureDecoder.TestGenerator
 		static void Main()
 		{
 			Directory.CreateDirectory(OutputFolder);
-			
+
 			foreach (GenerationData data in dataList)
 			{
 				using MemoryStream memoryStream = new();
@@ -300,7 +301,7 @@ namespace AssetRipper.TextureDecoder.TestGenerator
 			textWriter.WriteLine($"{containingName} converted = original.{nameof(ColorExtensions.Convert)}<{currentName}, {currentData.ChannelTypeName}, {containingName}, {containingData.ChannelTypeName}>();");
 			textWriter.WriteLine($"{currentName} convertedBack = converted.{nameof(ColorExtensions.Convert)}<{containingName}, {containingData.ChannelTypeName}, {currentName}, {currentData.ChannelTypeName}>();");
 			textWriter.WriteLine("Assert.That(convertedBack, Is.EqualTo(original));");
-			
+
 			textWriter.Indent -= 1;
 			textWriter.WriteLine("}");
 		}
