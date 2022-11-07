@@ -3,55 +3,44 @@
     /// <summary>
     /// Also called R11G11B10_FLOAT
     /// </summary>
-    public struct ColorRGB32Half : IColor<Half>
+    /// <remarks>
+    /// <see href="https://github.com/microsoft/DirectX-Graphics-Samples/blob/e5ea2ac7430ce39e6f6d619fd85ae32581931589/MiniEngine/Core/Shaders/PixelPacking_R11G11B10.hlsli#L31-L37" />
+    /// </remarks>
+    public partial struct ColorRGB32Half : IColor<Half>
     {
         private uint bits;
 
-        [MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
-        private static Half ToHalf(ushort value)
-        {
-        #if NET5_0_OR_GREATER
-            return Unsafe.As<ushort, Half>(ref value);
-        #else
-            return ToHalf(value);
-        #endif
-        }
-
-        [MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
-        private static uint FromHalf(Half value)
-        {
-        #if NET5_0_OR_GREATER
-            return Unsafe.As<Half, ushort>(ref value);
-        #else
-            return FromHalf(value);
-        #endif
+        /// <summary>
+        /// 11 bits
+        /// </summary>
+        public Half R {
+            get {
+                var value = (ushort) ((bits << 4) & 0x7FF0);
+                return Unsafe.As<ushort, Half>(ref value);
+            }
+            set => bits = (uint) ((bits & ~0x7FF) | ((uint) Unsafe.As<Half, ushort>(ref value) & 0x7FF0) >> 4);
         }
 
         /// <summary>
-        /// 5 bits
+        /// 11 bits
         /// </summary>
-        public Half R
-        {
-            get => ToHalf((ushort) ((bits << 4) & 0x7FF0));
-            set => bits = (uint) ((bits & ~0x7FF) | (FromHalf(value) & 0x7FF0) >> 4);
+        public Half G {
+            get {
+                var value = (ushort) ((bits >> 7) & 0x7FF0);
+                return Unsafe.As<ushort, Half>(ref value);
+            }
+            set => bits = (uint) ((bits & ~0x3FF800) | (((uint) Unsafe.As<Half, ushort>(ref value) >> 4) & 0x7FF0) << 11);
         }
 
         /// <summary>
-        /// 6 bits
+        /// 10 bits
         /// </summary>
-        public Half G
-        {
-            get => ToHalf((ushort) ((bits >> 7) & 0x7FF0));
-            set => bits = (uint) ((bits & ~0x3FF800) | ((FromHalf(value) >> 4) & 0x7FF0) << 11);
-        }
-
-        /// <summary>
-        /// 5 bits
-        /// </summary>
-        public Half B
-        {
-            get => ToHalf((ushort) ((bits >> 17) & 0x7FE0));
-            set => bits = (bits & ~0xFFC00000) | (((FromHalf(value) >> 5) & 0x3FF) << 22);
+        public Half B {
+            get {
+                var value = (ushort) ((bits >> 17) & 0x7FE0);
+                return Unsafe.As<ushort, Half>(ref value);
+            }
+            set => bits = (bits & ~0xFFC00000) | ((((uint) Unsafe.As<Half, ushort>(ref value) >> 5) & 0x3FF) << 22);
         }
 
         public Half A
@@ -67,9 +56,9 @@
 
         public void SetChannels(Half r, Half g, Half b, Half a)
         {
-            bits = ((FromHalf(r) >> 4) & 0x7FF) |
-                   (((FromHalf(g) >> 4) & 0x7FF) << 11) |
-                   (((FromHalf(b) >> 5) & 0x3FF) << 22);
+            bits = (((uint) Unsafe.As<Half, ushort>(ref r) >> 4) & 0x7FF) |
+                   ((((uint) Unsafe.As<Half, ushort>(ref g) >> 4) & 0x7FF) << 11) |
+                   ((((uint) Unsafe.As<Half, ushort>(ref b) >> 5) & 0x3FF) << 22);
         }
     }
 }

@@ -1,5 +1,6 @@
 //This code is source generated. Do not edit manually.
 
+using AssetRipper.TextureDecoder.Rgb;
 using AssetRipper.TextureDecoder.Rgb.Formats;
 using System.Runtime.CompilerServices;
 
@@ -151,5 +152,41 @@ public partial class ColorRGB32HalfTests
 			B = (Half)0.95f,
 			A = (Half)0.897f,
 		};
+	}
+	
+	[Test]
+	public void ConversionToColorRGBAHalfIsLossless()
+	{
+		ColorRGB32Half original = MakeRandomColor();
+		ColorRGBAHalf converted = original.Convert<ColorRGB32Half, Half, ColorRGBAHalf, Half>();
+		ColorRGB32Half convertedBack = converted.Convert<ColorRGBAHalf, Half, ColorRGB32Half, Half>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGBASingleIsLossless()
+	{
+		ColorRGB32Half original = MakeRandomColor();
+		ColorRGBASingle converted = original.Convert<ColorRGB32Half, Half, ColorRGBASingle, float>();
+		ColorRGB32Half convertedBack = converted.Convert<ColorRGBASingle, float, ColorRGB32Half, Half>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGBHalfIsLossless()
+	{
+		ColorRGB32Half original = MakeRandomColor();
+		ColorRGBHalf converted = original.Convert<ColorRGB32Half, Half, ColorRGBHalf, Half>();
+		ColorRGB32Half convertedBack = converted.Convert<ColorRGBHalf, Half, ColorRGB32Half, Half>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGBSingleIsLossless()
+	{
+		ColorRGB32Half original = MakeRandomColor();
+		ColorRGBSingle converted = original.Convert<ColorRGB32Half, Half, ColorRGBSingle, float>();
+		ColorRGB32Half convertedBack = converted.Convert<ColorRGBSingle, float, ColorRGB32Half, Half>();
+		Assert.That(convertedBack, Is.EqualTo(original));
 	}
 }
