@@ -18,33 +18,33 @@ namespace AssetRipper.TextureDecoder.TestGenerator
 			new GenerationData(typeof(ColorARGB32), 4),
 			new GenerationData(typeof(ColorBGRA32), 4),
 			new GenerationData(typeof(ColorR16), 2),
+			new GenerationData(typeof(ColorR16Half), 2),
 			new GenerationData(typeof(ColorR16Signed), 2),
+			new GenerationData(typeof(ColorR32Single), 4),
 			new GenerationData(typeof(ColorR8), 1),
 			new GenerationData(typeof(ColorR8Signed), 1),
 			new GenerationData(typeof(ColorRG16), 2),
+			new GenerationData(typeof(ColorRG32Half), 4),
 			new GenerationData(typeof(ColorRG16Signed), 2),
 			new GenerationData(typeof(ColorRG32), 4),
 			new GenerationData(typeof(ColorRG32Signed), 4),
+			new GenerationData(typeof(ColorRG64Single), 8),
 			new GenerationData(typeof(ColorRGB16), 2),
 			new GenerationData(typeof(ColorRGB24), 3),
 			new GenerationData(typeof(ColorRGB24Signed), 3),
+			new GenerationData(typeof(ColorRGB32Half), 4),
 			new GenerationData(typeof(ColorRGB48), 6),
+			new GenerationData(typeof(ColorRGB48Half), 6),
 			new GenerationData(typeof(ColorRGB48Signed), 6),
+			new GenerationData(typeof(ColorRGB96Single), 12),
 			new GenerationData(typeof(ColorRGB9e5), 4),
+			new GenerationData(typeof(ColorRGBA128Single), 16),
 			new GenerationData(typeof(ColorRGBA16), 2),
 			new GenerationData(typeof(ColorRGBA32), 4),
 			new GenerationData(typeof(ColorRGBA32Signed), 4),
-			new GenerationData(typeof(ColorRGB32Half), 4),
 			new GenerationData(typeof(ColorRGBA64), 8),
+			new GenerationData(typeof(ColorRGBA64Half), 8),
 			new GenerationData(typeof(ColorRGBA64Signed), 8),
-			new GenerationData(typeof(ColorRGBAHalf), 8),
-			new GenerationData(typeof(ColorRGBASingle), 16),
-			new GenerationData(typeof(ColorRGBHalf), 6),
-			new GenerationData(typeof(ColorRGBSingle), 12),
-			new GenerationData(typeof(ColorRGHalf), 4),
-			new GenerationData(typeof(ColorRGSingle), 8),
-			new GenerationData(typeof(ColorRHalf), 2),
-			new GenerationData(typeof(ColorRSingle), 4),
 		};
 
 		private static readonly Dictionary<Type, ColorRandomValues> randomValueDictionary = new()
@@ -102,7 +102,7 @@ namespace AssetRipper.TextureDecoder.TestGenerator
 
 				string outputFilePath = $"{OutputFolder}{data.ColorType.Name}Tests.g.cs";
 				File.WriteAllBytes(outputFilePath, memoryStream.ToArray());
-				Console.WriteLine(outputFilePath);
+				Console.WriteLine(data.ColorType.Name);
 			}
 
 			Console.WriteLine("Done!");

@@ -6,12 +6,12 @@ using System.Runtime.CompilerServices;
 
 namespace AssetRipper.TextureDecoder.Tests.Formats;
 
-public partial class ColorRGBSingleTests
+public partial class ColorR32SingleTests
 {
 	[Test]
 	public void CorrectSizeTest()
 	{
-		Assert.That(Unsafe.SizeOf<ColorRGBSingle>(), Is.EqualTo(12));
+		Assert.That(Unsafe.SizeOf<ColorR32Single>(), Is.EqualTo(4));
 	}
 	
 	[Test]
@@ -143,7 +143,7 @@ public partial class ColorRGBSingleTests
 		});
 	}
 	
-	public static ColorRGBSingle MakeRandomColor()
+	public static ColorR32Single MakeRandomColor()
 	{
 		return new()
 		{
@@ -155,20 +155,38 @@ public partial class ColorRGBSingleTests
 	}
 	
 	[Test]
-	public void ConversionToColorRGBASingleIsLossless()
+	public void ConversionToColorR32SingleIsLossless()
 	{
-		ColorRGBSingle original = MakeRandomColor();
-		ColorRGBASingle converted = original.Convert<ColorRGBSingle, float, ColorRGBASingle, float>();
-		ColorRGBSingle convertedBack = converted.Convert<ColorRGBASingle, float, ColorRGBSingle, float>();
+		ColorR32Single original = MakeRandomColor();
+		ColorR32Single converted = original.Convert<ColorR32Single, float, ColorR32Single, float>();
+		ColorR32Single convertedBack = converted.Convert<ColorR32Single, float, ColorR32Single, float>();
 		Assert.That(convertedBack, Is.EqualTo(original));
 	}
 	
 	[Test]
-	public void ConversionToColorRGBSingleIsLossless()
+	public void ConversionToColorRG64SingleIsLossless()
 	{
-		ColorRGBSingle original = MakeRandomColor();
-		ColorRGBSingle converted = original.Convert<ColorRGBSingle, float, ColorRGBSingle, float>();
-		ColorRGBSingle convertedBack = converted.Convert<ColorRGBSingle, float, ColorRGBSingle, float>();
+		ColorR32Single original = MakeRandomColor();
+		ColorRG64Single converted = original.Convert<ColorR32Single, float, ColorRG64Single, float>();
+		ColorR32Single convertedBack = converted.Convert<ColorRG64Single, float, ColorR32Single, float>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGB96SingleIsLossless()
+	{
+		ColorR32Single original = MakeRandomColor();
+		ColorRGB96Single converted = original.Convert<ColorR32Single, float, ColorRGB96Single, float>();
+		ColorR32Single convertedBack = converted.Convert<ColorRGB96Single, float, ColorR32Single, float>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGBA128SingleIsLossless()
+	{
+		ColorR32Single original = MakeRandomColor();
+		ColorRGBA128Single converted = original.Convert<ColorR32Single, float, ColorRGBA128Single, float>();
+		ColorR32Single convertedBack = converted.Convert<ColorRGBA128Single, float, ColorR32Single, float>();
 		Assert.That(convertedBack, Is.EqualTo(original));
 	}
 }

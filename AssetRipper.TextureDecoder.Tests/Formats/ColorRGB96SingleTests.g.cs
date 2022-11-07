@@ -6,12 +6,12 @@ using System.Runtime.CompilerServices;
 
 namespace AssetRipper.TextureDecoder.Tests.Formats;
 
-public partial class ColorRGSingleTests
+public partial class ColorRGB96SingleTests
 {
 	[Test]
 	public void CorrectSizeTest()
 	{
-		Assert.That(Unsafe.SizeOf<ColorRGSingle>(), Is.EqualTo(8));
+		Assert.That(Unsafe.SizeOf<ColorRGB96Single>(), Is.EqualTo(12));
 	}
 	
 	[Test]
@@ -143,7 +143,7 @@ public partial class ColorRGSingleTests
 		});
 	}
 	
-	public static ColorRGSingle MakeRandomColor()
+	public static ColorRGB96Single MakeRandomColor()
 	{
 		return new()
 		{
@@ -155,29 +155,20 @@ public partial class ColorRGSingleTests
 	}
 	
 	[Test]
-	public void ConversionToColorRGBASingleIsLossless()
+	public void ConversionToColorRGB96SingleIsLossless()
 	{
-		ColorRGSingle original = MakeRandomColor();
-		ColorRGBASingle converted = original.Convert<ColorRGSingle, float, ColorRGBASingle, float>();
-		ColorRGSingle convertedBack = converted.Convert<ColorRGBASingle, float, ColorRGSingle, float>();
+		ColorRGB96Single original = MakeRandomColor();
+		ColorRGB96Single converted = original.Convert<ColorRGB96Single, float, ColorRGB96Single, float>();
+		ColorRGB96Single convertedBack = converted.Convert<ColorRGB96Single, float, ColorRGB96Single, float>();
 		Assert.That(convertedBack, Is.EqualTo(original));
 	}
 	
 	[Test]
-	public void ConversionToColorRGBSingleIsLossless()
+	public void ConversionToColorRGBA128SingleIsLossless()
 	{
-		ColorRGSingle original = MakeRandomColor();
-		ColorRGBSingle converted = original.Convert<ColorRGSingle, float, ColorRGBSingle, float>();
-		ColorRGSingle convertedBack = converted.Convert<ColorRGBSingle, float, ColorRGSingle, float>();
-		Assert.That(convertedBack, Is.EqualTo(original));
-	}
-	
-	[Test]
-	public void ConversionToColorRGSingleIsLossless()
-	{
-		ColorRGSingle original = MakeRandomColor();
-		ColorRGSingle converted = original.Convert<ColorRGSingle, float, ColorRGSingle, float>();
-		ColorRGSingle convertedBack = converted.Convert<ColorRGSingle, float, ColorRGSingle, float>();
+		ColorRGB96Single original = MakeRandomColor();
+		ColorRGBA128Single converted = original.Convert<ColorRGB96Single, float, ColorRGBA128Single, float>();
+		ColorRGB96Single convertedBack = converted.Convert<ColorRGBA128Single, float, ColorRGB96Single, float>();
 		Assert.That(convertedBack, Is.EqualTo(original));
 	}
 }

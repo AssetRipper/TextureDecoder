@@ -6,12 +6,12 @@ using System.Runtime.CompilerServices;
 
 namespace AssetRipper.TextureDecoder.Tests.Formats;
 
-public partial class ColorRGBASingleTests
+public partial class ColorRGBA128SingleTests
 {
 	[Test]
 	public void CorrectSizeTest()
 	{
-		Assert.That(Unsafe.SizeOf<ColorRGBASingle>(), Is.EqualTo(16));
+		Assert.That(Unsafe.SizeOf<ColorRGBA128Single>(), Is.EqualTo(16));
 	}
 	
 	[Test]
@@ -143,7 +143,7 @@ public partial class ColorRGBASingleTests
 		});
 	}
 	
-	public static ColorRGBASingle MakeRandomColor()
+	public static ColorRGBA128Single MakeRandomColor()
 	{
 		return new()
 		{
@@ -155,11 +155,11 @@ public partial class ColorRGBASingleTests
 	}
 	
 	[Test]
-	public void ConversionToColorRGBASingleIsLossless()
+	public void ConversionToColorRGBA128SingleIsLossless()
 	{
-		ColorRGBASingle original = MakeRandomColor();
-		ColorRGBASingle converted = original.Convert<ColorRGBASingle, float, ColorRGBASingle, float>();
-		ColorRGBASingle convertedBack = converted.Convert<ColorRGBASingle, float, ColorRGBASingle, float>();
+		ColorRGBA128Single original = MakeRandomColor();
+		ColorRGBA128Single converted = original.Convert<ColorRGBA128Single, float, ColorRGBA128Single, float>();
+		ColorRGBA128Single convertedBack = converted.Convert<ColorRGBA128Single, float, ColorRGBA128Single, float>();
 		Assert.That(convertedBack, Is.EqualTo(original));
 	}
 }

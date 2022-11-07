@@ -68,15 +68,15 @@ internal static class Program
 		( "ColorRGB48Signed", typeof(short), true, true, true, false ),
 		( "ColorRGBA64Signed", typeof(short), true, true, true, true ),
 
-		( "ColorRHalf", typeof(Half), true, false, false, false ),
-		( "ColorRGHalf", typeof(Half), true, true, false, false ),
-		( "ColorRGBHalf", typeof(Half), true, true, true, false ),
-		( "ColorRGBAHalf", typeof(Half), true, true, true, true ),
+		( "ColorR16Half", typeof(Half), true, false, false, false ),
+		( "ColorRG32Half", typeof(Half), true, true, false, false ),
+		( "ColorRGB48Half", typeof(Half), true, true, true, false ),
+		( "ColorRGBA64Half", typeof(Half), true, true, true, true ),
 
-		( "ColorRSingle", typeof(float), true, false, false, false ),
-		( "ColorRGSingle", typeof(float), true, true, false, false ),
-		( "ColorRGBSingle", typeof(float), true, true, true, false ),
-		( "ColorRGBASingle", typeof(float), true, true, true, true ),
+		( "ColorR32Single", typeof(float), true, false, false, false ),
+		( "ColorRG64Single", typeof(float), true, true, false, false ),
+		( "ColorRGB96Single", typeof(float), true, true, true, false ),
+		( "ColorRGBA128Single", typeof(float), true, true, true, true ),
 	};
 
 	/// <summary>

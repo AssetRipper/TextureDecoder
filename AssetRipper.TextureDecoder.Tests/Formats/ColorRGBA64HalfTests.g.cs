@@ -6,12 +6,12 @@ using System.Runtime.CompilerServices;
 
 namespace AssetRipper.TextureDecoder.Tests.Formats;
 
-public partial class ColorRSingleTests
+public partial class ColorRGBA64HalfTests
 {
 	[Test]
 	public void CorrectSizeTest()
 	{
-		Assert.That(Unsafe.SizeOf<ColorRSingle>(), Is.EqualTo(4));
+		Assert.That(Unsafe.SizeOf<ColorRGBA64Half>(), Is.EqualTo(8));
 	}
 	
 	[Test]
@@ -57,7 +57,7 @@ public partial class ColorRSingleTests
 		var g = color.G;
 		var b = color.B;
 		var a = color.A;
-		color.R = 0.333f;
+		color.R = (Half)0.333f;
 		Assert.Multiple(() =>
 		{
 			Assert.That(color.G, Is.EqualTo(g));
@@ -73,7 +73,7 @@ public partial class ColorRSingleTests
 		var r = color.R;
 		var b = color.B;
 		var a = color.A;
-		color.G = 0.333f;
+		color.G = (Half)0.333f;
 		Assert.Multiple(() =>
 		{
 			Assert.That(color.R, Is.EqualTo(r));
@@ -89,7 +89,7 @@ public partial class ColorRSingleTests
 		var r = color.R;
 		var g = color.G;
 		var a = color.A;
-		color.B = 0.333f;
+		color.B = (Half)0.333f;
 		Assert.Multiple(() =>
 		{
 			Assert.That(color.R, Is.EqualTo(r));
@@ -105,7 +105,7 @@ public partial class ColorRSingleTests
 		var r = color.R;
 		var g = color.G;
 		var b = color.B;
-		color.A = 0.333f;
+		color.A = (Half)0.333f;
 		Assert.Multiple(() =>
 		{
 			Assert.That(color.R, Is.EqualTo(r));
@@ -143,50 +143,32 @@ public partial class ColorRSingleTests
 		});
 	}
 	
-	public static ColorRSingle MakeRandomColor()
+	public static ColorRGBA64Half MakeRandomColor()
 	{
 		return new()
 		{
-			R = 0.447f,
-			G = 0.224f,
-			B = 0.95f,
-			A = 0.897f,
+			R = (Half)0.447f,
+			G = (Half)0.224f,
+			B = (Half)0.95f,
+			A = (Half)0.897f,
 		};
 	}
 	
 	[Test]
-	public void ConversionToColorRGBASingleIsLossless()
+	public void ConversionToColorRGBA128SingleIsLossless()
 	{
-		ColorRSingle original = MakeRandomColor();
-		ColorRGBASingle converted = original.Convert<ColorRSingle, float, ColorRGBASingle, float>();
-		ColorRSingle convertedBack = converted.Convert<ColorRGBASingle, float, ColorRSingle, float>();
+		ColorRGBA64Half original = MakeRandomColor();
+		ColorRGBA128Single converted = original.Convert<ColorRGBA64Half, Half, ColorRGBA128Single, float>();
+		ColorRGBA64Half convertedBack = converted.Convert<ColorRGBA128Single, float, ColorRGBA64Half, Half>();
 		Assert.That(convertedBack, Is.EqualTo(original));
 	}
 	
 	[Test]
-	public void ConversionToColorRGBSingleIsLossless()
+	public void ConversionToColorRGBA64HalfIsLossless()
 	{
-		ColorRSingle original = MakeRandomColor();
-		ColorRGBSingle converted = original.Convert<ColorRSingle, float, ColorRGBSingle, float>();
-		ColorRSingle convertedBack = converted.Convert<ColorRGBSingle, float, ColorRSingle, float>();
-		Assert.That(convertedBack, Is.EqualTo(original));
-	}
-	
-	[Test]
-	public void ConversionToColorRGSingleIsLossless()
-	{
-		ColorRSingle original = MakeRandomColor();
-		ColorRGSingle converted = original.Convert<ColorRSingle, float, ColorRGSingle, float>();
-		ColorRSingle convertedBack = converted.Convert<ColorRGSingle, float, ColorRSingle, float>();
-		Assert.That(convertedBack, Is.EqualTo(original));
-	}
-	
-	[Test]
-	public void ConversionToColorRSingleIsLossless()
-	{
-		ColorRSingle original = MakeRandomColor();
-		ColorRSingle converted = original.Convert<ColorRSingle, float, ColorRSingle, float>();
-		ColorRSingle convertedBack = converted.Convert<ColorRSingle, float, ColorRSingle, float>();
+		ColorRGBA64Half original = MakeRandomColor();
+		ColorRGBA64Half converted = original.Convert<ColorRGBA64Half, Half, ColorRGBA64Half, Half>();
+		ColorRGBA64Half convertedBack = converted.Convert<ColorRGBA64Half, Half, ColorRGBA64Half, Half>();
 		Assert.That(convertedBack, Is.EqualTo(original));
 	}
 }

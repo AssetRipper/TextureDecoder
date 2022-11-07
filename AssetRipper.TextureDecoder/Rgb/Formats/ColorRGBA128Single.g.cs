@@ -4,24 +4,16 @@ using AssetRipper.TextureDecoder.Attributes;
 
 namespace AssetRipper.TextureDecoder.Rgb.Formats
 {
-	[RgbaAttribute(RedChannel = true, GreenChannel = true, BlueChannel = false, AlphaChannel = false, FullyUtilizedChannels = true)]
-	public partial struct ColorRGSingle : IColor<float>
+	[RgbaAttribute(RedChannel = true, GreenChannel = true, BlueChannel = true, AlphaChannel = true, FullyUtilizedChannels = true)]
+	public partial struct ColorRGBA128Single : IColor<float>
 	{
 		public float R { get; set; }
 		
 		public float G { get; set; }
 		
-		public float B 
-		{
-			get => 0f;
-			set { }
-		}
+		public float B { get; set; }
 		
-		public float A 
-		{
-			get => 1f;
-			set { }
-		}
+		public float A { get; set; }
 		
 		public void GetChannels(out float r, out float g, out float b, out float a)
 		{

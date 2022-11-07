@@ -6,12 +6,12 @@ using System.Runtime.CompilerServices;
 
 namespace AssetRipper.TextureDecoder.Tests.Formats;
 
-public partial class ColorRGHalfTests
+public partial class ColorRG32HalfTests
 {
 	[Test]
 	public void CorrectSizeTest()
 	{
-		Assert.That(Unsafe.SizeOf<ColorRGHalf>(), Is.EqualTo(4));
+		Assert.That(Unsafe.SizeOf<ColorRG32Half>(), Is.EqualTo(4));
 	}
 	
 	[Test]
@@ -143,7 +143,7 @@ public partial class ColorRGHalfTests
 		});
 	}
 	
-	public static ColorRGHalf MakeRandomColor()
+	public static ColorRG32Half MakeRandomColor()
 	{
 		return new()
 		{
@@ -155,56 +155,56 @@ public partial class ColorRGHalfTests
 	}
 	
 	[Test]
-	public void ConversionToColorRGBAHalfIsLossless()
+	public void ConversionToColorRG32HalfIsLossless()
 	{
-		ColorRGHalf original = MakeRandomColor();
-		ColorRGBAHalf converted = original.Convert<ColorRGHalf, Half, ColorRGBAHalf, Half>();
-		ColorRGHalf convertedBack = converted.Convert<ColorRGBAHalf, Half, ColorRGHalf, Half>();
+		ColorRG32Half original = MakeRandomColor();
+		ColorRG32Half converted = original.Convert<ColorRG32Half, Half, ColorRG32Half, Half>();
+		ColorRG32Half convertedBack = converted.Convert<ColorRG32Half, Half, ColorRG32Half, Half>();
 		Assert.That(convertedBack, Is.EqualTo(original));
 	}
 	
 	[Test]
-	public void ConversionToColorRGBASingleIsLossless()
+	public void ConversionToColorRG64SingleIsLossless()
 	{
-		ColorRGHalf original = MakeRandomColor();
-		ColorRGBASingle converted = original.Convert<ColorRGHalf, Half, ColorRGBASingle, float>();
-		ColorRGHalf convertedBack = converted.Convert<ColorRGBASingle, float, ColorRGHalf, Half>();
+		ColorRG32Half original = MakeRandomColor();
+		ColorRG64Single converted = original.Convert<ColorRG32Half, Half, ColorRG64Single, float>();
+		ColorRG32Half convertedBack = converted.Convert<ColorRG64Single, float, ColorRG32Half, Half>();
 		Assert.That(convertedBack, Is.EqualTo(original));
 	}
 	
 	[Test]
-	public void ConversionToColorRGBHalfIsLossless()
+	public void ConversionToColorRGB48HalfIsLossless()
 	{
-		ColorRGHalf original = MakeRandomColor();
-		ColorRGBHalf converted = original.Convert<ColorRGHalf, Half, ColorRGBHalf, Half>();
-		ColorRGHalf convertedBack = converted.Convert<ColorRGBHalf, Half, ColorRGHalf, Half>();
+		ColorRG32Half original = MakeRandomColor();
+		ColorRGB48Half converted = original.Convert<ColorRG32Half, Half, ColorRGB48Half, Half>();
+		ColorRG32Half convertedBack = converted.Convert<ColorRGB48Half, Half, ColorRG32Half, Half>();
 		Assert.That(convertedBack, Is.EqualTo(original));
 	}
 	
 	[Test]
-	public void ConversionToColorRGBSingleIsLossless()
+	public void ConversionToColorRGB96SingleIsLossless()
 	{
-		ColorRGHalf original = MakeRandomColor();
-		ColorRGBSingle converted = original.Convert<ColorRGHalf, Half, ColorRGBSingle, float>();
-		ColorRGHalf convertedBack = converted.Convert<ColorRGBSingle, float, ColorRGHalf, Half>();
+		ColorRG32Half original = MakeRandomColor();
+		ColorRGB96Single converted = original.Convert<ColorRG32Half, Half, ColorRGB96Single, float>();
+		ColorRG32Half convertedBack = converted.Convert<ColorRGB96Single, float, ColorRG32Half, Half>();
 		Assert.That(convertedBack, Is.EqualTo(original));
 	}
 	
 	[Test]
-	public void ConversionToColorRGHalfIsLossless()
+	public void ConversionToColorRGBA128SingleIsLossless()
 	{
-		ColorRGHalf original = MakeRandomColor();
-		ColorRGHalf converted = original.Convert<ColorRGHalf, Half, ColorRGHalf, Half>();
-		ColorRGHalf convertedBack = converted.Convert<ColorRGHalf, Half, ColorRGHalf, Half>();
+		ColorRG32Half original = MakeRandomColor();
+		ColorRGBA128Single converted = original.Convert<ColorRG32Half, Half, ColorRGBA128Single, float>();
+		ColorRG32Half convertedBack = converted.Convert<ColorRGBA128Single, float, ColorRG32Half, Half>();
 		Assert.That(convertedBack, Is.EqualTo(original));
 	}
 	
 	[Test]
-	public void ConversionToColorRGSingleIsLossless()
+	public void ConversionToColorRGBA64HalfIsLossless()
 	{
-		ColorRGHalf original = MakeRandomColor();
-		ColorRGSingle converted = original.Convert<ColorRGHalf, Half, ColorRGSingle, float>();
-		ColorRGHalf convertedBack = converted.Convert<ColorRGSingle, float, ColorRGHalf, Half>();
+		ColorRG32Half original = MakeRandomColor();
+		ColorRGBA64Half converted = original.Convert<ColorRG32Half, Half, ColorRGBA64Half, Half>();
+		ColorRG32Half convertedBack = converted.Convert<ColorRGBA64Half, Half, ColorRG32Half, Half>();
 		Assert.That(convertedBack, Is.EqualTo(original));
 	}
 }

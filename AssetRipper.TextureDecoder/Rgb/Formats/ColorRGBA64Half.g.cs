@@ -5,7 +5,7 @@ using AssetRipper.TextureDecoder.Attributes;
 namespace AssetRipper.TextureDecoder.Rgb.Formats
 {
 	[RgbaAttribute(RedChannel = true, GreenChannel = true, BlueChannel = true, AlphaChannel = true, FullyUtilizedChannels = true)]
-	public partial struct ColorRGBAHalf : IColor<Half>
+	public partial struct ColorRGBA64Half : IColor<Half>
 	{
 		public Half R { get; set; }
 		
