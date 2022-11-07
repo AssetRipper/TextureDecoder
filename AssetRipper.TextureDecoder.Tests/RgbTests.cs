@@ -1,4 +1,7 @@
-﻿namespace AssetRipper.TextureDecoder.Tests
+﻿using AssetRipper.TextureDecoder.Rgb;
+using AssetRipper.TextureDecoder.Rgb.Formats;
+
+namespace AssetRipper.TextureDecoder.Tests
 {
 	public sealed class RgbTests
 	{
@@ -210,6 +213,21 @@
 			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestFilesFolder + "test.rgba64");
 			int bytesRead = Rgb.RgbConverter.RGBA64ToBGRA32(data, 512, 512, out _);
 			Assert.That(bytesRead, Is.EqualTo(data.Length));
+		}
+
+		[Test]
+		public void ConvertRGB32HalfTest()
+		{
+			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.RgbTestFilesFolder + "test.rgb24");
+			RgbConverter.Convert<ColorRGB24, byte, ColorRGB32Half, Half>(data, 256, 256, out var halfData);
+			int legacyBytesRead = RgbConverter.R11G11B10FloatToBGRA32(halfData, 256, 256, out var legacyRgbData);
+			int bytesRead = RgbConverter.Convert<ColorRGB32Half, Half, ColorBGRA32, byte>(halfData, 256, 256, out var rgbData);
+			Assert.Multiple(() =>
+			{
+				Assert.That(bytesRead, Is.EqualTo(halfData.Length));
+				Assert.That(legacyBytesRead, Is.EqualTo(halfData.Length));
+				Assert.That(rgbData, Is.EqualTo(legacyRgbData));
+			});
 		}
 	}
 }
