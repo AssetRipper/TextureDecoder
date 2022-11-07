@@ -89,8 +89,8 @@ internal static class Program
 		( "ColorBGRA32", typeof(byte), true, true, true, true, true ),
 		( "ColorRGB16", typeof(byte), true, true, true, false, false ),
 		( "ColorRGB9e5", typeof(double), true, true, true, false, false ),
-        ( "ColorRGBA16", typeof(byte), true, true, true, true, false ),
-        ( "ColorRGB32Half", typeof(Half), true, true, true, false, false ),
+		( "ColorRGBA16", typeof(byte), true, true, true, true, false ),
+		( "ColorRGB32Half", typeof(Half), true, true, true, false, false ),
 	};
 
 	static void Main()
