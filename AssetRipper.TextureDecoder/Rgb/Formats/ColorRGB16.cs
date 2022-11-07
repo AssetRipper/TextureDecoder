@@ -3,7 +3,7 @@
 	/// <summary>
 	/// Also called RGB 565
 	/// </summary>
-	public struct ColorRGB16 : IColor<byte>
+	public partial struct ColorRGB16 : IColor<byte>
 	{
 		private ushort bits;
 

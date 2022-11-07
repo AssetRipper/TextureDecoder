@@ -1,5 +1,6 @@
 //This code is source generated. Do not edit manually.
 
+using AssetRipper.TextureDecoder.Rgb;
 using AssetRipper.TextureDecoder.Rgb.Formats;
 using System.Runtime.CompilerServices;
 
@@ -151,5 +152,95 @@ public partial class ColorRGB16Tests
 			B = 0b10001111,
 			A = 0b11000111,
 		};
+	}
+	
+	[Test]
+	public void ConversionToColorARGB32IsLossless()
+	{
+		ColorRGB16 original = MakeRandomColor();
+		ColorARGB32 converted = original.Convert<ColorRGB16, byte, ColorARGB32, byte>();
+		ColorRGB16 convertedBack = converted.Convert<ColorARGB32, byte, ColorRGB16, byte>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorBGRA32IsLossless()
+	{
+		ColorRGB16 original = MakeRandomColor();
+		ColorBGRA32 converted = original.Convert<ColorRGB16, byte, ColorBGRA32, byte>();
+		ColorRGB16 convertedBack = converted.Convert<ColorBGRA32, byte, ColorRGB16, byte>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGB24IsLossless()
+	{
+		ColorRGB16 original = MakeRandomColor();
+		ColorRGB24 converted = original.Convert<ColorRGB16, byte, ColorRGB24, byte>();
+		ColorRGB16 convertedBack = converted.Convert<ColorRGB24, byte, ColorRGB16, byte>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGB24SignedIsLossless()
+	{
+		ColorRGB16 original = MakeRandomColor();
+		ColorRGB24Signed converted = original.Convert<ColorRGB16, byte, ColorRGB24Signed, sbyte>();
+		ColorRGB16 convertedBack = converted.Convert<ColorRGB24Signed, sbyte, ColorRGB16, byte>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGB48IsLossless()
+	{
+		ColorRGB16 original = MakeRandomColor();
+		ColorRGB48 converted = original.Convert<ColorRGB16, byte, ColorRGB48, ushort>();
+		ColorRGB16 convertedBack = converted.Convert<ColorRGB48, ushort, ColorRGB16, byte>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGB48SignedIsLossless()
+	{
+		ColorRGB16 original = MakeRandomColor();
+		ColorRGB48Signed converted = original.Convert<ColorRGB16, byte, ColorRGB48Signed, short>();
+		ColorRGB16 convertedBack = converted.Convert<ColorRGB48Signed, short, ColorRGB16, byte>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGBA32IsLossless()
+	{
+		ColorRGB16 original = MakeRandomColor();
+		ColorRGBA32 converted = original.Convert<ColorRGB16, byte, ColorRGBA32, byte>();
+		ColorRGB16 convertedBack = converted.Convert<ColorRGBA32, byte, ColorRGB16, byte>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGBA32SignedIsLossless()
+	{
+		ColorRGB16 original = MakeRandomColor();
+		ColorRGBA32Signed converted = original.Convert<ColorRGB16, byte, ColorRGBA32Signed, sbyte>();
+		ColorRGB16 convertedBack = converted.Convert<ColorRGBA32Signed, sbyte, ColorRGB16, byte>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGBA64IsLossless()
+	{
+		ColorRGB16 original = MakeRandomColor();
+		ColorRGBA64 converted = original.Convert<ColorRGB16, byte, ColorRGBA64, ushort>();
+		ColorRGB16 convertedBack = converted.Convert<ColorRGBA64, ushort, ColorRGB16, byte>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGBA64SignedIsLossless()
+	{
+		ColorRGB16 original = MakeRandomColor();
+		ColorRGBA64Signed converted = original.Convert<ColorRGB16, byte, ColorRGBA64Signed, short>();
+		ColorRGB16 convertedBack = converted.Convert<ColorRGBA64Signed, short, ColorRGB16, byte>();
+		Assert.That(convertedBack, Is.EqualTo(original));
 	}
 }

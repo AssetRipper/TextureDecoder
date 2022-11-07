@@ -1,5 +1,24 @@
 ﻿namespace AssetRipper.TextureDecoder.Rgb
 {
+	/// <summary>
+	/// An <see langword="interface"/> for handling color formats with up to 4 channels.
+	/// </summary>
+	/// <remarks>
+	/// When used as a generic type constraint, the methods and properties get devirtualized by the JIT compiler.
+	/// This prevents boxing when the implementing type is a <see langword="struct"/>.
+	/// </remarks>
+	/// <typeparam name="T">
+	/// Supported types are:
+	/// <list type="bullet">
+	/// <item><see cref="sbyte"/></item>
+	/// <item><see cref="byte"/></item>
+	/// <item><see cref="short"/></item>
+	/// <item><see cref="ushort"/></item>
+	/// <item><see cref="Half"/></item>
+	/// <item><see cref="float"/></item>
+	/// <item><see cref="double"/></item>
+	/// </list>
+	/// </typeparam>
 	public interface IColor<T> where T : unmanaged
 	{
 		/// <summary>
@@ -23,7 +42,7 @@
 		void SetChannels(T r, T g, T b, T a);
 	}
 
-	internal static class ColorExtensions
+	public static class ColorExtensions
 	{
 		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		internal static void SetConvertedChannels<TThis, TThisArg, TSourceArg>(this ref TThis color, TSourceArg r, TSourceArg g, TSourceArg b, TSourceArg a)
@@ -36,6 +55,26 @@
 					ConversionUtilities.ConvertValue<TSourceArg, TThisArg>(g),
 					ConversionUtilities.ConvertValue<TSourceArg, TThisArg>(b),
 					ConversionUtilities.ConvertValue<TSourceArg, TThisArg>(a));
+		}
+
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
+		public static TTarget Convert<TThis, TThisArg, TTarget, TTargetArg>(this TThis color)
+			where TThisArg : unmanaged
+			where TTargetArg : unmanaged
+			where TThis : unmanaged, IColor<TThisArg>
+			where TTarget : unmanaged, IColor<TTargetArg>
+		{
+			if (typeof(TThis) == typeof(TTarget))
+			{
+				return Unsafe.As<TThis, TTarget>(ref color);
+			}
+			else
+			{
+				TTarget destination = default;
+				color.GetChannels(out TThisArg r, out TThisArg g, out TThisArg b, out TThisArg a);
+				destination.SetConvertedChannels<TTarget, TTargetArg, TThisArg>(r, g, b, a);
+				return destination;
+			}
 		}
 	}
 }

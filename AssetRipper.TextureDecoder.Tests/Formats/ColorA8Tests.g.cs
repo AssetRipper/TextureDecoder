@@ -1,5 +1,6 @@
 //This code is source generated. Do not edit manually.
 
+using AssetRipper.TextureDecoder.Rgb;
 using AssetRipper.TextureDecoder.Rgb.Formats;
 using System.Runtime.CompilerServices;
 
@@ -151,5 +152,68 @@ public partial class ColorA8Tests
 			B = 0b10001111,
 			A = 0b11000111,
 		};
+	}
+	
+	[Test]
+	public void ConversionToColorA8IsLossless()
+	{
+		ColorA8 original = MakeRandomColor();
+		ColorA8 converted = original.Convert<ColorA8, byte, ColorA8, byte>();
+		ColorA8 convertedBack = converted.Convert<ColorA8, byte, ColorA8, byte>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorARGB32IsLossless()
+	{
+		ColorA8 original = MakeRandomColor();
+		ColorARGB32 converted = original.Convert<ColorA8, byte, ColorARGB32, byte>();
+		ColorA8 convertedBack = converted.Convert<ColorARGB32, byte, ColorA8, byte>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorBGRA32IsLossless()
+	{
+		ColorA8 original = MakeRandomColor();
+		ColorBGRA32 converted = original.Convert<ColorA8, byte, ColorBGRA32, byte>();
+		ColorA8 convertedBack = converted.Convert<ColorBGRA32, byte, ColorA8, byte>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGBA32IsLossless()
+	{
+		ColorA8 original = MakeRandomColor();
+		ColorRGBA32 converted = original.Convert<ColorA8, byte, ColorRGBA32, byte>();
+		ColorA8 convertedBack = converted.Convert<ColorRGBA32, byte, ColorA8, byte>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGBA32SignedIsLossless()
+	{
+		ColorA8 original = MakeRandomColor();
+		ColorRGBA32Signed converted = original.Convert<ColorA8, byte, ColorRGBA32Signed, sbyte>();
+		ColorA8 convertedBack = converted.Convert<ColorRGBA32Signed, sbyte, ColorA8, byte>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGBA64IsLossless()
+	{
+		ColorA8 original = MakeRandomColor();
+		ColorRGBA64 converted = original.Convert<ColorA8, byte, ColorRGBA64, ushort>();
+		ColorA8 convertedBack = converted.Convert<ColorRGBA64, ushort, ColorA8, byte>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGBA64SignedIsLossless()
+	{
+		ColorA8 original = MakeRandomColor();
+		ColorRGBA64Signed converted = original.Convert<ColorA8, byte, ColorRGBA64Signed, short>();
+		ColorA8 convertedBack = converted.Convert<ColorRGBA64Signed, short, ColorA8, byte>();
+		Assert.That(convertedBack, Is.EqualTo(original));
 	}
 }
