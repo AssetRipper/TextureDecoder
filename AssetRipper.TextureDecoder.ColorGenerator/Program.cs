@@ -25,7 +25,7 @@ internal static class Program
 		{ typeof(sbyte), "sbyte.MaxValue" },
 		{ typeof(short), "short.MaxValue" },
 		{ typeof(ushort), "ushort.MaxValue" },
-		{ typeof(Half), "(Half)1" },
+		{ typeof(Half), "Half.One" },
 		{ typeof(float), "1f" },
 		{ typeof(double), "1d" },
 	};
@@ -173,7 +173,7 @@ internal static class Program
 
 		WriteGetChannels(writer, typeName);
 		writer.WriteLine();
-		WriteSetChannels(writer, typeName);
+		WriteSetChannels(writer, type, hasRed, hasGreen, hasBlue, hasAlpha);
 
 		writer.Indent--;
 		writer.WriteLine('}');
@@ -187,17 +187,36 @@ internal static class Program
 		writer.WriteLine($"public void GetChannels(out {typeName} r, out {typeName} g, out {typeName} b, out {typeName} a)");
 		writer.WriteLine('{');
 		writer.Indent++;
-		writer.WriteLine("DefaultColorMethods.GetChannels(this, out r, out g, out b, out a);");
+		writer.WriteLine("r = R;");
+		writer.WriteLine("g = G;");
+		writer.WriteLine("b = B;");
+		writer.WriteLine("a = A;");
 		writer.Indent--;
 		writer.WriteLine('}');
 	}
 
-	private static void WriteSetChannels(IndentedTextWriter writer, string typeName)
+	private static void WriteSetChannels(IndentedTextWriter writer, Type type, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha)
 	{
+		string typeName = TypeNames[type];
 		writer.WriteLine($"public void SetChannels({typeName} r, {typeName} g, {typeName} b, {typeName} a)");
 		writer.WriteLine('{');
 		writer.Indent++;
-		writer.WriteLine("DefaultColorMethods.SetChannels(ref this, r, g, b, a);");
+		if (hasRed)
+		{
+			writer.WriteLine("R = r;");
+		}
+		if (hasGreen)
+		{
+			writer.WriteLine("G = g;");
+		}
+		if (hasBlue)
+		{
+			writer.WriteLine("B = b;");
+		}
+		if (hasAlpha)
+		{
+			writer.WriteLine("A = a;");
+		}
 		writer.Indent--;
 		writer.WriteLine('}');
 	}
