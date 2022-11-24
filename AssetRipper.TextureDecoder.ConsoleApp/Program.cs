@@ -10,65 +10,75 @@ using AssetRipper.TextureDecoder.Yuy2;
 
 namespace AssetRipper.TextureDecoder.ConsoleApp;
 
-internal static class Program
+internal static partial class Program
 {
 	static void Main(string[] args)
 	{
 		if (args.Length < 4)
 		{
-			Console.WriteLine("Format: {path} {type} {width} {height} {args4} {args5}");
+			Console.WriteLine("Format: {path} {inputType} {outputType} {width} {height} {args5} {args6}");
 			return;
 		}
 		string path = args[0];
-		string type = args[1].ToLowerInvariant();
-		int width = int.Parse(args[2]);
-		int height = int.Parse(args[3]);
-		string args4 = args.GetArgument(4);
+		string inputType = args[1].ToLowerInvariant();
+		string outputType = args[2].ToLowerInvariant();
+		int width = int.Parse(args[3]);
+		int height = int.Parse(args[4]);
 		string args5 = args.GetArgument(5);
+		string args6 = args.GetArgument(6);
 		byte[] data = File.ReadAllBytes(path);
 
 		DirectBitmap<ColorBGRA32, byte> bitmap = new DirectBitmap<ColorBGRA32, byte>(width, height);
-		switch (type)
+		switch (inputType)
 		{
 			case "astc":
-				DecodeAstc(data, width, height, args4, args5, bitmap.Bits);
+				DecodeAstc(data, width, height, args5, args6, bitmap.Bits);
 				break;
 			case "atc":
-				DecodeAtc(data, width, height, args4, bitmap.Bits);
+				DecodeAtc(data, width, height, args5, bitmap.Bits);
 				break;
 			case "bc":
-				DecodeBc(data, width, height, args4, args5, bitmap.Bits);
+				DecodeBc(data, width, height, args5, args6, bitmap.Bits);
 				break;
 			case "dxt":
-				DecodeDxt(data, width, height, args4, bitmap.Bits);
+				DecodeDxt(data, width, height, args5, bitmap.Bits);
 				break;
 			case "etc":
-				DecodeEtc(data, width, height, args4, bitmap.Bits);
+				DecodeEtc(data, width, height, args5, bitmap.Bits);
 				break;
 			case "pvrtc":
-				DecodePvrtc(data, width, height, args4, bitmap.Bits);
+				DecodePvrtc(data, width, height, args5, bitmap.Bits);
 				break;
 			case "rgb":
-				DecodeRgb(data, width, height, args4, bitmap.Bits);
+				DecodeRgb(data, width, height, args5, bitmap.Bits);
 				break;
 			case "yuy2":
 				Yuy2Decoder.DecompressYUY2(data, width, height, bitmap.Bits);
 				break;
 			default:
-				throw new NotSupportedException(type);
+				throw new NotSupportedException(inputType);
 		}
 
 		string dirPath = Path.GetDirectoryName(path) ?? Environment.CurrentDirectory;
-		string name = Path.GetFileNameWithoutExtension(path);
-		string newPath = Path.Combine(dirPath, name + ".png");
-		if (OperatingSystem.IsWindows())
+		string name = Path.GetFileName(path);
+		
+		switch (outputType)
 		{
-			bitmap.FlipY();
-			bitmap.SaveAsPng(newPath);
-		}
-		else
-		{
-			throw new NotSupportedException("Only supported on Windows");
+			case "png":
+				{
+					string newPath = Path.Combine(dirPath, name + ".png");
+					bitmap.FlipY();
+					bitmap.SaveAsPng(newPath);
+				}
+				break;
+			case "bgra":
+				{
+					string newPath = Path.Combine(dirPath, name + ".bgra");
+					WriteAllBytes(newPath, bitmap.Bits);
+				}
+				break;
+			default:
+				throw new NotSupportedException(outputType);
 		}
 
 		Console.WriteLine("Done!");
@@ -81,8 +91,8 @@ internal static class Program
 
 	private static void DecodeAstc(ReadOnlySpan<byte> input, int width, int height, string blockXSizeString, string blockYSizeString, Span<byte> output)
 	{
-		Console.WriteLine("Arg at index 4 : blockXSize");
-		Console.WriteLine("Arg at index 5 : blockYSize");
+		Console.WriteLine("Arg at index 5 : blockXSize");
+		Console.WriteLine("Arg at index 6 : blockYSize");
 		int blockXSize = int.Parse(blockXSizeString);
 		int blockYSize = int.Parse(blockYSizeString);
 		AstcDecoder.DecodeASTC(input, width, height, blockXSize, blockYSize, output);
@@ -90,7 +100,7 @@ internal static class Program
 
 	private static void DecodeAtc(ReadOnlySpan<byte> input, int width, int height, string modeString, Span<byte> output)
 	{
-		Console.WriteLine("Arg at index 4 : mode");
+		Console.WriteLine("Arg at index 5 : mode");
 		Console.WriteLine("  0 - ATC RGB4");
 		Console.WriteLine("  1 - ATC RGBA8");
 		int mode = int.Parse(modeString);
@@ -110,7 +120,7 @@ internal static class Program
 
 	private static void DecodeBc(ReadOnlySpan<byte> input, int width, int height, string modeString, string isSignedString, Span<byte> output)
 	{
-		Console.WriteLine("Arg at index 4 : mode");
+		Console.WriteLine("Arg at index 5 : mode");
 		Console.WriteLine("  1 - BC1");
 		Console.WriteLine("  2 - BC2");
 		Console.WriteLine("  3 - BC3");
@@ -118,7 +128,7 @@ internal static class Program
 		Console.WriteLine("  5 - BC5");
 		Console.WriteLine("  6 - BC6H");
 		Console.WriteLine("  7 - BC7");
-		Console.WriteLine("Arg at index 5 : isSigned (BC6H only)");
+		Console.WriteLine("Arg at index 6 : isSigned (BC6H only)");
 		int mode = int.Parse(modeString);
 		switch (mode)
 		{
@@ -151,7 +161,7 @@ internal static class Program
 
 	private static void DecodeDxt(ReadOnlySpan<byte> input, int width, int height, string modeString, Span<byte> output)
 	{
-		Console.WriteLine("Arg at index 4 : mode");
+		Console.WriteLine("Arg at index 5 : mode");
 		Console.WriteLine("  0 - DXT1");
 		Console.WriteLine("  1 - DXT3");
 		Console.WriteLine("  2 - DXT5");
@@ -175,7 +185,7 @@ internal static class Program
 
 	private static void DecodeEtc(ReadOnlySpan<byte> input, int width, int height, string modeString, Span<byte> output)
 	{
-		Console.WriteLine("Arg at index 4 : mode");
+		Console.WriteLine("Arg at index 5 : mode");
 		Console.WriteLine("  0 - ETC");
 		Console.WriteLine("  1 - ETC2");
 		Console.WriteLine("  2 - ETC2a1");
@@ -219,104 +229,15 @@ internal static class Program
 
 	private static void DecodePvrtc(ReadOnlySpan<byte> input, int width, int height, string do2bitModeString, Span<byte> output)
 	{
-		Console.WriteLine("Arg at index 4 : 2bitMode");
+		Console.WriteLine("Arg at index 5 : 2bitMode");
 		bool do2bit = bool.Parse(do2bitModeString);
 		PvrtcDecoder.DecompressPVRTC(input, width, height, do2bit, output);
 	}
 
-	private static void DecodeRgb(ReadOnlySpan<byte> input, int width, int height, string modeString, Span<byte> output)
+	public static void WriteAllBytes(string path, ReadOnlySpan<byte> bytes)
 	{
-		Console.WriteLine("Arg at index 4 : mode");
-		Console.WriteLine("  0 - Alpha8");
-		Console.WriteLine("  1 - Argb4444");
-		Console.WriteLine("  2 - Rgb24");
-		Console.WriteLine("  3 - Rgba32");
-		Console.WriteLine("  4 - Argb32");
-		Console.WriteLine("  5 - Rbg16");
-		Console.WriteLine("  6 - R16");
-		Console.WriteLine("  7 - Rgba4444");
-		Console.WriteLine("  8 - Bgra32");
-		Console.WriteLine("  9 - Rg16");
-		Console.WriteLine("  10 - R8");
-		Console.WriteLine("  11 - RHalf");
-		Console.WriteLine("  12 - RGHalf");
-		Console.WriteLine("  13 - RGBAHalf");
-		Console.WriteLine("  14 - RFloat");
-		Console.WriteLine("  15 - RGFloat");
-		Console.WriteLine("  16 - RGBAFloat");
-		Console.WriteLine("  17 - RGB9e5Float");
-		Console.WriteLine("  18 - RG32");
-		Console.WriteLine("  19 - RGB48");
-		Console.WriteLine("  20 - RGBA64");
-		int mode = int.Parse(modeString);
-		switch (mode)
-		{
-			case 0:
-				RgbConverter.A8ToBGRA32(input, width, height, output);
-				break;
-			case 1:
-				RgbConverter.ARGB16ToBGRA32(input, width, height, output);
-				break;
-			case 2:
-				RgbConverter.RGB24ToBGRA32(input, width, height, output);
-				break;
-			case 3:
-				RgbConverter.RGBA32ToBGRA32(input, width, height, output);
-				break;
-			case 4:
-				RgbConverter.ARGB32ToBGRA32(input, width, height, output);
-				break;
-			case 5:
-				RgbConverter.RGB16ToBGRA32(input, width, height, output);
-				break;
-			case 6:
-				RgbConverter.R16ToBGRA32(input, width, height, output);
-				break;
-			case 7:
-				RgbConverter.RGBA16ToBGRA32(input, width, height, output);
-				break;
-			case 8:
-				input.CopyTo(output);
-				break;
-			case 9:
-				RgbConverter.RG16ToBGRA32(input, width, height, output);
-				break;
-			case 10:
-				RgbConverter.R8ToBGRA32(input, width, height, output);
-				break;
-			case 11:
-				RgbConverter.RHalfToBGRA32(input, width, height, output);
-				break;
-			case 12:
-				RgbConverter.RGHalfToBGRA32(input, width, height, output);
-				break;
-			case 13:
-				RgbConverter.RGBAHalfToBGRA32(input, width, height, output);
-				break;
-			case 14:
-				RgbConverter.RFloatToBGRA32(input, width, height, output);
-				break;
-			case 15:
-				RgbConverter.RGFloatToBGRA32(input, width, height, output);
-				break;
-			case 16:
-				RgbConverter.RGBAFloatToBGRA32(input, width, height, output);
-				break;
-			case 17:
-				RgbConverter.RGB9e5FloatToBGRA32(input, width, height, output);
-				break;
-			case 18:
-				RgbConverter.RG32ToBGRA32(input, width, height, output);
-				break;
-			case 19:
-				RgbConverter.RGB48ToBGRA32(input, width, height, output);
-				break;
-			case 20:
-				RgbConverter.RGBA64ToBGRA32(input, width, height, output);
-				break;
-
-			default:
-				throw new NotSupportedException(mode.ToString());
-		}
+		ArgumentException.ThrowIfNullOrEmpty(path, nameof(path));
+		using Microsoft.Win32.SafeHandles.SafeFileHandle sfh = File.OpenHandle(path, FileMode.Create, FileAccess.Write, FileShare.Read);
+		RandomAccess.Write(sfh, bytes, 0);
 	}
 }
