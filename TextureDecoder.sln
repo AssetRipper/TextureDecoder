@@ -31,7 +31,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssetRipper.TextureDecoder.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssetRipper.TextureDecoder.Benchmarks", "AssetRipper.TextureDecoder.Benchmarks\AssetRipper.TextureDecoder.Benchmarks.csproj", "{F85804F4-4864-412E-BDC6-8B6E2B5646A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssetRipper.TextureDecoder.ColorGenerator", "AssetRipper.TextureDecoder.ColorGenerator\AssetRipper.TextureDecoder.ColorGenerator.csproj", "{E9ED1120-1CEA-433E-9BFF-C4B20A34CC7B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssetRipper.TextureDecoder.ColorGenerator", "AssetRipper.TextureDecoder.ColorGenerator\AssetRipper.TextureDecoder.ColorGenerator.csproj", "{E9ED1120-1CEA-433E-9BFF-C4B20A34CC7B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntegerConversion.ConstantEstimation", "IntegerConversion.ConstantEstimation\IntegerConversion.ConstantEstimation.csproj", "{9897C52D-2F38-405A-AB85-B06383FDF6E0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{E9ED1120-1CEA-433E-9BFF-C4B20A34CC7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9ED1120-1CEA-433E-9BFF-C4B20A34CC7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9ED1120-1CEA-433E-9BFF-C4B20A34CC7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9897C52D-2F38-405A-AB85-B06383FDF6E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9897C52D-2F38-405A-AB85-B06383FDF6E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9897C52D-2F38-405A-AB85-B06383FDF6E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9897C52D-2F38-405A-AB85-B06383FDF6E0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
