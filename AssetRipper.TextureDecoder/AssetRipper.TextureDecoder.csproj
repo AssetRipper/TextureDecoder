@@ -12,14 +12,14 @@
 		<Authors>ds5678</Authors>
 		<Company>AssetRipper</Company>
 		<Version>1.2.0.0</Version>
-		<AssemblyVersion>1.2.0.0</AssemblyVersion>
+		<AssemblyVersion>$(Version)</AssemblyVersion>
 		<PackageId>AssetRipper.TextureDecoder</PackageId>
 		<PackageTags>C# Texture</PackageTags>
 		<RepositoryUrl>https://github.com/AssetRipper/TextureDecoder</RepositoryUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<RepositoryType>git</RepositoryType>
 		<PackageProjectUrl>https://github.com/AssetRipper/TextureDecoder</PackageProjectUrl>
-		<Copyright>Copyright (c) 2022 ds5678</Copyright>
+		<Copyright>Copyright (c) 2022 - 2023 ds5678</Copyright>
 		<Description>Managed library for decoding textures in multiple formats.</Description>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 
