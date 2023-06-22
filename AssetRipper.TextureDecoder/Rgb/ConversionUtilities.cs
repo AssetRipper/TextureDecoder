@@ -90,7 +90,10 @@
 			}
 
 			[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
-			static ushort ConvertUInt8ToUInt16(byte value) => unchecked((ushort)((uint)value << 8));
+			static ushort ConvertUInt8ToUInt16(byte value)
+			{
+				return unchecked((ushort)(((uint)value << 8) | value));//See https://github.com/AssetRipper/TextureDecoder/issues/19
+		}
 		}
 
 		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
@@ -136,7 +139,11 @@
 			}
 
 			[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
-			static byte ConvertUInt16ToUInt8(ushort value) => unchecked((byte)((uint)value >> 8));
+			static byte ConvertUInt16ToUInt8(ushort value)
+			{
+				uint result = (value * 255u + 32895u) >> 16;//See https://github.com/AssetRipper/TextureDecoder/issues/19
+				return unchecked((byte)result);
+		}
 		}
 
 		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
