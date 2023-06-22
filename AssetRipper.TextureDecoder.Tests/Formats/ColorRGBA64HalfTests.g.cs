@@ -164,6 +164,15 @@ public partial class ColorRGBA64HalfTests
 	}
 	
 	[Test]
+	public void ConversionToColorRGBA256DoubleIsLossless()
+	{
+		ColorRGBA64Half original = MakeRandomColor();
+		ColorRGBA256Double converted = original.Convert<ColorRGBA64Half, Half, ColorRGBA256Double, double>();
+		ColorRGBA64Half convertedBack = converted.Convert<ColorRGBA256Double, double, ColorRGBA64Half, Half>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
 	public void ConversionToColorRGBA64HalfIsLossless()
 	{
 		ColorRGBA64Half original = MakeRandomColor();

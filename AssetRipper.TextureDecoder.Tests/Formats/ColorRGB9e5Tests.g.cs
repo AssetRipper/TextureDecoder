@@ -153,4 +153,22 @@ public partial class ColorRGB9e5Tests
 			A = 0.897,
 		};
 	}
+	
+	[Test]
+	public void ConversionToColorRGB192DoubleIsLossless()
+	{
+		ColorRGB9e5 original = MakeRandomColor();
+		ColorRGB192Double converted = original.Convert<ColorRGB9e5, double, ColorRGB192Double, double>();
+		ColorRGB9e5 convertedBack = converted.Convert<ColorRGB192Double, double, ColorRGB9e5, double>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGBA256DoubleIsLossless()
+	{
+		ColorRGB9e5 original = MakeRandomColor();
+		ColorRGBA256Double converted = original.Convert<ColorRGB9e5, double, ColorRGBA256Double, double>();
+		ColorRGB9e5 convertedBack = converted.Convert<ColorRGBA256Double, double, ColorRGB9e5, double>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
 }

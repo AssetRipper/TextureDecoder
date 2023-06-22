@@ -173,11 +173,29 @@ public partial class ColorRGB48HalfTests
 	}
 	
 	[Test]
+	public void ConversionToColorRGB192DoubleIsLossless()
+	{
+		ColorRGB48Half original = MakeRandomColor();
+		ColorRGB192Double converted = original.Convert<ColorRGB48Half, Half, ColorRGB192Double, double>();
+		ColorRGB48Half convertedBack = converted.Convert<ColorRGB192Double, double, ColorRGB48Half, Half>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
 	public void ConversionToColorRGBA128SingleIsLossless()
 	{
 		ColorRGB48Half original = MakeRandomColor();
 		ColorRGBA128Single converted = original.Convert<ColorRGB48Half, Half, ColorRGBA128Single, float>();
 		ColorRGB48Half convertedBack = converted.Convert<ColorRGBA128Single, float, ColorRGB48Half, Half>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGBA256DoubleIsLossless()
+	{
+		ColorRGB48Half original = MakeRandomColor();
+		ColorRGBA256Double converted = original.Convert<ColorRGB48Half, Half, ColorRGBA256Double, double>();
+		ColorRGB48Half convertedBack = converted.Convert<ColorRGBA256Double, double, ColorRGB48Half, Half>();
 		Assert.That(convertedBack, Is.EqualTo(original));
 	}
 	

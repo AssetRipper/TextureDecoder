@@ -77,6 +77,11 @@ internal static class Program
 		( "ColorRG64Single", typeof(float), true, true, false, false ),
 		( "ColorRGB96Single", typeof(float), true, true, true, false ),
 		( "ColorRGBA128Single", typeof(float), true, true, true, true ),
+
+		( "ColorR64Double", typeof(double), true, false, false, false ),
+		( "ColorRG128Double", typeof(double), true, true, false, false ),
+		( "ColorRGB192Double", typeof(double), true, true, true, false ),
+		( "ColorRGBA256Double", typeof(double), true, true, true, true ),
 	};
 
 	/// <summary>
@@ -112,7 +117,9 @@ internal static class Program
 		Console.WriteLine(name);
 		using FileStream stream = File.Create($"{OutputFolder}{name}.g.cs");
 		using StreamWriter streamWriter = new StreamWriter(stream);
+		streamWriter.NewLine = "\n";
 		using IndentedTextWriter writer = new IndentedTextWriter(streamWriter, "\t");
+		writer.NewLine = "\n";
 		WriteColor(writer, name, type, hasRed, hasGreen, hasBlue, hasAlpha);
 	}
 
@@ -122,7 +129,9 @@ internal static class Program
 		Console.WriteLine(name);
 		using FileStream stream = File.Create($"{OutputFolder}{name}.g.cs");
 		using StreamWriter streamWriter = new StreamWriter(stream);
+		streamWriter.NewLine = "\n";
 		using IndentedTextWriter writer = new IndentedTextWriter(streamWriter, "\t");
+		writer.NewLine = "\n";
 		WriteOtherColor(writer, name, type, hasRed, hasGreen, hasBlue, hasAlpha, fullyUtilized);
 	}
 

@@ -162,4 +162,13 @@ public partial class ColorRGBA128SingleTests
 		ColorRGBA128Single convertedBack = converted.Convert<ColorRGBA128Single, float, ColorRGBA128Single, float>();
 		Assert.That(convertedBack, Is.EqualTo(original));
 	}
+	
+	[Test]
+	public void ConversionToColorRGBA256DoubleIsLossless()
+	{
+		ColorRGBA128Single original = MakeRandomColor();
+		ColorRGBA256Double converted = original.Convert<ColorRGBA128Single, float, ColorRGBA256Double, double>();
+		ColorRGBA128Single convertedBack = converted.Convert<ColorRGBA256Double, double, ColorRGBA128Single, float>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
 }

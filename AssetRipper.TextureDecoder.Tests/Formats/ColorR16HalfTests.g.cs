@@ -173,6 +173,15 @@ public partial class ColorR16HalfTests
 	}
 	
 	[Test]
+	public void ConversionToColorR64DoubleIsLossless()
+	{
+		ColorR16Half original = MakeRandomColor();
+		ColorR64Double converted = original.Convert<ColorR16Half, Half, ColorR64Double, double>();
+		ColorR16Half convertedBack = converted.Convert<ColorR64Double, double, ColorR16Half, Half>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
 	public void ConversionToColorRG32HalfIsLossless()
 	{
 		ColorR16Half original = MakeRandomColor();
@@ -187,6 +196,15 @@ public partial class ColorR16HalfTests
 		ColorR16Half original = MakeRandomColor();
 		ColorRG64Single converted = original.Convert<ColorR16Half, Half, ColorRG64Single, float>();
 		ColorR16Half convertedBack = converted.Convert<ColorRG64Single, float, ColorR16Half, Half>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRG128DoubleIsLossless()
+	{
+		ColorR16Half original = MakeRandomColor();
+		ColorRG128Double converted = original.Convert<ColorR16Half, Half, ColorRG128Double, double>();
+		ColorR16Half convertedBack = converted.Convert<ColorRG128Double, double, ColorR16Half, Half>();
 		Assert.That(convertedBack, Is.EqualTo(original));
 	}
 	
@@ -209,11 +227,29 @@ public partial class ColorR16HalfTests
 	}
 	
 	[Test]
+	public void ConversionToColorRGB192DoubleIsLossless()
+	{
+		ColorR16Half original = MakeRandomColor();
+		ColorRGB192Double converted = original.Convert<ColorR16Half, Half, ColorRGB192Double, double>();
+		ColorR16Half convertedBack = converted.Convert<ColorRGB192Double, double, ColorR16Half, Half>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
 	public void ConversionToColorRGBA128SingleIsLossless()
 	{
 		ColorR16Half original = MakeRandomColor();
 		ColorRGBA128Single converted = original.Convert<ColorR16Half, Half, ColorRGBA128Single, float>();
 		ColorR16Half convertedBack = converted.Convert<ColorRGBA128Single, float, ColorR16Half, Half>();
+		Assert.That(convertedBack, Is.EqualTo(original));
+	}
+	
+	[Test]
+	public void ConversionToColorRGBA256DoubleIsLossless()
+	{
+		ColorR16Half original = MakeRandomColor();
+		ColorRGBA256Double converted = original.Convert<ColorR16Half, Half, ColorRGBA256Double, double>();
+		ColorR16Half convertedBack = converted.Convert<ColorRGBA256Double, double, ColorR16Half, Half>();
 		Assert.That(convertedBack, Is.EqualTo(original));
 	}
 	
