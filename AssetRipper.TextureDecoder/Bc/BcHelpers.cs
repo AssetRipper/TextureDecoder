@@ -71,14 +71,12 @@ internal unsafe static class BcHelpers
 		g.Clear();
 		b.Clear();
 
-		int mode = bstream.ReadBits(2);
-		if (mode > 1)
-		{
-			mode |= bstream.ReadBits(3) << 2;
-		}
+		int mode;
 
+		//modes >= 11 (10 in my code) are using 0 one, others will read it from the bitstream
 		int partition;
-		switch (mode)
+
+		switch (ReadBc6hModeBits(ref bstream))
 		{
 			// mode 1 
 			case 0b00:
@@ -492,11 +490,12 @@ internal unsafe static class BcHelpers
 		}
 
 		int numPartitions = mode >= 10 ? 0 : 1;
+		byte actualBits0Mode = Bc6hTables.ActualBitsCount[0][mode];
 		if (isSigned)
 		{
-			r[0] = ExtendSign(r[0], Bc6hTables.ActualBitsCount[0][mode]);
-			g[0] = ExtendSign(g[0], Bc6hTables.ActualBitsCount[0][mode]);
-			b[0] = ExtendSign(b[0], Bc6hTables.ActualBitsCount[0][mode]);
+			r[0] = ExtendSign(r[0], actualBits0Mode);
+			g[0] = ExtendSign(g[0], actualBits0Mode);
+			b[0] = ExtendSign(b[0], actualBits0Mode);
 		}
 
 		// Mode 11 (like Mode 10) does not use delta compression,
@@ -515,12 +514,20 @@ internal unsafe static class BcHelpers
 		{
 			for (int i = 1; i < (numPartitions + 1) * 2; ++i)
 			{
-				r[i] = TransformInverse(r[i], r[0], Bc6hTables.ActualBitsCount[0][mode], isSigned);
-				g[i] = TransformInverse(g[i], g[0], Bc6hTables.ActualBitsCount[0][mode], isSigned);
-				b[i] = TransformInverse(b[i], b[0], Bc6hTables.ActualBitsCount[0][mode], isSigned);
+				r[i] = TransformInverse(r[i], r[0], actualBits0Mode, isSigned);
+				g[i] = TransformInverse(g[i], g[0], actualBits0Mode, isSigned);
+				b[i] = TransformInverse(b[i], b[0], actualBits0Mode, isSigned);
 			}
 		}
 
+		for (int i = 0; i < (numPartitions + 1) * 2; i++)
+		{
+			r[i] = Unquantize(r[i], actualBits0Mode, isSigned);
+			g[i] = Unquantize(g[i], actualBits0Mode, isSigned);
+			b[i] = Unquantize(b[i], actualBits0Mode, isSigned);
+		}
+
+		ReadOnlySpan<int> weights = (mode >= 10) ? Bc6hTables.AWeight4 : Bc6hTables.AWeight3;
 		for (int i = 0; i < 4; ++i)
 		{
 			for (int j = 0; j < 4; ++j)
@@ -538,20 +545,28 @@ internal unsafe static class BcHelpers
 
 				int index = bstream.ReadBits(indexBits);
 
-				// endpoints A and B
-				int epR0 = Unquantize(r[(partitionSet * 2) + 0], Bc6hTables.ActualBitsCount[0][mode], isSigned);
-				int epG0 = Unquantize(g[(partitionSet * 2) + 0], Bc6hTables.ActualBitsCount[0][mode], isSigned);
-				int epB0 = Unquantize(b[(partitionSet * 2) + 0], Bc6hTables.ActualBitsCount[0][mode], isSigned);
-				int epR1 = Unquantize(r[(partitionSet * 2) + 1], Bc6hTables.ActualBitsCount[0][mode], isSigned);
-				int epG1 = Unquantize(g[(partitionSet * 2) + 1], Bc6hTables.ActualBitsCount[0][mode], isSigned);
-				int epB1 = Unquantize(b[(partitionSet * 2) + 1], Bc6hTables.ActualBitsCount[0][mode], isSigned);
+				int ep_i = (partitionSet * 2);
 
-				decompressedBlock[decompressedOffset + (j * 3) + 0] = FinishUnquantize(Interpolate(epR0, epR1, (mode >= 10) ? Bc6hTables.AWeight4 : Bc6hTables.AWeight3, index), isSigned);
-				decompressedBlock[decompressedOffset + (j * 3) + 1] = FinishUnquantize(Interpolate(epG0, epG1, (mode >= 10) ? Bc6hTables.AWeight4 : Bc6hTables.AWeight3, index), isSigned);
-				decompressedBlock[decompressedOffset + (j * 3) + 2] = FinishUnquantize(Interpolate(epB0, epB1, (mode >= 10) ? Bc6hTables.AWeight4 : Bc6hTables.AWeight3, index), isSigned);
+				decompressedBlock[decompressedOffset + (j * 3) + 0] = FinishUnquantize(Interpolate(r[ep_i], r[ep_i + 1], weights, index), isSigned);
+				decompressedBlock[decompressedOffset + (j * 3) + 1] = FinishUnquantize(Interpolate(g[ep_i], g[ep_i + 1], weights, index), isSigned);
+				decompressedBlock[decompressedOffset + (j * 3) + 2] = FinishUnquantize(Interpolate(b[ep_i], b[ep_i + 1], weights, index), isSigned);
 			}
 
 			decompressedOffset += destinationPitch;
+		}
+
+		static int ReadBc6hModeBits(ref BitStream bstream)
+		{
+			int twoBits = bstream.ReadBits(2);
+			if (twoBits > 1)
+			{
+				int threeBits = bstream.ReadBits(3);
+				return (threeBits << 2) | twoBits;
+			}
+			else
+			{
+				return twoBits;
+			}
 		}
 	}
 
@@ -567,11 +582,7 @@ internal unsafe static class BcHelpers
 		bstream.low = compressedBlockSpan[0];
 		bstream.high = compressedBlockSpan[1];
 
-		int mode;
-		for (mode = 0; mode < 8 && (0 == bstream.ReadBit()); ++mode)
-		{
-			;
-		}
+		int mode = ReadBc7Mode(ref bstream);
 
 		// unexpected mode, clear the block (transparent black)
 		if (mode >= 8)
@@ -809,6 +820,16 @@ internal unsafe static class BcHelpers
 			}
 
 			decompressedOffset += destinationPitch;
+		}
+
+		static int ReadBc7Mode(ref BitStream bstream)
+		{
+			int i = 0;
+			while (i < 8 && bstream.ReadBit() == 0)
+			{
+				i++;
+			}
+			return i;
 		}
 	}
 
