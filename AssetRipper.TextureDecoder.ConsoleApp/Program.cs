@@ -133,25 +133,25 @@ internal static partial class Program
 		switch (mode)
 		{
 			case 1:
-				BcDecoder.DecompressBC1(input, width, height, output);
+				Bc1.Decompress(input, width, height, output);
 				break;
 			case 2:
-				BcDecoder.DecompressBC2(input, width, height, output);
+				Bc2.Decompress(input, width, height, output);
 				break;
 			case 3:
-				BcDecoder.DecompressBC3(input, width, height, output);
+				Bc3.Decompress(input, width, height, output);
 				break;
 			case 4:
-				BcDecoder.DecompressBC4(input, width, height, output);
+				Bc4.Decompress(input, width, height, output);
 				break;
 			case 5:
-				BcDecoder.DecompressBC5(input, width, height, output);
+				Bc5.Decompress(input, width, height, output);
 				break;
 			case 6:
-				BcDecoder.DecompressBC6H(input, width, height, bool.Parse(isSignedString), output);
+				Bc6h.Decompress(input, width, height, bool.Parse(isSignedString), output);
 				break;
 			case 7:
-				BcDecoder.DecompressBC7(input, width, height, output);
+				Bc7.Decompress(input, width, height, output);
 				break;
 
 			default:
