@@ -64,13 +64,10 @@ internal unsafe static class BcHelpers
 
 	public static void DecompressBc6h_Half(ReadOnlySpan<byte> compressedBlock, Span<ushort> decompressedBlock, int destinationPitch, bool isSigned)
 	{
-		BitStream bstream = new BitStream();
-		int[] r = new int[4]; // wxyz
-		int[] g = new int[4];
-		int[] b = new int[4];
-		int[] epR = new int[2]; // endpoints A and B
-		int[] epG = new int[2];
-		int[] epB = new int[2];
+		BitStream bstream = new();
+		Span<int> r = stackalloc int[4]; // wxyz
+		Span<int> g = stackalloc int[4];
+		Span<int> b = stackalloc int[4];
 
 		int decompressedOffset = 0;
 
@@ -78,9 +75,9 @@ internal unsafe static class BcHelpers
 		bstream.low = compressedBlockSpan[0];
 		bstream.high = compressedBlockSpan[1];
 
-		r[0] = r[1] = r[2] = r[3] = 0;
-		g[0] = g[1] = g[2] = g[3] = 0;
-		b[0] = b[1] = b[2] = b[3] = 0;
+		r.Clear();
+		g.Clear();
+		b.Clear();
 
 		int mode = bstream.ReadBits(2);
 		if (mode > 1)
@@ -555,16 +552,17 @@ internal unsafe static class BcHelpers
 
 				int index = bstream.ReadBits(indexBits);
 
-				epR[0] = Unquantize(r[(partitionSet * 2) + 0], Bc6hTables.ActualBitsCount[0][mode], isSigned);
-				epG[0] = Unquantize(g[(partitionSet * 2) + 0], Bc6hTables.ActualBitsCount[0][mode], isSigned);
-				epB[0] = Unquantize(b[(partitionSet * 2) + 0], Bc6hTables.ActualBitsCount[0][mode], isSigned);
-				epR[1] = Unquantize(r[(partitionSet * 2) + 1], Bc6hTables.ActualBitsCount[0][mode], isSigned);
-				epG[1] = Unquantize(g[(partitionSet * 2) + 1], Bc6hTables.ActualBitsCount[0][mode], isSigned);
-				epB[1] = Unquantize(b[(partitionSet * 2) + 1], Bc6hTables.ActualBitsCount[0][mode], isSigned);
+				// endpoints A and B
+				int epR0 = Unquantize(r[(partitionSet * 2) + 0], Bc6hTables.ActualBitsCount[0][mode], isSigned);
+				int epG0 = Unquantize(g[(partitionSet * 2) + 0], Bc6hTables.ActualBitsCount[0][mode], isSigned);
+				int epB0 = Unquantize(b[(partitionSet * 2) + 0], Bc6hTables.ActualBitsCount[0][mode], isSigned);
+				int epR1 = Unquantize(r[(partitionSet * 2) + 1], Bc6hTables.ActualBitsCount[0][mode], isSigned);
+				int epG1 = Unquantize(g[(partitionSet * 2) + 1], Bc6hTables.ActualBitsCount[0][mode], isSigned);
+				int epB1 = Unquantize(b[(partitionSet * 2) + 1], Bc6hTables.ActualBitsCount[0][mode], isSigned);
 
-				decompressedBlock[decompressedOffset + (j * 3) + 0] = FinishUnquantize(Interpolate(epR[0], epR[1], (mode >= 10) ? Bc6hTables.AWeight4 : Bc6hTables.AWeight3, index), isSigned);
-				decompressedBlock[decompressedOffset + (j * 3) + 1] = FinishUnquantize(Interpolate(epG[0], epG[1], (mode >= 10) ? Bc6hTables.AWeight4 : Bc6hTables.AWeight3, index), isSigned);
-				decompressedBlock[decompressedOffset + (j * 3) + 2] = FinishUnquantize(Interpolate(epB[0], epB[1], (mode >= 10) ? Bc6hTables.AWeight4 : Bc6hTables.AWeight3, index), isSigned);
+				decompressedBlock[decompressedOffset + (j * 3) + 0] = FinishUnquantize(Interpolate(epR0, epR1, (mode >= 10) ? Bc6hTables.AWeight4 : Bc6hTables.AWeight3, index), isSigned);
+				decompressedBlock[decompressedOffset + (j * 3) + 1] = FinishUnquantize(Interpolate(epG0, epG1, (mode >= 10) ? Bc6hTables.AWeight4 : Bc6hTables.AWeight3, index), isSigned);
+				decompressedBlock[decompressedOffset + (j * 3) + 2] = FinishUnquantize(Interpolate(epB0, epB1, (mode >= 10) ? Bc6hTables.AWeight4 : Bc6hTables.AWeight3, index), isSigned);
 			}
 
 			decompressedOffset += destinationPitch;
@@ -573,7 +571,7 @@ internal unsafe static class BcHelpers
 
 	public static void DecompressBc7(ReadOnlySpan<byte> compressedBlock, Span<byte> decompressedBlock, int destinationPitch)
 	{
-		BitStream bstream = new BitStream();
+		BitStream bstream = new();
 		int[][] endpoints = CreateRectangularArray<int>(6, 4);
 		int[][] indices = CreateRectangularArray<int>(4, 4);
 
