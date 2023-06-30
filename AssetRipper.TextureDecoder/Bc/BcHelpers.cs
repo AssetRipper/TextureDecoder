@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Buffers.Binary;
+using System.Runtime.InteropServices;
 
 namespace AssetRipper.TextureDecoder.Bc;
 
@@ -56,16 +57,16 @@ internal unsafe static class BcHelpers
 
 	public static void DecompressBc6h_Half(ReadOnlySpan<byte> compressedBlock, Span<ushort> decompressedBlock, int destinationPitch, bool isSigned)
 	{
-		BitStream bstream = new();
+		BitStream bstream = new()
+		{
+			low = BinaryPrimitives.ReadUInt64LittleEndian(compressedBlock),
+			high = BinaryPrimitives.ReadUInt64LittleEndian(compressedBlock.Slice(sizeof(ulong)))
+		};
 		Span<int> r = stackalloc int[4]; // wxyz
 		Span<int> g = stackalloc int[4];
 		Span<int> b = stackalloc int[4];
 
 		int decompressedOffset = 0;
-
-		ReadOnlySpan<ulong> compressedBlockSpan = MemoryMarshal.Cast<byte, ulong>(compressedBlock);
-		bstream.low = compressedBlockSpan[0];
-		bstream.high = compressedBlockSpan[1];
 
 		r.Clear();
 		g.Clear();
@@ -572,15 +573,15 @@ internal unsafe static class BcHelpers
 
 	public static void DecompressBc7(ReadOnlySpan<byte> compressedBlock, Span<byte> decompressedBlock, int destinationPitch)
 	{
-		BitStream bstream = new();
+		BitStream bstream = new()
+		{
+			low = BinaryPrimitives.ReadUInt64LittleEndian(compressedBlock),
+			high = BinaryPrimitives.ReadUInt64LittleEndian(compressedBlock.Slice(sizeof(ulong)))
+		};
 		int[][] endpoints = CreateRectangularArray<int>(6, 4);
 		int[][] indices = CreateRectangularArray<int>(4, 4);
 
 		int decompressedOffset = 0;
-
-		ReadOnlySpan<ulong> compressedBlockSpan = MemoryMarshal.Cast<byte, ulong>(compressedBlock);
-		bstream.low = compressedBlockSpan[0];
-		bstream.high = compressedBlockSpan[1];
 
 		int mode = ReadBc7Mode(ref bstream);
 
@@ -838,8 +839,8 @@ internal unsafe static class BcHelpers
 	{
 		Span<uint> refColors = stackalloc uint[4]; // 0xAABBGGRR
 
-		ushort c0 = MemoryMarshal.Read<ushort>(compressedBlock);
-		ushort c1 = MemoryMarshal.Read<ushort>(compressedBlock.Slice(sizeof(ushort)));
+		ushort c0 = BinaryPrimitives.ReadUInt16LittleEndian(compressedBlock);
+		ushort c1 = BinaryPrimitives.ReadUInt16LittleEndian(compressedBlock.Slice(sizeof(ushort)));
 
 		// Expand 565 ref colors to 888 
 		uint r0 = (uint)(((((c0 >> 11) & 0x1F) * 527) + 23) >> 6);
@@ -884,7 +885,7 @@ internal unsafe static class BcHelpers
 			refColors[3] = 0x00000000;
 		}
 
-		uint colorIndices = MemoryMarshal.Read<uint>(compressedBlock.Slice(sizeof(ushort) + sizeof(ushort)));
+		uint colorIndices = BinaryPrimitives.ReadUInt32LittleEndian(compressedBlock.Slice(sizeof(ushort) + sizeof(ushort)));
 
 		// Fill out the decompressed color block 
 		for (int i = 0; i < 4; ++i)
@@ -897,7 +898,7 @@ internal unsafe static class BcHelpers
 				{
 					throw new Exception($"Not enough space in decompressed block.\nLength: {decompressedBlock.Length}\nOffset: {decompressedBlockOffset}\nPitch: {destinationPitch}\ni: {i}\nj: {j}");
 				}
-				MemoryMarshal.Write(decompressedBlock.Slice(decompressedBlockOffset), ref refColors[idx]);
+				BinaryPrimitives.WriteUInt32LittleEndian(decompressedBlock.Slice(decompressedBlockOffset), refColors[idx]);
 				colorIndices >>= 2;
 			}
 		}
@@ -905,13 +906,12 @@ internal unsafe static class BcHelpers
 
 	public static void SharpAlphaBlock(ReadOnlySpan<byte> compressedBlock, Span<byte> decompressedBlock, int destinationPitch)
 	{
-		ReadOnlySpan<ushort> alpha = MemoryMarshal.Cast<byte, ushort>(compressedBlock);
-
 		for (int i = 0; i < 4; ++i)
 		{
+			ushort alpha = BinaryPrimitives.ReadUInt16LittleEndian(compressedBlock.Slice(i * sizeof(ushort)));
 			for (int j = 0; j < 4; ++j)
 			{
-				decompressedBlock[j * 4 + i * destinationPitch] = (byte)((((uint)alpha[i] >> (4 * j)) & 0x0F) * 17);
+				decompressedBlock[j * 4 + i * destinationPitch] = (byte)((((uint)alpha >> (4 * j)) & 0x0F) * 17);
 			}
 		}
 	}
@@ -920,7 +920,7 @@ internal unsafe static class BcHelpers
 	{
 		Span<byte> alpha = stackalloc byte[8];
 
-		ulong block = MemoryMarshal.Read<ulong>(compressedBlock);
+		ulong block = BinaryPrimitives.ReadUInt64LittleEndian(compressedBlock);
 
 		alpha[0] = (byte)(block & 0xFF);
 		alpha[1] = (byte)((block >> 8) & 0xFF);
