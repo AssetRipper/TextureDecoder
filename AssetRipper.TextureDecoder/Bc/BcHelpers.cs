@@ -636,15 +636,15 @@ internal unsafe static class BcHelpers
 		{
 			for (int j = 0; j < numEndpoints; ++j)
 			{
-				endpoints[j][i] = bstream.ReadBits(Bc7Tables.bcdec_bc7_actual_bits_count[0][mode]);
+				endpoints[j][i] = bstream.ReadBits(Bc7Tables.ActualBitsCount[0][mode]);
 			}
 		}
 		// Alpha (if any) 
-		if (Bc7Tables.bcdec_bc7_actual_bits_count[1][mode] > 0)
+		if (Bc7Tables.ActualBitsCount[1][mode] > 0)
 		{
 			for (int j = 0; j < numEndpoints; ++j)
 			{
-				endpoints[j][3] = bstream.ReadBits(Bc7Tables.bcdec_bc7_actual_bits_count[1][mode]);
+				endpoints[j][3] = bstream.ReadBits(Bc7Tables.ActualBitsCount[1][mode]);
 			}
 		}
 
@@ -693,7 +693,7 @@ internal unsafe static class BcHelpers
 		for (int i = 0; i < numEndpoints; ++i)
 		{
 			// get color components precision including pbit 
-			int j = Bc7Tables.bcdec_bc7_actual_bits_count[0][mode] + ((Bc7Tables.bcdec_bc7_sModeHasPBits >> mode) & 1);
+			int j = Bc7Tables.ActualBitsCount[0][mode] + ((Bc7Tables.bcdec_bc7_sModeHasPBits >> mode) & 1);
 
 			for (int k = 0; k < 3; ++k)
 			{
@@ -704,7 +704,7 @@ internal unsafe static class BcHelpers
 			}
 
 			// get alpha component precision including pbit 
-			j = Bc7Tables.bcdec_bc7_actual_bits_count[1][mode] + ((Bc7Tables.bcdec_bc7_sModeHasPBits >> mode) & 1);
+			j = Bc7Tables.ActualBitsCount[1][mode] + ((Bc7Tables.bcdec_bc7_sModeHasPBits >> mode) & 1);
 
 			// left shift endpoint components so that their MSB lies in bit 7 
 			endpoints[i][3] = endpoints[i][3] << (8 - j);
@@ -714,7 +714,7 @@ internal unsafe static class BcHelpers
 
 		// If this mode does not explicitly define the alpha component 
 		// set alpha equal to 1.0 
-		if (Bc7Tables.bcdec_bc7_actual_bits_count[1][mode] == 0)
+		if (Bc7Tables.ActualBitsCount[1][mode] == 0)
 		{
 			for (int j = 0; j < numEndpoints; ++j)
 			{
@@ -734,7 +734,7 @@ internal unsafe static class BcHelpers
 		{
 			for (int j = 0; j < 4; ++j)
 			{
-				int partitionSet = (numPartitions == 1) ? ((i | j) != 0 ? 0 : 128) : Bc7Tables.bcdec_bc7_partition_sets[numPartitions - 2][partition][i][j];
+				int partitionSet = (numPartitions == 1) ? ((i | j) != 0 ? 0 : 128) : Bc7Tables.PartitionSets[numPartitions - 2][partition][i][j];
 
 				indexBits = (mode == 0 || mode == 1) ? 3 : ((mode == 6) ? 4 : 2);
 				// fix-up index is specified with one less bit 
@@ -755,7 +755,7 @@ internal unsafe static class BcHelpers
 			{
 				int partitionSet = (numPartitions == 1)
 					? ((i | j) != 0 ? 0 : 128)
-					: Bc7Tables.bcdec_bc7_partition_sets[numPartitions - 2][partition][i][j];
+					: Bc7Tables.PartitionSets[numPartitions - 2][partition][i][j];
 				partitionSet &= 0x03;
 
 				int index = indices[i][j];
