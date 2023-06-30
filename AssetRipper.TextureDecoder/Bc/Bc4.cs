@@ -1,5 +1,6 @@
 ﻿using AssetRipper.TextureDecoder.Rgb;
 using AssetRipper.TextureDecoder.Rgb.Formats;
+using System.Buffers;
 
 namespace AssetRipper.TextureDecoder.Bc;
 
@@ -15,8 +16,10 @@ public static class Bc4
 
 	public static int Decompress(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 	{
+		int bufferSize = width * height * Unsafe.SizeOf<ColorR8>();
+		byte[] bufferArray = ArrayPool<byte>.Shared.Rent(bufferSize);
+		Span<byte> buffer = new Span<byte>(bufferArray, 0, bufferSize);
 		int inputOffset = 0;
-		Span<byte> buffer = new byte[width * height * Unsafe.SizeOf<ColorR8>()];
 		for (int i = 0; i < height; i += 4)
 		{
 			for (int j = 0; j < width; j += 4)
@@ -27,6 +30,7 @@ public static class Bc4
 			}
 		}
 		RgbConverter.Convert<ColorR8, byte, ColorBGRA32, byte>(buffer, width, height, output);
+		ArrayPool<byte>.Shared.Return(bufferArray);
 		return inputOffset;
 	}
 
