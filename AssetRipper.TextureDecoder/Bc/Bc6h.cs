@@ -16,7 +16,7 @@ public static class Bc6h
 
 	public static int Decompress(ReadOnlySpan<byte> input, int width, int height, bool isSigned, Span<byte> output)
 	{
-		int bufferSize = width * height * Unsafe.SizeOf<ColorRGB96Single>();
+		int bufferSize = width * height * Unsafe.SizeOf<ColorRGB48Half>();
 		byte[] bufferArray = ArrayPool<byte>.Shared.Rent(bufferSize);
 		Span<byte> buffer = new Span<byte>(bufferArray, 0, bufferSize);
 		int inputOffset = 0;
@@ -24,8 +24,8 @@ public static class Bc6h
 		{
 			for (int j = 0; j < width; j += 4)
 			{
-				int outputOffset = ((i * width) + j) * Unsafe.SizeOf<ColorRGB96Single>();
-				BcHelpers.DecompressBc6h_Float(
+				int outputOffset = ((i * width) + j) * Unsafe.SizeOf<ColorRGB48Half>();
+				BcHelpers.DecompressBc6h(
 					input.Slice(inputOffset, BlockSize),
 					buffer.Slice(outputOffset),
 					width * 3,
@@ -33,7 +33,7 @@ public static class Bc6h
 				inputOffset += BlockSize;
 			}
 		}
-		RgbConverter.Convert<ColorRGB96Single, float, ColorBGRA32, byte>(buffer, width, height, output);
+		RgbConverter.Convert<ColorRGB48Half, Half, ColorBGRA32, byte>(buffer, width, height, output);
 		ArrayPool<byte>.Shared.Return(bufferArray);
 		return inputOffset;
 	}

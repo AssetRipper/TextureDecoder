@@ -1,5 +1,4 @@
 ﻿using System.Buffers.Binary;
-using System.Runtime.InteropServices;
 
 namespace AssetRipper.TextureDecoder.Bc;
 
@@ -33,29 +32,7 @@ internal unsafe static class BcHelpers
 		SmoothAlphaBlock(compressedBlock.Slice(8), decompressedBlock.Slice(1), destinationPitch, 2);
 	}
 
-	public static void DecompressBc6h_Float(ReadOnlySpan<byte> compressedBlock, Span<byte> decompressedBlock, int destinationPitch, bool isSigned)
-	{
-		Span<ushort> block = stackalloc ushort[16 * 3];
-
-		DecompressBc6h_Half(compressedBlock, block, 4 * 3, isSigned);
-
-		int blockOffset = 0;
-		int decompressedOffset = 0;
-		Span<float> decompressed = MemoryMarshal.Cast<byte, float>(decompressedBlock);
-		for (int i = 0; i < 4; ++i)
-		{
-			for (int j = 0; j < 4; ++j)
-			{
-				decompressed[decompressedOffset + (j * 3) + 0] = HalfToFloatQuick(block[blockOffset + 0]);//R
-				decompressed[decompressedOffset + (j * 3) + 1] = HalfToFloatQuick(block[blockOffset + 1]);//G
-				decompressed[decompressedOffset + (j * 3) + 2] = HalfToFloatQuick(block[blockOffset + 2]);//B
-				blockOffset += 3;
-			}
-			decompressedOffset += destinationPitch;
-		}
-	}
-
-	public static void DecompressBc6h_Half(ReadOnlySpan<byte> compressedBlock, Span<ushort> decompressedBlock, int destinationPitch, bool isSigned)
+	public static void DecompressBc6h(ReadOnlySpan<byte> compressedBlock, Span<byte> decompressedBlock, int destinationPitch, bool isSigned)
 	{
 		BitStream bstream = new()
 		{
@@ -479,11 +456,10 @@ internal unsafe static class BcHelpers
 					{
 						for (int j = 0; j < 4; ++j)
 						{
-							decompressedBlock[decompressedOffset + (j * 3) + 0] = 0;
-							decompressedBlock[decompressedOffset + (j * 3) + 1] = 0;
-							decompressedBlock[decompressedOffset + (j * 3) + 2] = 0;
+							Span<byte> pixel = decompressedBlock.Slice(decompressedOffset + (j * 3 * sizeof(ushort)), 3 * sizeof(ushort));
+							pixel.Clear();
 						}
-						decompressedOffset += destinationPitch;
+						decompressedOffset += destinationPitch * sizeof(ushort);
 					}
 
 					return;
@@ -548,12 +524,22 @@ internal unsafe static class BcHelpers
 
 				int ep_i = (partitionSet * 2);
 
-				decompressedBlock[decompressedOffset + (j * 3) + 0] = FinishUnquantize(Interpolate(r[ep_i], r[ep_i + 1], weights, index), isSigned);
-				decompressedBlock[decompressedOffset + (j * 3) + 1] = FinishUnquantize(Interpolate(g[ep_i], g[ep_i + 1], weights, index), isSigned);
-				decompressedBlock[decompressedOffset + (j * 3) + 2] = FinishUnquantize(Interpolate(b[ep_i], b[ep_i + 1], weights, index), isSigned);
+				int pixelOffset = decompressedOffset + (j * 3 * sizeof(ushort));
+
+				int rOffset = pixelOffset + 0 * sizeof(ushort);
+				ushort rFinal = FinishUnquantize(Interpolate(r[ep_i], r[ep_i + 1], weights, index), isSigned);
+				BinaryPrimitives.WriteUInt16LittleEndian(decompressedBlock.Slice(rOffset), rFinal);
+
+				int gOffset = pixelOffset + 1 * sizeof(ushort);
+				ushort gFinal = FinishUnquantize(Interpolate(g[ep_i], g[ep_i + 1], weights, index), isSigned);
+				BinaryPrimitives.WriteUInt16LittleEndian(decompressedBlock.Slice(gOffset), gFinal);
+
+				int bOffset = pixelOffset + 2 * sizeof(ushort);
+				ushort bFinal = FinishUnquantize(Interpolate(b[ep_i], b[ep_i + 1], weights, index), isSigned);
+				BinaryPrimitives.WriteUInt16LittleEndian(decompressedBlock.Slice(bOffset), bFinal);
 			}
 
-			decompressedOffset += destinationPitch;
+			decompressedOffset += destinationPitch * sizeof(ushort);
 		}
 
 		static int ReadBc6hModeBits(ref BitStream bstream)
@@ -1064,11 +1050,6 @@ internal unsafe static class BcHelpers
 			}
 			return (ushort)(s | val);
 		}
-	}
-
-	public static float HalfToFloatQuick(ushort half)
-	{
-		return (float)Unsafe.As<ushort, Half>(ref half);
 	}
 
 	public static void SwapValues(ref int a, ref int b)
