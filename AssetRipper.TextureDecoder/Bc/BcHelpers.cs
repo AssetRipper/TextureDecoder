@@ -85,7 +85,7 @@ internal unsafe static class BcHelpers
 			mode |= bstream.ReadBits(3) << 2;
 		}
 
-		int partition = default;
+		int partition;
 		switch (mode)
 		{
 			// mode 1 
@@ -413,6 +413,7 @@ internal unsafe static class BcHelpers
 					r[1] |= bstream.ReadBits(10); // rx[9:0]
 					g[1] |= bstream.ReadBits(10); // gx[9:0]
 					b[1] |= bstream.ReadBits(10); // bx[9:0]
+					partition = 0;
 					mode = 10;
 				}
 				break;
@@ -432,6 +433,7 @@ internal unsafe static class BcHelpers
 					g[0] |= bstream.ReadBit() << 10; // gw[10]
 					b[1] |= bstream.ReadBits(9); // bx[8:0]
 					b[0] |= bstream.ReadBit() << 10; // bw[10]
+					partition = 0;
 					mode = 11;
 				}
 				break;
@@ -451,6 +453,7 @@ internal unsafe static class BcHelpers
 					g[0] |= bstream.ReadBitsReversed(2) << 10; // gx[10:11]
 					b[1] |= bstream.ReadBits(8); // bx[7:0]
 					b[0] |= bstream.ReadBitsReversed(2) << 10; // bx[10:11]
+					partition = 0;
 					mode = 12;
 				}
 				break;
@@ -470,6 +473,7 @@ internal unsafe static class BcHelpers
 					g[0] |= bstream.ReadBitsReversed(6) << 10; // gw[10:15]
 					b[1] |= bstream.ReadBits(4); // bx[3:0]
 					b[0] |= bstream.ReadBitsReversed(6) << 10; // bw[10:15]
+					partition = 0;
 					mode = 13;
 				}
 				break;
@@ -495,17 +499,7 @@ internal unsafe static class BcHelpers
 				}
 		}
 
-		int numPartitions;
-		if (mode >= 10)
-		{
-			partition = 0;
-			numPartitions = 0;
-		}
-		else
-		{
-			numPartitions = 1;
-		}
-
+		int numPartitions = mode >= 10 ? 0 : 1;
 		if (isSigned)
 		{
 			r[0] = ExtendSign(r[0], Bc6hTables.ActualBitsCount[0][mode]);
