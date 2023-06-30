@@ -6,6 +6,8 @@ namespace AssetRipper.TextureDecoder.Bc;
 
 public static class Bc6h
 {
+	internal const int BlockSize = 16;
+
 	public static int Decompress(ReadOnlySpan<byte> input, int width, int height, bool isSigned, out byte[] output)
 	{
 		output = new byte[width * height * Unsafe.SizeOf<ColorBGRA32>()];
@@ -24,15 +26,17 @@ public static class Bc6h
 			{
 				int outputOffset = ((i * width) + j) * Unsafe.SizeOf<ColorRGB96Single>();
 				BcHelpers.DecompressBc6h_Float(
-					input.Slice(inputOffset, DefineConstants.BCDEC_BC6H_BLOCK_SIZE),
+					input.Slice(inputOffset, BlockSize),
 					buffer.Slice(outputOffset),
 					width * 3,
 					isSigned);
-				inputOffset += DefineConstants.BCDEC_BC6H_BLOCK_SIZE;
+				inputOffset += BlockSize;
 			}
 		}
 		RgbConverter.Convert<ColorRGB96Single, float, ColorBGRA32, byte>(buffer, width, height, output);
 		ArrayPool<byte>.Shared.Return(bufferArray);
 		return inputOffset;
 	}
+
+	internal static int GetCompressedSize(int w, int h) => ((w) >> 2) * ((h) >> 2) * BlockSize;
 }

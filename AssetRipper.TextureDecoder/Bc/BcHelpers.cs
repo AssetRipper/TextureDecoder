@@ -4,14 +4,6 @@ namespace AssetRipper.TextureDecoder.Bc;
 
 internal unsafe static class BcHelpers
 {
-	public static int Bc1CompressedSize(int w, int h) => ((w) >> 2) * ((h) >> 2) * DefineConstants.BCDEC_BC1_BLOCK_SIZE;
-	public static int Bc2CompressedSize(int w, int h) => ((w) >> 2) * ((h) >> 2) * DefineConstants.BCDEC_BC2_BLOCK_SIZE;
-	public static int Bc3CompressedSize(int w, int h) => ((w) >> 2) * ((h) >> 2) * DefineConstants.BCDEC_BC3_BLOCK_SIZE;
-	public static int Bc4CompressedSize(int w, int h) => ((w) >> 2) * ((h) >> 2) * DefineConstants.BCDEC_BC4_BLOCK_SIZE;
-	public static int Bc5CompressedSize(int w, int h) => ((w) >> 2) * ((h) >> 2) * DefineConstants.BCDEC_BC5_BLOCK_SIZE;
-	public static int Bc6hCompressedSize(int w, int h) => ((w) >> 2) * ((h) >> 2) * DefineConstants.BCDEC_BC6H_BLOCK_SIZE;
-	public static int Bc7CompressedSize(int w, int h) => ((w) >> 2) * ((h) >> 2) * DefineConstants.BCDEC_BC7_BLOCK_SIZE;
-
 	public static void DecompressBc1(ReadOnlySpan<byte> compressedBlock, Span<byte> decompressedBlock, int destinationPitch)
 	{
 		ColorBlock(compressedBlock, decompressedBlock, destinationPitch, 0);

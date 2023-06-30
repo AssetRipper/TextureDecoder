@@ -5,6 +5,8 @@ namespace AssetRipper.TextureDecoder.Bc;
 
 public static class Bc3
 {
+	internal const int BlockSize = 16;
+
 	public static int Decompress(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 	{
 		output = new byte[width * height * Unsafe.SizeOf<ColorBGRA32>()];
@@ -20,10 +22,12 @@ public static class Bc3
 			{
 				int outputOffset = ((i * width) + j) * Unsafe.SizeOf<ColorRGBA32>();
 				BcHelpers.DecompressBc3(input.Slice(inputOffset), output.Slice(outputOffset), width * 4);
-				inputOffset += DefineConstants.BCDEC_BC3_BLOCK_SIZE;
+				inputOffset += BlockSize;
 			}
 		}
 		RgbConverter.Convert<ColorRGBA32, byte, ColorBGRA32, byte>(output, width, height, output);
 		return inputOffset;
 	}
+
+	internal static int GetCompressedSize(int w, int h) => ((w) >> 2) * ((h) >> 2) * BlockSize;
 }
