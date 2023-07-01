@@ -2,6 +2,14 @@ namespace AssetRipper.TextureDecoder.Astc
 {
 	public static partial class AstcDecoder
 	{
+		private static void ValidateBlockDimension(int value, [CallerArgumentExpression(nameof(value))] string? paramName = null)
+		{
+			if (value < 4 || value > 12)
+			{
+				throw new ArgumentException($"Block dimension must be between 4 and 12, inclusive. Value: {value}", paramName);
+			}
+		}
+
 		public static int DecodeASTC(ReadOnlySpan<byte> input, int width, int height, int blockWidth, int blockHeight, out byte[] output)
 		{
 			output = new byte[width * height * 4];
@@ -21,6 +29,8 @@ namespace AssetRipper.TextureDecoder.Astc
 
 		private unsafe static int DecodeASTC(byte* input, int width, int height, int blockWidth, int blockHeight, byte* output)
 		{
+			ValidateBlockDimension(blockWidth);
+			ValidateBlockDimension(blockHeight);
 			int bcw = (width + blockWidth - 1) / blockWidth;
 			int bch = (height + blockHeight - 1) / blockHeight;
 			int clen_last = (width + blockWidth - 1) % blockWidth + 1;
