@@ -409,12 +409,14 @@ namespace AssetRipper.TextureDecoder.Etc
 		/// <summary>
 		/// Parses an 8-byte Etc1 block from <paramref name="input"/>.
 		/// </summary>
-		private unsafe static void DecodeEtc1Block(ReadOnlySpan<byte> input, Span<uint> output)
+		private static void DecodeEtc1Block(ReadOnlySpan<byte> input, Span<uint> output)
 		{
 			byte i3 = input[3];
-			Span<int> code = stackalloc int[2];
-			code[0] = (i3 >> 5) * 4;
-			code[1] = (i3 >> 2 & 7) * 4;
+			ReadOnlySpan<int> code = stackalloc int[2]
+			{
+				(i3 >> 5) * 4,
+				(i3 >> 2 & 7) * 4
+			};
 			Span<byte> c = stackalloc byte[6];
 			int ti = (i3 & 1) * 16;
 			if ((i3 & 2) != 0)
@@ -462,7 +464,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		private unsafe static void DecodeEtc2Block(ReadOnlySpan<byte> input, Span<uint> output)
+		private static void DecodeEtc2Block(ReadOnlySpan<byte> input, Span<uint> output)
 		{
 			int j = input[6] << 8 | input[7];
 			int k = input[4] << 8 | input[5];
@@ -567,9 +569,9 @@ namespace AssetRipper.TextureDecoder.Etc
 							{
 								for (int x = 0; x < 4; x++, i++)
 								{
-									int ri = Clamp255((x * (c[1 * 3 + 0] - c[0 * 3 + 0]) + y * (c[2 * 3 + 0] - c[0 * 3 + 0]) + 4 * c[0 * 3 + 0] + 2) >> 2);
-									int gi = Clamp255((x * (c[1 * 3 + 1] - c[0 * 3 + 1]) + y * (c[2 * 3 + 1] - c[0 * 3 + 1]) + 4 * c[0 * 3 + 1] + 2) >> 2);
-									int bi = Clamp255((x * (c[1 * 3 + 2] - c[0 * 3 + 2]) + y * (c[2 * 3 + 2] - c[0 * 3 + 2]) + 4 * c[0 * 3 + 2] + 2) >> 2);
+									byte ri = Clamp255((x * (c[1 * 3 + 0] - c[0 * 3 + 0]) + y * (c[2 * 3 + 0] - c[0 * 3 + 0]) + 4 * c[0 * 3 + 0] + 2) >> 2);
+									byte gi = Clamp255((x * (c[1 * 3 + 1] - c[0 * 3 + 1]) + y * (c[2 * 3 + 1] - c[0 * 3 + 1]) + 4 * c[0 * 3 + 1] + 2) >> 2);
+									byte bi = Clamp255((x * (c[1 * 3 + 2] - c[0 * 3 + 2]) + y * (c[2 * 3 + 2] - c[0 * 3 + 2]) + 4 * c[0 * 3 + 2] + 2) >> 2);
 									output[i] = Color(ri, gi, bi, 255);
 								}
 							}
@@ -610,9 +612,11 @@ namespace AssetRipper.TextureDecoder.Etc
 			else
 			{
 				// individual
-				Span<int> code = stackalloc int[2];
-				code[0] = (input[3] >> 5) * 4;
-				code[1] = (input[3] >> 2 & 7) * 4;
+				ReadOnlySpan<int> code = stackalloc int[2]
+				{
+					(input[3] >> 5) * 4,
+					(input[3] >> 2 & 7) * 4
+				};
 				int ti = (input[3] & 1) * 16;
 				unchecked
 				{
@@ -637,7 +641,7 @@ namespace AssetRipper.TextureDecoder.Etc
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private unsafe static void DecodeEtc2a1Block(ReadOnlySpan<byte> input, Span<uint> output)
+		private static void DecodeEtc2a1Block(ReadOnlySpan<byte> input, Span<uint> output)
 		{
 			if ((input[3] & 2) != 0)
 			{
@@ -650,7 +654,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		private unsafe static void DecodeEtc2PunchThrowBlock(ReadOnlySpan<byte> input, Span<uint> output)
+		private static void DecodeEtc2PunchThrowBlock(ReadOnlySpan<byte> input, Span<uint> output)
 		{
 			int j = input[6] << 8 | input[7];
 			int k = input[4] << 8 | input[5];
@@ -671,7 +675,7 @@ namespace AssetRipper.TextureDecoder.Etc
 				}
 				int ti = input[3] >> 1 & 6 | input[3] & 1;
 				byte d = Etc2DistanceTable[ti];
-				uint* color_set = stackalloc uint[]
+				ReadOnlySpan<uint> color_set = stackalloc uint[4]
 				{
 					ApplicateColorRaw(c, 0),
 					ApplicateColor(c, 1, d),
@@ -713,7 +717,7 @@ namespace AssetRipper.TextureDecoder.Etc
 						++di;
 					}
 					byte d = Etc2DistanceTable[di];
-					uint* color_set = stackalloc uint[]
+					ReadOnlySpan<uint> color_set = stackalloc uint[4]
 					{
 						ApplicateColor(c, 0, d),
 						ApplicateColor(c, 0, -d),
@@ -754,9 +758,9 @@ namespace AssetRipper.TextureDecoder.Etc
 						{
 							for (int x = 0; x < 4; x++, i++)
 							{
-								int ri = Clamp255((x * (c[1 * 3 + 0] - c[0 * 3 + 0]) + y * (c[2 * 3 + 0] - c[0 * 3 + 0]) + 4 * c[0 * 3 + 0] + 2) >> 2);
-								int gi = Clamp255((x * (c[1 * 3 + 1] - c[0 * 3 + 1]) + y * (c[2 * 3 + 1] - c[0 * 3 + 1]) + 4 * c[0 * 3 + 1] + 2) >> 2);
-								int bi = Clamp255((x * (c[1 * 3 + 2] - c[0 * 3 + 2]) + y * (c[2 * 3 + 2] - c[0 * 3 + 2]) + 4 * c[0 * 3 + 2] + 2) >> 2);
+								byte ri = Clamp255((x * (c[1 * 3 + 0] - c[0 * 3 + 0]) + y * (c[2 * 3 + 0] - c[0 * 3 + 0]) + 4 * c[0 * 3 + 0] + 2) >> 2);
+								byte gi = Clamp255((x * (c[1 * 3 + 1] - c[0 * 3 + 1]) + y * (c[2 * 3 + 1] - c[0 * 3 + 1]) + 4 * c[0 * 3 + 1] + 2) >> 2);
+								byte bi = Clamp255((x * (c[1 * 3 + 2] - c[0 * 3 + 2]) + y * (c[2 * 3 + 2] - c[0 * 3 + 2]) + 4 * c[0 * 3 + 2] + 2) >> 2);
 								output[i] = Color(ri, gi, bi, 255);
 							}
 						}
@@ -764,9 +768,11 @@ namespace AssetRipper.TextureDecoder.Etc
 					else
 					{
 						// differential (Etc1Block + mask + specific mod table)
-						int* code = stackalloc int[2];
-						code[0] = (input[3] >> 5) * 4;
-						code[1] = (input[3] >> 2 & 7) * 4;
+						ReadOnlySpan<int> code = stackalloc int[2]
+						{
+							(input[3] >> 5) * 4,
+							(input[3] >> 2 & 7) * 4
+						};
 						int ti = (input[3] & 1) * 16;
 						unchecked
 						{
@@ -796,7 +802,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		private unsafe static void DecodeEtc2a8Block(ReadOnlySpan<byte> input, Span<uint> output)
+		private static void DecodeEtc2a8Block(ReadOnlySpan<byte> input, Span<uint> output)
 		{
 			int @base = input[0];
 			int data1 = input[1];
@@ -816,7 +822,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		private unsafe static void DecodeEacUnsignedBlock(ReadOnlySpan<byte> input, Span<uint> output, int channel)
+		private static void DecodeEacUnsignedBlock(ReadOnlySpan<byte> input, Span<uint> output, int channel)
 		{
 			int @base = input[0];
 			int data1 = input[1];
@@ -833,7 +839,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		private unsafe static void DecodeEacSignedBlock(ReadOnlySpan<byte> input, Span<uint> output, int channel)
+		private static void DecodeEacSignedBlock(ReadOnlySpan<byte> input, Span<uint> output, int channel)
 		{
 			int @base = 127 + unchecked((sbyte)input[0]);
 			int data1 = input[1];
@@ -851,7 +857,7 @@ namespace AssetRipper.TextureDecoder.Etc
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private unsafe static void DecodeEac11Block(Span<byte> output, int @base)
+		private static void DecodeEac11Block(Span<byte> output, int @base)
 		{
 			for (int i = 0; i < 16; i++)
 			{
@@ -860,15 +866,13 @@ namespace AssetRipper.TextureDecoder.Etc
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private unsafe static void DecodeEac11Block(Span<byte> output, int @base, int ti, int mul, ulong l)
+		private static void DecodeEac11Block(Span<byte> output, int @base, int ti, int mul, ulong l)
 		{
-			fixed (sbyte* table = &Etc2AlphaModTable[ti * 8])
+			ReadOnlySpan<sbyte> table = Etc2AlphaModTable.AsSpan(ti * 8, 8);
+			for (int i = 0; i < 16; i++, l >>= 3)
 			{
-				for (int i = 0; i < 16; i++, l >>= 3)
-				{
-					int val = @base + mul * table[l & 7];
-					output[WriteOrderTableRev[i] * 4] = (byte)(Clamp255(val));
-				}
+				int val = @base + mul * table[unchecked((int)(l & 0b111))];
+				output[WriteOrderTableRev[i] * 4] = Clamp255(val);
 			}
 		}
 
@@ -879,31 +883,31 @@ namespace AssetRipper.TextureDecoder.Etc
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static int Clamp255(int n)
+		private static byte Clamp255(int n)
 		{
-			return n < 0 ? 0 : n > 255 ? 255 : n;
+			return n < 0 ? (byte)0 : n > 255 ? (byte)255 : unchecked((byte)n);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private unsafe static uint ApplicateColor(ReadOnlySpan<byte> c, int o, int m)
-		{
-			return Color(Clamp255(c[o * 3 + 0] + m), Clamp255(c[o * 3 + 1] + m), Clamp255(c[o * 3 + 2] + m), 255);
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private unsafe static uint ApplicateColor(ReadOnlySpan<int> c, int o, int m)
+		private static uint ApplicateColor(ReadOnlySpan<byte> c, int o, int m)
 		{
 			return Color(Clamp255(c[o * 3 + 0] + m), Clamp255(c[o * 3 + 1] + m), Clamp255(c[o * 3 + 2] + m), 255);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private unsafe static uint ApplicateColorRaw(ReadOnlySpan<byte> c, int o)
+		private static uint ApplicateColor(ReadOnlySpan<int> c, int o, int m)
+		{
+			return Color(Clamp255(c[o * 3 + 0] + m), Clamp255(c[o * 3 + 1] + m), Clamp255(c[o * 3 + 2] + m), 255);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static uint ApplicateColorRaw(ReadOnlySpan<byte> c, int o)
 		{
 			return Color(c[o * 3 + 0], c[o * 3 + 1], c[o * 3 + 2], 255);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private unsafe static ulong Get6SwapedBytes(ReadOnlySpan<byte> data)
+		private static ulong Get6SwapedBytes(ReadOnlySpan<byte> data)
 		{
 			return data[7] | (uint)data[6] << 8 | (uint)data[5] << 16 | (uint)data[4] << 24 | (ulong)data[3] << 32 | (ulong)data[2] << 40;
 		}
