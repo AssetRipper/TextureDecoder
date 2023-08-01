@@ -92,7 +92,7 @@ namespace AssetRipper.TextureDecoder.Atc
 			return inputOffset;
 		}
 
-		private unsafe static void DecodeAtcRgb4Block(ReadOnlySpan<byte> input, Span<uint> output)
+		private static void DecodeAtcRgb4Block(ReadOnlySpan<byte> input, Span<uint> output)
 		{
 			Span<int> colors = stackalloc int[16];
 			int c0 = input.ReadAtOffset<ushort>(0);
@@ -112,10 +112,10 @@ namespace AssetRipper.TextureDecoder.Atc
 			}
 		}
 
-		private unsafe static void DecodeAtcRgba8Block(ReadOnlySpan<byte> input, Span<uint> output)
+		private static void DecodeAtcRgba8Block(ReadOnlySpan<byte> input, Span<uint> output)
 		{
 			Span<int> alphas = stackalloc int[16];
-			ulong avalue = input.ReadAtOffset<ulong>(0);
+			ulong avalue = BinaryPrimitives.ReadUInt64LittleEndian(input);
 			int a0 = unchecked((int)(avalue >> 0) & 0xFF);
 			int a1 = unchecked((int)(avalue >> 8) & 0xFF);
 			ulong aindex = avalue >> 16;
@@ -149,7 +149,7 @@ namespace AssetRipper.TextureDecoder.Atc
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private unsafe static void DecodeColors(Span<int> colors, int c0, int c1)
+		private static void DecodeColors(Span<int> colors, int c0, int c1)
 		{
 			if ((c0 & 0x8000) == 0)
 			{
@@ -190,7 +190,7 @@ namespace AssetRipper.TextureDecoder.Atc
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private unsafe static void DecodeAlphas(Span<int> alphas, int a0, int a1)
+		private static void DecodeAlphas(Span<int> alphas, int a0, int a1)
 		{
 			alphas[0] = a0;
 			alphas[1] = a1;
