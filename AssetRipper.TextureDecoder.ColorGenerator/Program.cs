@@ -25,7 +25,7 @@ internal static class Program
 		{ typeof(sbyte), "sbyte.MaxValue" },
 		{ typeof(short), "short.MaxValue" },
 		{ typeof(ushort), "ushort.MaxValue" },
-		{ typeof(Half), "HalfConstants.One" },
+		{ typeof(Half), "Half.One" },
 		{ typeof(float), "1f" },
 		{ typeof(double), "1d" },
 	};

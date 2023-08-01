@@ -19,7 +19,7 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats
 		
 		public readonly Half A 
 		{
-			get => HalfConstants.One;
+			get => Half.One;
 			set { }
 		}
 		
