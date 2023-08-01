@@ -6,10 +6,11 @@ using System.Runtime.InteropServices;
 
 namespace AssetRipper.TextureDecoder.ConsoleApp;
 
-public struct DirectBitmap<TColor, TColorArg>
+public readonly struct DirectBitmap<TColor, TColorArg>
 	where TColorArg : unmanaged
 	where TColor : unmanaged, IColor<TColorArg>
 {
+	private static readonly ImageWriter imageWriter = new();
 	public DirectBitmap(int width, int height)
 	{
 		Width = width;
@@ -45,96 +46,75 @@ public struct DirectBitmap<TColor, TColorArg>
 
 	public void SaveAsBmp(string path)
 	{
+		GetDataAndComponentsForSaving(out byte[] data, out ColorComponents components);
 		using Stream stream = File.OpenWrite(path);
-		ImageWriter writer = new();
-		if (typeof(TColor) == typeof(ColorRGBA32))
+		lock (imageWriter)
 		{
-			writer.WriteBmp(Data, Width, Height, ColorComponents.RedGreenBlueAlpha, stream);
-		}
-		else if (typeof(TColor) == typeof(ColorRGB24))
-		{
-			writer.WriteBmp(Data, Width, Height, ColorComponents.RedGreenBlue, stream);
-		}
-		else
-		{
-			RgbConverter.Convert<TColor, TColorArg, ColorRGBA32, byte>(Bits, Width, Height, out byte[] output);
-			writer.WriteBmp(output, Width, Height, ColorComponents.RedGreenBlueAlpha, stream);
+			imageWriter.WriteBmp(data, Width, Height, components, stream);
 		}
 	}
 
 	public void SaveAsHdr(string path)
 	{
+		GetDataAndComponentsForSaving(out byte[] data, out ColorComponents components);
 		using Stream stream = File.OpenWrite(path);
-		ImageWriter writer = new();
-		if (typeof(TColor) == typeof(ColorRGBA32))
+		lock (imageWriter)
 		{
-			writer.WriteHdr(Data, Width, Height, ColorComponents.RedGreenBlueAlpha, stream);
-		}
-		else if (typeof(TColor) == typeof(ColorRGB24))
-		{
-			writer.WriteHdr(Data, Width, Height, ColorComponents.RedGreenBlue, stream);
-		}
-		else
-		{
-			RgbConverter.Convert<TColor, TColorArg, ColorRGBA32, byte>(Bits, Width, Height, out byte[] output);
-			writer.WriteHdr(output, Width, Height, ColorComponents.RedGreenBlueAlpha, stream);
+			imageWriter.WriteHdr(data, Width, Height, components, stream);
 		}
 	}
 
 	public void SaveAsJpg(string path)
 	{
+		GetDataAndComponentsForSaving(out byte[] data, out ColorComponents components);
 		using Stream stream = File.OpenWrite(path);
-		ImageWriter writer = new();
-		if (typeof(TColor) == typeof(ColorRGBA32))
+		lock (imageWriter)
 		{
-			writer.WriteJpg(Data, Width, Height, ColorComponents.RedGreenBlueAlpha, stream, default);
-		}
-		else if (typeof(TColor) == typeof(ColorRGB24))
-		{
-			writer.WriteJpg(Data, Width, Height, ColorComponents.RedGreenBlue, stream, default);
-		}
-		else
-		{
-			RgbConverter.Convert<TColor, TColorArg, ColorRGBA32, byte>(Bits, Width, Height, out byte[] output);
-			writer.WriteJpg(output, Width, Height, ColorComponents.RedGreenBlueAlpha, stream, default);
+			imageWriter.WriteJpg(data, Width, Height, components, stream, default);
 		}
 	}
 
 	public void SaveAsPng(string path)
 	{
+		GetDataAndComponentsForSaving(out byte[] data, out ColorComponents components);
 		using Stream stream = File.OpenWrite(path);
-		ImageWriter writer = new();
-		if (typeof(TColor) == typeof(ColorRGBA32))
+		lock (imageWriter)
 		{
-			writer.WritePng(Data, Width, Height, ColorComponents.RedGreenBlueAlpha, stream);
-		}
-		else if (typeof(TColor) == typeof(ColorRGB24))
-		{
-			writer.WritePng(Data, Width, Height, ColorComponents.RedGreenBlue, stream);
-		}
-		else
-		{
-			RgbConverter.Convert<TColor, TColorArg, ColorRGBA32, byte>(Bits, Width, Height, out byte[] output);
-			writer.WritePng(output, Width, Height, ColorComponents.RedGreenBlueAlpha, stream);
+			imageWriter.WritePng(data, Width, Height, components, stream);
 		}
 	}
 
 	public void SaveAsTga(string path)
 	{
+		GetDataAndComponentsForSaving(out byte[] data, out ColorComponents components);
 		using Stream stream = File.OpenWrite(path);
-		ImageWriter writer = new();
+		lock (imageWriter)
+		{
+			imageWriter.WriteTga(data, Width, Height, components, stream);
+		}
+	}
+
+	private void GetDataAndComponentsForSaving(out byte[] data, out ColorComponents components)
+	{
 		if (typeof(TColor) == typeof(ColorRGBA32))
 		{
-			writer.WriteTga(Data, Width, Height, ColorComponents.RedGreenBlueAlpha, stream);
+			data = Data;
+			components = ColorComponents.RedGreenBlueAlpha;
 		}
 		else if (typeof(TColor) == typeof(ColorRGB24))
 		{
-			writer.WriteTga(Data, Width, Height, ColorComponents.RedGreenBlue, stream);
+			data = Data;
+			components = ColorComponents.RedGreenBlue;
+		}
+		else if (TColor.HasAlphaChannel)
+		{
+			RgbConverter.Convert<TColor, TColorArg, ColorRGBA32, byte>(Bits, Width, Height, out data);
+			components = ColorComponents.RedGreenBlueAlpha;
 		}
 		else
 		{
-			RgbConverter.Convert<TColor, TColorArg, ColorRGBA32, byte>(Bits, Width, Height, out byte[] output);
-			writer.WriteTga(output, Width, Height, ColorComponents.RedGreenBlueAlpha, stream);
+			RgbConverter.Convert<TColor, TColorArg, ColorRGB24, byte>(Bits, Width, Height, out data);
+			components = ColorComponents.RedGreenBlue;
 		}
 	}
 
