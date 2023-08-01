@@ -7,19 +7,19 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats
 	[RgbaAttribute(RedChannel = false, GreenChannel = false, BlueChannel = false, AlphaChannel = true, FullyUtilizedChannels = true)]
 	public partial struct ColorA8 : IColor<byte>
 	{
-		public byte R 
+		public readonly byte R 
 		{
 			get => byte.MinValue;
 			set { }
 		}
 		
-		public byte G 
+		public readonly byte G 
 		{
 			get => byte.MinValue;
 			set { }
 		}
 		
-		public byte B 
+		public readonly byte B 
 		{
 			get => byte.MinValue;
 			set { }
@@ -27,7 +27,7 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats
 		
 		public byte A { get; set; }
 		
-		public void GetChannels(out byte r, out byte g, out byte b, out byte a)
+		public readonly void GetChannels(out byte r, out byte g, out byte b, out byte a)
 		{
 			r = R;
 			g = G;

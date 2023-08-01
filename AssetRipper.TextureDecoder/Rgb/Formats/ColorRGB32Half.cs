@@ -14,7 +14,7 @@
         /// 11 bits
         /// </summary>
         public Half R {
-            get {
+			readonly get {
                 var value = (ushort) ((bits << 4) & 0x7FF0);
                 return Unsafe.As<ushort, Half>(ref value);
             }
@@ -25,7 +25,7 @@
         /// 11 bits
         /// </summary>
         public Half G {
-            get {
+			readonly get {
                 var value = (ushort) ((bits >> 7) & 0x7FF0);
                 return Unsafe.As<ushort, Half>(ref value);
             }
@@ -36,20 +36,20 @@
         /// 10 bits
         /// </summary>
         public Half B {
-            get {
+			readonly get {
                 var value = (ushort) ((bits >> 17) & 0x7FE0);
                 return Unsafe.As<ushort, Half>(ref value);
             }
             set => bits = (bits & ~0xFFC00000) | ((((uint) Unsafe.As<Half, ushort>(ref value) >> 5) & 0x3FF) << 22);
         }
 
-        public Half A
+        public readonly Half A
         {
             get => (Half) 1.0f;
-            set { }
+			set { }
         }
 
-        public void GetChannels(out Half r, out Half g, out Half b, out Half a)
+        public readonly void GetChannels(out Half r, out Half g, out Half b, out Half a)
         {
             DefaultColorMethods.GetChannels(this, out r, out g, out b, out a);
         }

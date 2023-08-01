@@ -9,25 +9,25 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats
 	{
 		public double R { get; set; }
 		
-		public double G 
+		public readonly double G 
 		{
 			get => 0d;
 			set { }
 		}
 		
-		public double B 
+		public readonly double B 
 		{
 			get => 0d;
 			set { }
 		}
 		
-		public double A 
+		public readonly double A 
 		{
 			get => 1d;
 			set { }
 		}
 		
-		public void GetChannels(out double r, out double g, out double b, out double a)
+		public readonly void GetChannels(out double r, out double g, out double b, out double a)
 		{
 			r = R;
 			g = G;

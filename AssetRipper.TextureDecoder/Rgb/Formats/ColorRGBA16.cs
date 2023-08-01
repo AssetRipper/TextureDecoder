@@ -7,29 +7,29 @@
 
 		public byte R
 		{
-			get => rg.HighValue;
+			readonly get => rg.HighValue;
 			set => rg.HighValue = value;
 		}
 
 		public byte G
 		{
-			get => rg.LowValue;
+			readonly get => rg.LowValue;
 			set => rg.LowValue = value;
 		}
 
 		public byte B
 		{
-			get => ba.HighValue;
+			readonly get => ba.HighValue;
 			set => ba.HighValue = value;
 		}
 
 		public byte A
 		{
-			get => ba.LowValue;
+			readonly get => ba.LowValue;
 			set => ba.LowValue = value;
 		}
 
-		public void GetChannels(out byte r, out byte g, out byte b, out byte a)
+		public readonly void GetChannels(out byte r, out byte g, out byte b, out byte a)
 		{
 			DefaultColorMethods.GetChannels(this, out r, out g, out b, out a);
 		}

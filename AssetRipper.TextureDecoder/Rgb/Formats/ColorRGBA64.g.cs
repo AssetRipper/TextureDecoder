@@ -15,7 +15,7 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats
 		
 		public ushort A { get; set; }
 		
-		public void GetChannels(out ushort r, out ushort g, out ushort b, out ushort a)
+		public readonly void GetChannels(out ushort r, out ushort g, out ushort b, out ushort a)
 		{
 			r = R;
 			g = G;

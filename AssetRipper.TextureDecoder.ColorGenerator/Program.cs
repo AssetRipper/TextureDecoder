@@ -206,7 +206,7 @@ internal static class Program
 
 	private static void WriteGetChannels(IndentedTextWriter writer, string typeName)
 	{
-		writer.WriteLine($"public void GetChannels(out {typeName} r, out {typeName} g, out {typeName} b, out {typeName} a)");
+		writer.WriteLine($"public readonly void GetChannels(out {typeName} r, out {typeName} g, out {typeName} b, out {typeName} a)");
 		writer.WriteLine('{');
 		writer.Indent++;
 		writer.WriteLine("r = R;");
@@ -251,7 +251,7 @@ internal static class Program
 		}
 		else
 		{
-			writer.WriteLine($"public {typeName} {channel} ");
+			writer.WriteLine($"public readonly {typeName} {channel} ");
 			writer.WriteLine('{');
 			writer.Indent++;
 			writer.WriteLine($"get => {defaultValue};");

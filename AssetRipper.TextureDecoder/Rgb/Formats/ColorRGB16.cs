@@ -12,7 +12,7 @@
 		/// </summary>
 		public byte R
 		{
-			get => (byte)(((uint)bits >> 8) & 0xF8);
+			readonly get => (byte)(((uint)bits >> 8) & 0xF8);
 			set
 			{
 				bits = (ushort)((((uint)value << 8) & 0xF800u) | (bits & ~0xF800u));
@@ -24,7 +24,7 @@
 		/// </summary>
 		public byte G
 		{
-			get => (byte)(((uint)bits >> 3) & 0xFC);
+			readonly get => (byte)(((uint)bits >> 3) & 0xFC);
 			set
 			{
 				bits = (ushort)((((uint)value << 3) & 0x07E0u) | (bits & ~0x07E0u));
@@ -36,20 +36,20 @@
 		/// </summary>
 		public byte B
 		{
-			get => (byte)(((uint)bits << 3) & 0xF8);
+			readonly get => (byte)(((uint)bits << 3) & 0xF8);
 			set
 			{
 				bits = (ushort)((((uint)value >> 3) & 0x001Fu) | (bits & ~0x001Fu));
 			}
 		}
 
-		public byte A
+		public readonly byte A
 		{
 			get => byte.MaxValue;
 			set { }
 		}
 
-		public void GetChannels(out byte r, out byte g, out byte b, out byte a)
+		public readonly void GetChannels(out byte r, out byte g, out byte b, out byte a)
 		{
 			DefaultColorMethods.GetChannels(this, out r, out g, out b, out a);
 		}

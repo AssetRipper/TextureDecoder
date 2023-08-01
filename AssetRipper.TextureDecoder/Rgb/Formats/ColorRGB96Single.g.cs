@@ -13,13 +13,13 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats
 		
 		public float B { get; set; }
 		
-		public float A 
+		public readonly float A 
 		{
 			get => 1f;
 			set { }
 		}
 		
-		public void GetChannels(out float r, out float g, out float b, out float a)
+		public readonly void GetChannels(out float r, out float g, out float b, out float a)
 		{
 			r = R;
 			g = G;

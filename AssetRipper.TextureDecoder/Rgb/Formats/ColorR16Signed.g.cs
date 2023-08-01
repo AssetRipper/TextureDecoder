@@ -9,25 +9,25 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats
 	{
 		public short R { get; set; }
 		
-		public short G 
+		public readonly short G 
 		{
 			get => short.MinValue;
 			set { }
 		}
 		
-		public short B 
+		public readonly short B 
 		{
 			get => short.MinValue;
 			set { }
 		}
 		
-		public short A 
+		public readonly short A 
 		{
 			get => short.MaxValue;
 			set { }
 		}
 		
-		public void GetChannels(out short r, out short g, out short b, out short a)
+		public readonly void GetChannels(out short r, out short g, out short b, out short a)
 		{
 			r = R;
 			g = G;

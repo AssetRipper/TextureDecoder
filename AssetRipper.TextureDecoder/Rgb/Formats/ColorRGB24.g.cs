@@ -13,13 +13,13 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats
 		
 		public byte B { get; set; }
 		
-		public byte A 
+		public readonly byte A 
 		{
 			get => byte.MaxValue;
 			set { }
 		}
 		
-		public void GetChannels(out byte r, out byte g, out byte b, out byte a)
+		public readonly void GetChannels(out byte r, out byte g, out byte b, out byte a)
 		{
 			r = R;
 			g = G;

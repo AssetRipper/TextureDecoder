@@ -9,25 +9,25 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats
 	{
 		public Half R { get; set; }
 		
-		public Half G 
+		public readonly Half G 
 		{
 			get => default;
 			set { }
 		}
 		
-		public Half B 
+		public readonly Half B 
 		{
 			get => default;
 			set { }
 		}
 		
-		public Half A 
+		public readonly Half A 
 		{
 			get => HalfConstants.One;
 			set { }
 		}
 		
-		public void GetChannels(out Half r, out Half g, out Half b, out Half a)
+		public readonly void GetChannels(out Half r, out Half g, out Half b, out Half a)
 		{
 			r = R;
 			g = G;

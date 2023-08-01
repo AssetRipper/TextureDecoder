@@ -7,7 +7,7 @@
 		public byte R { get; set; }
 		public byte A { get; set; }
 
-		public void GetChannels(out byte r, out byte g, out byte b, out byte a)
+		public readonly void GetChannels(out byte r, out byte g, out byte b, out byte a)
 		{
 			DefaultColorMethods.GetChannels(this, out r, out g, out b, out a);
 		}

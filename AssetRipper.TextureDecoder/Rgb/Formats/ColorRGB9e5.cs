@@ -11,7 +11,7 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats
 
 		public double R
 		{
-			get => RBits * Scale;
+			readonly get => RBits * Scale;
 			set
 			{
 				GetChannels(out _, out double g, out double b, out _);
@@ -21,7 +21,7 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats
 
 		public double G
 		{
-			get => GBits * Scale;
+			readonly get => GBits * Scale;
 			set
 			{
 				GetChannels(out double r, out _, out double b, out _);
@@ -31,7 +31,7 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats
 
 		public double B
 		{
-			get => BBits * Scale;
+			readonly get => BBits * Scale;
 			set
 			{
 				GetChannels(out double r, out double g, out _, out _);
@@ -39,14 +39,14 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats
 			}
 		}
 
-		public double A
+		public readonly double A
 		{
 			get => 1;
 			set { }
 		}
 
 		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
-		public void GetChannels(out double r, out double g, out double b, out double a)
+		public readonly void GetChannels(out double r, out double g, out double b, out double a)
 		{
 			double scale = Scale;
 			r = RBits * scale;
@@ -70,11 +70,11 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats
 		/// <summary>
 		/// Range: -24 to 7 inclusive
 		/// </summary>
-		private int Exponent => unchecked((int)(bits >> 27) - 24);
-		private double Scale => Pow(2, Exponent);
-		private uint RBits => (bits >> 0) & 0x1FF;
-		private uint GBits => (bits >> 9) & 0x1FF;
-		private uint BBits => (bits >> 18) & 0x1FF;
+		private readonly int Exponent => unchecked((int)(bits >> 27) - 24);
+		private readonly double Scale => Pow(2, Exponent);
+		private readonly uint RBits => (bits >> 0) & 0x1FF;
+		private readonly uint GBits => (bits >> 9) & 0x1FF;
+		private readonly uint BBits => (bits >> 18) & 0x1FF;
 
 		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		private static int CalculateExponent(double r, double g, double b)
@@ -83,11 +83,5 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats
 			double minExponent = Log2(maxChannel / 0x1FF);
 			return (int)Ceiling(minExponent);
 		}
-
-#if NETSTANDARD
-		private static readonly double LogTwoConstant = Log(2);
-		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
-		private static double Log2(double value) => Log(value) / LogTwoConstant;
-#endif
 	}
 }
