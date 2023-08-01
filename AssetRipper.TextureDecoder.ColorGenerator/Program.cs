@@ -149,10 +149,21 @@ internal static class Program
 		writer.WriteLine($"[RgbaAttribute(RedChannel = {hasRed.ToLowerString()}, GreenChannel = {hasGreen.ToLowerString()}, BlueChannel = {hasBlue.ToLowerString()}, AlphaChannel = {hasAlpha.ToLowerString()}, FullyUtilizedChannels = {fullyUtilized.ToLowerString()})]");
 		writer.WriteLine($"public partial struct {name} : IColor<{typeName}>");
 		writer.WriteLine('{');
+		writer.Indent++;
+		WriteHasChannelStaticProperties(writer, hasRed, hasGreen, hasBlue, hasAlpha, typeName);
+		writer.Indent--;
 		writer.WriteLine('}');
 
 		writer.Indent--;
 		writer.WriteLine('}');
+	}
+
+	private static void WriteHasChannelStaticProperties(IndentedTextWriter writer, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha, string typeName)
+	{
+		writer.WriteLine($"static bool IColor<{typeName}>.HasRedChannel => {hasRed.ToLowerString()};");
+		writer.WriteLine($"static bool IColor<{typeName}>.HasGreenChannel => {hasGreen.ToLowerString()};");
+		writer.WriteLine($"static bool IColor<{typeName}>.HasBlueChannel => {hasBlue.ToLowerString()};");
+		writer.WriteLine($"static bool IColor<{typeName}>.HasAlphaChannel => {hasAlpha.ToLowerString()};");
 	}
 
 	private static void WriteColor(IndentedTextWriter writer, string name, Type type, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha)
@@ -183,6 +194,8 @@ internal static class Program
 		WriteGetChannels(writer, typeName);
 		writer.WriteLine();
 		WriteSetChannels(writer, type, hasRed, hasGreen, hasBlue, hasAlpha);
+		writer.WriteLine();
+		WriteHasChannelStaticProperties(writer, hasRed, hasGreen, hasBlue, hasAlpha, typeName);
 
 		writer.Indent--;
 		writer.WriteLine('}');

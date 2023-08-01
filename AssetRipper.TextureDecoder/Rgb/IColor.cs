@@ -40,6 +40,23 @@
 
 		void GetChannels(out T r, out T g, out T b, out T a);
 		void SetChannels(T r, T g, T b, T a);
+
+		/// <summary>
+		/// Does the format have a red channel?
+		/// </summary>
+		static abstract bool HasRedChannel { get; }
+		/// <summary>
+		/// Does the format have a green channel?
+		/// </summary>
+		static abstract bool HasGreenChannel { get; }
+		/// <summary>
+		/// Does the format have a blue channel?
+		/// </summary>
+		static abstract bool HasBlueChannel { get; }
+		/// <summary>
+		/// Does the format have an alpha channel?
+		/// </summary>
+		static abstract bool HasAlphaChannel { get; }
 	}
 
 	public static class ColorExtensions

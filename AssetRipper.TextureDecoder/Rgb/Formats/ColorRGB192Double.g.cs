@@ -33,5 +33,10 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats
 			G = g;
 			B = b;
 		}
+		
+		static bool IColor<double>.HasRedChannel => true;
+		static bool IColor<double>.HasGreenChannel => true;
+		static bool IColor<double>.HasBlueChannel => true;
+		static bool IColor<double>.HasAlphaChannel => false;
 	}
 }
