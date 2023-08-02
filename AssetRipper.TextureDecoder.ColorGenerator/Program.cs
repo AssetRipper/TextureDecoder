@@ -8,39 +8,6 @@ internal static class Program
 	private const string OutputNamespace = "AssetRipper.TextureDecoder.Rgb.Formats";
 	private const string OutputFolder = "../../../../AssetRipper.TextureDecoder/Rgb/Formats/";
 
-	private static readonly Dictionary<Type, string> MinimumValues = new()
-	{
-		{ typeof(byte), "byte.MinValue" },
-		{ typeof(sbyte), "sbyte.MinValue" },
-		{ typeof(short), "short.MinValue" },
-		{ typeof(ushort), "ushort.MinValue" },
-		{ typeof(Half), "default" },
-		{ typeof(float), "0f" },
-		{ typeof(double), "0d" },
-	};
-
-	private static readonly Dictionary<Type, string> MaximumValues = new()
-	{
-		{ typeof(byte), "byte.MaxValue" },
-		{ typeof(sbyte), "sbyte.MaxValue" },
-		{ typeof(short), "short.MaxValue" },
-		{ typeof(ushort), "ushort.MaxValue" },
-		{ typeof(Half), "Half.One" },
-		{ typeof(float), "1f" },
-		{ typeof(double), "1d" },
-	};
-
-	private static readonly Dictionary<Type, string> TypeNames = new()
-	{
-		{ typeof(byte), "byte" },
-		{ typeof(sbyte), "sbyte" },
-		{ typeof(short), "short" },
-		{ typeof(ushort), "ushort" },
-		{ typeof(Half), "Half" },
-		{ typeof(float), "float" },
-		{ typeof(double), "double" },
-	};
-
 	/// <summary>
 	/// Name, Type, Red, Blue, Green, Alpha
 	/// </summary>
@@ -108,6 +75,7 @@ internal static class Program
 		{
 			WriteOtherColor(otherColor);
 		}
+		NumericConversionGenerator.Run();
 		Console.WriteLine("Done!");
 	}
 
@@ -137,7 +105,7 @@ internal static class Program
 
 	private static void WriteOtherColor(IndentedTextWriter writer, string name, Type type, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha, bool fullyUtilized)
 	{
-		string typeName = TypeNames[type];
+		string typeName = CSharpPrimitives.TypeNames[type];
 		writer.WriteLine("//This code is source generated. Do not edit manually.");
 		writer.WriteLine();
 		writer.WriteLine($"using {AttributeNamespace};");
@@ -168,7 +136,7 @@ internal static class Program
 
 	private static void WriteColor(IndentedTextWriter writer, string name, Type type, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha)
 	{
-		string typeName = TypeNames[type];
+		string typeName = CSharpPrimitives.TypeNames[type];
 		writer.WriteLine("//This code is source generated. Do not edit manually.");
 		writer.WriteLine();
 		writer.WriteLine($"using {AttributeNamespace};");
@@ -182,13 +150,13 @@ internal static class Program
 		writer.WriteLine('{');
 		writer.Indent++;
 
-		WriteProperty(writer, hasRed, typeName, 'R', MinimumValues[type]);
+		WriteProperty(writer, hasRed, typeName, 'R', CSharpPrimitives.MinimumValues[type]);
 		writer.WriteLine();
-		WriteProperty(writer, hasGreen, typeName, 'G', MinimumValues[type]);
+		WriteProperty(writer, hasGreen, typeName, 'G', CSharpPrimitives.MinimumValues[type]);
 		writer.WriteLine();
-		WriteProperty(writer, hasBlue, typeName, 'B', MinimumValues[type]);
+		WriteProperty(writer, hasBlue, typeName, 'B', CSharpPrimitives.MinimumValues[type]);
 		writer.WriteLine();
-		WriteProperty(writer, hasAlpha, typeName, 'A', MaximumValues[type]);
+		WriteProperty(writer, hasAlpha, typeName, 'A', CSharpPrimitives.MaximumValues[type]);
 		writer.WriteLine();
 
 		WriteGetChannels(writer, typeName);
@@ -219,7 +187,7 @@ internal static class Program
 
 	private static void WriteSetChannels(IndentedTextWriter writer, Type type, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha)
 	{
-		string typeName = TypeNames[type];
+		string typeName = CSharpPrimitives.TypeNames[type];
 		writer.WriteLine($"public void SetChannels({typeName} r, {typeName} g, {typeName} b, {typeName} a)");
 		writer.WriteLine('{');
 		writer.Indent++;

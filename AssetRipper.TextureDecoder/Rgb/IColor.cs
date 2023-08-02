@@ -14,9 +14,14 @@
 	/// <item><see cref="byte"/></item>
 	/// <item><see cref="short"/></item>
 	/// <item><see cref="ushort"/></item>
+	/// <item><see cref="int"/></item>
+	/// <item><see cref="uint"/></item>
+	/// <item><see cref="long"/></item>
+	/// <item><see cref="ulong"/></item>
 	/// <item><see cref="Half"/></item>
 	/// <item><see cref="float"/></item>
 	/// <item><see cref="double"/></item>
+	/// <item><see cref="decimal"/></item>
 	/// </list>
 	/// </typeparam>
 	public interface IColor<T> where T : unmanaged
@@ -68,10 +73,10 @@
 			where TThis : unmanaged, IColor<TThisArg>
 		{
 			color.SetChannels(
-					ConversionUtilities.ConvertValue<TSourceArg, TThisArg>(r),
-					ConversionUtilities.ConvertValue<TSourceArg, TThisArg>(g),
-					ConversionUtilities.ConvertValue<TSourceArg, TThisArg>(b),
-					ConversionUtilities.ConvertValue<TSourceArg, TThisArg>(a));
+				NumericConversion.Convert<TSourceArg, TThisArg>(r),
+				NumericConversion.Convert<TSourceArg, TThisArg>(g),
+				NumericConversion.Convert<TSourceArg, TThisArg>(b),
+				NumericConversion.Convert<TSourceArg, TThisArg>(a));
 		}
 
 		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
