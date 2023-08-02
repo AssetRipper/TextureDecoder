@@ -278,7 +278,7 @@ static partial class NumericConversion
 			// There are more accurate ways to map uint onto ushort, but this is the simplest.
 			unchecked
 			{
-				ushort converted = (ushort)((uint)value >> 8);
+				ushort converted = (ushort)((uint)value >> 16);
 				return Unsafe.As<ushort, TTo>(ref converted);
 			}
 		}
@@ -369,7 +369,7 @@ static partial class NumericConversion
 			// There are more accurate ways to map ulong onto ushort, but this is the simplest.
 			unchecked
 			{
-				ushort converted = (ushort)((ulong)value >> 24);
+				ushort converted = (ushort)((ulong)value >> 48);
 				return Unsafe.As<ushort, TTo>(ref converted);
 			}
 		}
@@ -384,7 +384,7 @@ static partial class NumericConversion
 			// There are more accurate ways to map ulong onto uint, but this is the simplest.
 			unchecked
 			{
-				uint converted = (uint)((ulong)value >> 8);
+				uint converted = (uint)((ulong)value >> 32);
 				return Unsafe.As<uint, TTo>(ref converted);
 			}
 		}

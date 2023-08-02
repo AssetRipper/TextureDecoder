@@ -13,6 +13,7 @@ internal static class NumericConversionGenerator
 
 	public static void Run()
 	{
+		Console.WriteLine(ClassName);
 		using IndentedTextWriter writer = IndentedTextWriterFactory.Create(OutputDirectory, ClassName);
 		Write(writer);
 	}
@@ -214,7 +215,8 @@ internal static class NumericConversionGenerator
 										writer.WriteLine("unchecked");
 										using (new CurlyBrackets(writer))
 										{
-											writer.WriteLine($"{toName} converted = ({toName})(({conversionType})value >> {(fromSize / toSize - 1) * 8});");
+											int offset = (fromSize / toSize - 1) * toSize * 8;
+											writer.WriteLine($"{toName} converted = ({toName})(({conversionType})value >> {offset});");
 											writer.WriteLine($"return Unsafe.As<{toName}, TTo>(ref converted);");
 										}
 									}
