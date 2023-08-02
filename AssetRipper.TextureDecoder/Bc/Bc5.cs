@@ -16,7 +16,7 @@ public static class Bc5
 
 	public static int Decompress(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 	{
-		int bufferSize = width * height * Unsafe.SizeOf<ColorRG16>();
+		int bufferSize = width * height * Unsafe.SizeOf<ColorRG<byte>>();
 		byte[] bufferArray = ArrayPool<byte>.Shared.Rent(bufferSize);
 		Span<byte> buffer = new Span<byte>(bufferArray, 0, bufferSize);
 		int inputOffset = 0;
@@ -24,12 +24,12 @@ public static class Bc5
 		{
 			for (int j = 0; j < width; j += 4)
 			{
-				int bufferOffset = ((i * width) + j) * Unsafe.SizeOf<ColorRG16>();
+				int bufferOffset = ((i * width) + j) * Unsafe.SizeOf<ColorRG<byte>>();
 				BcHelpers.DecompressBc5(input.Slice(inputOffset), buffer.Slice(bufferOffset), width * 2);
 				inputOffset += BlockSize;
 			}
 		}
-		RgbConverter.Convert<ColorRG16, byte, ColorBGRA32, byte>(buffer, width, height, output);
+		RgbConverter.Convert<ColorRG<byte>, byte, ColorBGRA32, byte>(buffer, width, height, output);
 		ArrayPool<byte>.Shared.Return(bufferArray);
 		return inputOffset;
 	}

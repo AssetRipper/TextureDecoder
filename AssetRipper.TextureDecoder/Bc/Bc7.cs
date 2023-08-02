@@ -20,7 +20,7 @@ public static class Bc7
 		{
 			for (int j = 0; j < width; j += 4)
 			{
-				int outputOffset = ((i * width) + j) * Unsafe.SizeOf<ColorRGBA32>();
+				int outputOffset = ((i * width) + j) * Unsafe.SizeOf<ColorRGBA<byte>>();
 				BcHelpers.DecompressBc7(
 					input.Slice(inputOffset, BlockSize), 
 					output.Slice(outputOffset),
@@ -28,7 +28,7 @@ public static class Bc7
 				inputOffset += BlockSize;
 			}
 		}
-		RgbConverter.Convert<ColorRGBA32, byte, ColorBGRA32, byte>(output, width, height, output);
+		RgbConverter.Convert<ColorRGBA<byte>, byte, ColorBGRA32, byte>(output, width, height, output);
 		return inputOffset;
 	}
 

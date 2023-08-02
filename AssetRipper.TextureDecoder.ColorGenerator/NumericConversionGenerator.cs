@@ -1,4 +1,5 @@
 ﻿using AssetRipper.Text.SourceGeneration;
+using AssetRipper.TextureDecoder.SourceGeneration.Common;
 using System.CodeDom.Compiler;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -108,7 +109,7 @@ internal static class NumericConversionGenerator
 		writer.WriteLine($"private static TTo {methodName}<TTo>({fromName} value) where TTo : unmanaged");
 		using (new CurlyBrackets(writer))
 		{
-			if (IsSignedInteger(from, out Type? unsignedFrom))
+			if (CSharpPrimitives.IsSignedInteger(from, out Type? unsignedFrom))
 			{
 				writer.WriteLine($"{CSharpPrimitives.TypeNames[unsignedFrom]} unsigned = {ChangeSign}(value);");
 				writer.WriteLine($"return {ConvertMethodName(unsignedFrom)}<TTo>(unsigned);");
@@ -125,22 +126,22 @@ internal static class NumericConversionGenerator
 						{
 							writer.WriteLine($"return Unsafe.As<{toName}, TTo>(ref value);");
 						}
-						else if (IsSignedInteger(to, out Type? unsignedTo))
+						else if (CSharpPrimitives.IsSignedInteger(to, out Type? unsignedTo))
 						{
 							string unsignedToName = CSharpPrimitives.TypeNames[unsignedTo];
 							writer.WriteLine($"{toName} converted = {ChangeSign}({methodName}<{unsignedToName}>(value));");
 							writer.WriteLine($"return Unsafe.As<{toName}, TTo>(ref converted);");
 						}
-						else if (IsFloatingPoint(from))
+						else if (CSharpPrimitives.IsFloatingPoint(from))
 						{
-							if (IsFloatingPoint(to))
+							if (CSharpPrimitives.IsFloatingPoint(to))
 							{
 								writer.WriteLine($"{toName} converted = ({toName})value;");
 								writer.WriteLine($"return Unsafe.As<{toName}, TTo>(ref converted);");
 							}
 							else
 							{
-								Debug.Assert(IsUnsignedInteger(to));
+								Debug.Assert(CSharpPrimitives.IsUnsignedInteger(to));
 								if (from == typeof(Half))
 								{
 									writer.WriteComment("We use float because it has enough precision to convert from Half to any integer type.");
@@ -159,8 +160,8 @@ internal static class NumericConversionGenerator
 						}
 						else
 						{
-							Debug.Assert(IsUnsignedInteger(from));
-							if (IsFloatingPoint(to))
+							Debug.Assert(CSharpPrimitives.IsUnsignedInteger(from));
+							if (CSharpPrimitives.IsFloatingPoint(to))
 							{
 								if (to == typeof(Half))
 								{
@@ -178,7 +179,7 @@ internal static class NumericConversionGenerator
 							}
 							else
 							{
-								Debug.Assert(IsUnsignedInteger(to));
+								Debug.Assert(CSharpPrimitives.IsUnsignedInteger(to));
 								writer.WriteComment("See https://github.com/AssetRipper/TextureDecoder/issues/19");
 								int fromSize = CSharpPrimitives.Sizes[from];
 								int toSize = CSharpPrimitives.Sizes[to];
@@ -238,40 +239,5 @@ internal static class NumericConversionGenerator
 	private static string ConvertMethodName(Type from)
 	{
 		return $"Convert{from.Name}";
-	}
-
-	private static bool IsFloatingPoint(Type type)
-	{
-		return type == typeof(Half) || type == typeof(float) || type == typeof(double) || type == typeof(decimal);
-	}
-
-	private static bool IsSignedInteger(Type type, [NotNullWhen(true)] out Type? unsignedType)
-	{
-		if (type == typeof(sbyte))
-		{
-			unsignedType = typeof(byte);
-		}
-		else if (type == typeof(short))
-		{
-			unsignedType = typeof(ushort);
-		}
-		else if (type == typeof(int))
-		{
-			unsignedType = typeof(uint);
-		}
-		else if (type == typeof(long))
-		{
-			unsignedType = typeof(ulong);
-		}
-		else
-		{
-			unsignedType = null;
-		}
-		return unsignedType is not null;
-	}
-
-	private static bool IsUnsignedInteger(Type type)
-	{
-		return type == typeof(byte) || type == typeof(ushort) || type == typeof(uint) || type == typeof(ulong);
 	}
 }

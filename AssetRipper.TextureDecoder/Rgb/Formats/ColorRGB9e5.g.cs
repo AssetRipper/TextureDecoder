@@ -11,5 +11,10 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats
 		static bool IColor<double>.HasGreenChannel => true;
 		static bool IColor<double>.HasBlueChannel => true;
 		static bool IColor<double>.HasAlphaChannel => false;
+
+		public override string ToString()
+		{
+			return $"{{ R: {R}, G: {G}, B: {B} }}";
+		}
 	}
 }

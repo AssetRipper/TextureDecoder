@@ -11,4 +11,8 @@
 		<PackageReference Include="AssetRipper.Text.SourceGeneration" Version="1.0.0" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\AssetRipper.TextureDecoder.SourceGeneration.Common\AssetRipper.TextureDecoder.SourceGeneration.Common.csproj" />
+	</ItemGroup>
+
 </Project>

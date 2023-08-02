@@ -20,12 +20,12 @@ public static class Bc2
 		{
 			for (int j = 0; j < width; j += 4)
 			{
-				int outputOffset = ((i * width) + j) * Unsafe.SizeOf<ColorRGBA32>();
+				int outputOffset = ((i * width) + j) * Unsafe.SizeOf<ColorRGBA<byte>>();
 				BcHelpers.DecompressBc2(input.Slice(inputOffset), output.Slice(outputOffset), width * 4);
 				inputOffset += BlockSize;
 			}
 		}
-		RgbConverter.Convert<ColorRGBA32, byte, ColorBGRA32, byte>(output, width, height, output);
+		RgbConverter.Convert<ColorRGBA<byte>, byte, ColorBGRA32, byte>(output, width, height, output);
 		return inputOffset;
 	}
 

@@ -1,5 +1,6 @@
 ﻿using AssetRipper.TextureDecoder.Attributes;
 using AssetRipper.TextureDecoder.Rgb;
+using AssetRipper.TextureDecoder.SourceGeneration.Common;
 using System.Reflection;
 
 namespace AssetRipper.TextureDecoder.TestGenerator
@@ -16,57 +17,11 @@ namespace AssetRipper.TextureDecoder.TestGenerator
 		public bool AlphaChannel { get; }
 		public bool FullyUtilizedChannels { get; }
 
-		public bool IsFloatingPoint
-		{
-			get
-			{
-				return ChannelType == typeof(Half) || ChannelType == typeof(float) || ChannelType == typeof(double);
-			}
-		}
+		public bool IsFloatingPoint => CSharpPrimitives.IsFloatingPoint(ChannelType);
 
-		public int BitSizePerChannel
-		{
-			get
-			{
-				if (ChannelType == typeof(byte) || ChannelType == typeof(sbyte))
-				{
-					return 8;
-				}
-				else if (ChannelType == typeof(ushort) || ChannelType == typeof(short) || ChannelType == typeof(Half))
-				{
-					return 16;
-				}
-				else if (ChannelType == typeof(float))
-				{
-					return 32;
-				}
-				else if (ChannelType == typeof(double))
-				{
-					return 64;
-				}
-				else
-				{
-					throw new NotSupportedException(ChannelType.Name);
-				}
-			}
-		}
+		public int BitSizePerChannel => CSharpPrimitives.Sizes[ChannelType] * 8;
 
-		public string ChannelTypeName
-		{
-			get
-			{
-				return ChannelType.Name switch
-				{
-					"Byte" => "byte",
-					"SByte" => "sbyte",
-					"UInt16" => "ushort",
-					"Int16" => "short",
-					"Single" => "float",
-					"Double" => "double",
-					_ => ChannelType.Name,
-				};
-			}
-		}
+		public string ChannelTypeName => CSharpPrimitives.TypeNames[ChannelType];
 
 		public GenerationData(Type colorType, int colorSize)
 		{
@@ -89,12 +44,7 @@ namespace AssetRipper.TextureDecoder.TestGenerator
 				return false;
 			}
 
-			if (!IsFloatingPoint && other.IsFloatingPoint)
-			{
-				return false;
-			}
-			
-			if (IsFloatingPoint && !other.IsFloatingPoint)
+			if (IsFloatingPoint != other.IsFloatingPoint)
 			{
 				return false;
 			}

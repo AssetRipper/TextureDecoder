@@ -96,24 +96,24 @@ public readonly struct DirectBitmap<TColor, TColorArg>
 
 	private void GetDataAndComponentsForSaving(out byte[] data, out ColorComponents components)
 	{
-		if (typeof(TColor) == typeof(ColorRGBA32))
+		if (typeof(TColor) == typeof(ColorRGBA<byte>))
 		{
 			data = Data;
 			components = ColorComponents.RedGreenBlueAlpha;
 		}
-		else if (typeof(TColor) == typeof(ColorRGB24))
+		else if (typeof(TColor) == typeof(ColorRGB<byte>))
 		{
 			data = Data;
 			components = ColorComponents.RedGreenBlue;
 		}
 		else if (TColor.HasAlphaChannel)
 		{
-			RgbConverter.Convert<TColor, TColorArg, ColorRGBA32, byte>(Bits, Width, Height, out data);
+			RgbConverter.Convert<TColor, TColorArg, ColorRGBA<byte>, byte>(Bits, Width, Height, out data);
 			components = ColorComponents.RedGreenBlueAlpha;
 		}
 		else
 		{
-			RgbConverter.Convert<TColor, TColorArg, ColorRGB24, byte>(Bits, Width, Height, out data);
+			RgbConverter.Convert<TColor, TColorArg, ColorRGB<byte>, byte>(Bits, Width, Height, out data);
 			components = ColorComponents.RedGreenBlue;
 		}
 	}

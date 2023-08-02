@@ -1,6 +1,5 @@
-//This code is source generated. Do not edit manually.
+// Auto-generated code. Do not modify manually.
 
-using AssetRipper.TextureDecoder.Rgb;
 using AssetRipper.TextureDecoder.Rgb.Formats;
 using System.Runtime.CompilerServices;
 
@@ -13,7 +12,7 @@ public partial class ColorRGB9e5Tests
 	{
 		Assert.That(Unsafe.SizeOf<ColorRGB9e5>(), Is.EqualTo(4));
 	}
-	
+
 	[Test]
 	public void PropertyIsSymmetric_R()
 	{
@@ -57,7 +56,7 @@ public partial class ColorRGB9e5Tests
 		var g = color.G;
 		var b = color.B;
 		var a = color.A;
-		color.R = 0.333;
+		color.R = MakeRandomValue();
 		Assert.Multiple(() =>
 		{
 			Assert.That(color.G, Is.EqualTo(g));
@@ -73,7 +72,7 @@ public partial class ColorRGB9e5Tests
 		var r = color.R;
 		var b = color.B;
 		var a = color.A;
-		color.G = 0.333;
+		color.G = MakeRandomValue();
 		Assert.Multiple(() =>
 		{
 			Assert.That(color.R, Is.EqualTo(r));
@@ -89,7 +88,7 @@ public partial class ColorRGB9e5Tests
 		var r = color.R;
 		var g = color.G;
 		var a = color.A;
-		color.B = 0.333;
+		color.B = MakeRandomValue();
 		Assert.Multiple(() =>
 		{
 			Assert.That(color.R, Is.EqualTo(r));
@@ -105,7 +104,7 @@ public partial class ColorRGB9e5Tests
 		var r = color.R;
 		var g = color.G;
 		var b = color.B;
-		color.A = 0.333;
+		color.A = MakeRandomValue();
 		Assert.Multiple(() =>
 		{
 			Assert.That(color.R, Is.EqualTo(r));
@@ -127,7 +126,7 @@ public partial class ColorRGB9e5Tests
 			Assert.That(color.A, Is.EqualTo(a));
 		});
 	}
-	
+
 	[Test]
 	public void MethodsAreSymmetric()
 	{
@@ -142,33 +141,20 @@ public partial class ColorRGB9e5Tests
 			Assert.That(color.A, Is.EqualTo(a));
 		});
 	}
-	
-	public static ColorRGB9e5 MakeRandomColor()
-	{
-		return new()
-		{
-			R = 0.447,
-			G = 0.224,
-			B = 0.95,
-			A = 0.897,
-		};
-	}
-	
+
+	public static ColorRGB9e5 MakeRandomColor() => ColorRandom<ColorRGB9e5, double>.MakeRandomColor();
+
+	public static double MakeRandomValue() => ColorRandom<ColorRGB9e5, double>.MakeRandomValue();
+
 	[Test]
-	public void ConversionToColorRGB192DoubleIsLossless()
+	public void ConversionIsLosslessToColorRGBA_double()
 	{
-		ColorRGB9e5 original = MakeRandomColor();
-		ColorRGB192Double converted = original.Convert<ColorRGB9e5, double, ColorRGB192Double, double>();
-		ColorRGB9e5 convertedBack = converted.Convert<ColorRGB192Double, double, ColorRGB9e5, double>();
-		Assert.That(convertedBack, Is.EqualTo(original));
+		LosslessConversion.Assert<ColorRGB9e5, double, ColorRGBA<double>, double>();
 	}
-	
+
 	[Test]
-	public void ConversionToColorRGBA256DoubleIsLossless()
+	public void ConversionIsLosslessToColorRGB_double()
 	{
-		ColorRGB9e5 original = MakeRandomColor();
-		ColorRGBA256Double converted = original.Convert<ColorRGB9e5, double, ColorRGBA256Double, double>();
-		ColorRGB9e5 convertedBack = converted.Convert<ColorRGBA256Double, double, ColorRGB9e5, double>();
-		Assert.That(convertedBack, Is.EqualTo(original));
+		LosslessConversion.Assert<ColorRGB9e5, double, ColorRGB<double>, double>();
 	}
 }

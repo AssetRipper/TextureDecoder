@@ -1,6 +1,5 @@
-//This code is source generated. Do not edit manually.
+// Auto-generated code. Do not modify manually.
 
-using AssetRipper.TextureDecoder.Rgb;
 using AssetRipper.TextureDecoder.Rgb.Formats;
 using System.Runtime.CompilerServices;
 
@@ -13,7 +12,7 @@ public partial class ColorARGB32Tests
 	{
 		Assert.That(Unsafe.SizeOf<ColorARGB32>(), Is.EqualTo(4));
 	}
-	
+
 	[Test]
 	public void PropertyIsSymmetric_R()
 	{
@@ -57,7 +56,7 @@ public partial class ColorARGB32Tests
 		var g = color.G;
 		var b = color.B;
 		var a = color.A;
-		color.R = 0b01001110;
+		color.R = MakeRandomValue();
 		Assert.Multiple(() =>
 		{
 			Assert.That(color.G, Is.EqualTo(g));
@@ -73,7 +72,7 @@ public partial class ColorARGB32Tests
 		var r = color.R;
 		var b = color.B;
 		var a = color.A;
-		color.G = 0b01001110;
+		color.G = MakeRandomValue();
 		Assert.Multiple(() =>
 		{
 			Assert.That(color.R, Is.EqualTo(r));
@@ -89,7 +88,7 @@ public partial class ColorARGB32Tests
 		var r = color.R;
 		var g = color.G;
 		var a = color.A;
-		color.B = 0b01001110;
+		color.B = MakeRandomValue();
 		Assert.Multiple(() =>
 		{
 			Assert.That(color.R, Is.EqualTo(r));
@@ -105,7 +104,7 @@ public partial class ColorARGB32Tests
 		var r = color.R;
 		var g = color.G;
 		var b = color.B;
-		color.A = 0b01001110;
+		color.A = MakeRandomValue();
 		Assert.Multiple(() =>
 		{
 			Assert.That(color.R, Is.EqualTo(r));
@@ -127,7 +126,7 @@ public partial class ColorARGB32Tests
 			Assert.That(color.A, Is.EqualTo(a));
 		});
 	}
-	
+
 	[Test]
 	public void MethodsAreSymmetric()
 	{
@@ -142,69 +141,68 @@ public partial class ColorARGB32Tests
 			Assert.That(color.A, Is.EqualTo(a));
 		});
 	}
-	
-	public static ColorARGB32 MakeRandomColor()
-	{
-		return new()
-		{
-			R = 0b11010101,
-			G = 0b01110010,
-			B = 0b10001111,
-			A = 0b11000111,
-		};
-	}
-	
+
+	public static ColorARGB32 MakeRandomColor() => ColorRandom<ColorARGB32, byte>.MakeRandomColor();
+
+	public static byte MakeRandomValue() => ColorRandom<ColorARGB32, byte>.MakeRandomValue();
+
 	[Test]
-	public void ConversionToColorARGB32IsLossless()
+	public void ConversionIsLosslessToColorARGB32()
 	{
-		ColorARGB32 original = MakeRandomColor();
-		ColorARGB32 converted = original.Convert<ColorARGB32, byte, ColorARGB32, byte>();
-		ColorARGB32 convertedBack = converted.Convert<ColorARGB32, byte, ColorARGB32, byte>();
-		Assert.That(convertedBack, Is.EqualTo(original));
+		LosslessConversion.Assert<ColorARGB32, byte, ColorARGB32, byte>();
 	}
-	
+
 	[Test]
-	public void ConversionToColorBGRA32IsLossless()
+	public void ConversionIsLosslessToColorBGRA32()
 	{
-		ColorARGB32 original = MakeRandomColor();
-		ColorBGRA32 converted = original.Convert<ColorARGB32, byte, ColorBGRA32, byte>();
-		ColorARGB32 convertedBack = converted.Convert<ColorBGRA32, byte, ColorARGB32, byte>();
-		Assert.That(convertedBack, Is.EqualTo(original));
+		LosslessConversion.Assert<ColorARGB32, byte, ColorBGRA32, byte>();
 	}
-	
+
 	[Test]
-	public void ConversionToColorRGBA32IsLossless()
+	public void ConversionIsLosslessToColorRGBA_sbyte()
 	{
-		ColorARGB32 original = MakeRandomColor();
-		ColorRGBA32 converted = original.Convert<ColorARGB32, byte, ColorRGBA32, byte>();
-		ColorARGB32 convertedBack = converted.Convert<ColorRGBA32, byte, ColorARGB32, byte>();
-		Assert.That(convertedBack, Is.EqualTo(original));
+		LosslessConversion.Assert<ColorARGB32, byte, ColorRGBA<sbyte>, sbyte>();
 	}
-	
+
 	[Test]
-	public void ConversionToColorRGBA32SignedIsLossless()
+	public void ConversionIsLosslessToColorRGBA_byte()
 	{
-		ColorARGB32 original = MakeRandomColor();
-		ColorRGBA32Signed converted = original.Convert<ColorARGB32, byte, ColorRGBA32Signed, sbyte>();
-		ColorARGB32 convertedBack = converted.Convert<ColorRGBA32Signed, sbyte, ColorARGB32, byte>();
-		Assert.That(convertedBack, Is.EqualTo(original));
+		LosslessConversion.Assert<ColorARGB32, byte, ColorRGBA<byte>, byte>();
 	}
-	
+
 	[Test]
-	public void ConversionToColorRGBA64IsLossless()
+	public void ConversionIsLosslessToColorRGBA_short()
 	{
-		ColorARGB32 original = MakeRandomColor();
-		ColorRGBA64 converted = original.Convert<ColorARGB32, byte, ColorRGBA64, ushort>();
-		ColorARGB32 convertedBack = converted.Convert<ColorRGBA64, ushort, ColorARGB32, byte>();
-		Assert.That(convertedBack, Is.EqualTo(original));
+		LosslessConversion.Assert<ColorARGB32, byte, ColorRGBA<short>, short>();
 	}
-	
+
 	[Test]
-	public void ConversionToColorRGBA64SignedIsLossless()
+	public void ConversionIsLosslessToColorRGBA_ushort()
 	{
-		ColorARGB32 original = MakeRandomColor();
-		ColorRGBA64Signed converted = original.Convert<ColorARGB32, byte, ColorRGBA64Signed, short>();
-		ColorARGB32 convertedBack = converted.Convert<ColorRGBA64Signed, short, ColorARGB32, byte>();
-		Assert.That(convertedBack, Is.EqualTo(original));
+		LosslessConversion.Assert<ColorARGB32, byte, ColorRGBA<ushort>, ushort>();
+	}
+
+	[Test]
+	public void ConversionIsLosslessToColorRGBA_int()
+	{
+		LosslessConversion.Assert<ColorARGB32, byte, ColorRGBA<int>, int>();
+	}
+
+	[Test]
+	public void ConversionIsLosslessToColorRGBA_uint()
+	{
+		LosslessConversion.Assert<ColorARGB32, byte, ColorRGBA<uint>, uint>();
+	}
+
+	[Test]
+	public void ConversionIsLosslessToColorRGBA_long()
+	{
+		LosslessConversion.Assert<ColorARGB32, byte, ColorRGBA<long>, long>();
+	}
+
+	[Test]
+	public void ConversionIsLosslessToColorRGBA_ulong()
+	{
+		LosslessConversion.Assert<ColorARGB32, byte, ColorRGBA<ulong>, ulong>();
 	}
 }

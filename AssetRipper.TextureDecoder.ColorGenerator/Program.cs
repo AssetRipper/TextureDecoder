@@ -1,60 +1,20 @@
-﻿using System.CodeDom.Compiler;
+﻿using AssetRipper.Text.SourceGeneration;
+using AssetRipper.TextureDecoder.SourceGeneration.Common;
+using System.CodeDom.Compiler;
+using System.Text;
 
 namespace AssetRipper.TextureDecoder.ColorGenerator;
 
-internal static class Program
+internal static partial class Program
 {
 	private const string AttributeNamespace = "AssetRipper.TextureDecoder.Attributes";
 	private const string OutputNamespace = "AssetRipper.TextureDecoder.Rgb.Formats";
 	private const string OutputFolder = "../../../../AssetRipper.TextureDecoder/Rgb/Formats/";
 
 	/// <summary>
-	/// Name, Type, Red, Blue, Green, Alpha
-	/// </summary>
-	private static readonly List<(string, Type, bool, bool, bool, bool)> Colors = new()
-	{
-		( "ColorA8", typeof(byte), false, false, false, true ),
-
-		( "ColorR8", typeof(byte), true, false, false, false ),
-		( "ColorRG16", typeof(byte), true, true, false, false ),
-		( "ColorRGB24", typeof(byte), true, true, true, false ),
-		( "ColorRGBA32", typeof(byte), true, true, true, true ),
-
-		( "ColorR8Signed", typeof(sbyte), true, false, false, false ),
-		( "ColorRG16Signed", typeof(sbyte), true, true, false, false ),
-		( "ColorRGB24Signed", typeof(sbyte), true, true, true, false ),
-		( "ColorRGBA32Signed", typeof(sbyte), true, true, true, true ),
-
-		( "ColorR16", typeof(ushort), true, false, false, false ),
-		( "ColorRG32", typeof(ushort), true, true, false, false ),
-		( "ColorRGB48", typeof(ushort), true, true, true, false ),
-		( "ColorRGBA64", typeof(ushort), true, true, true, true ),
-
-		( "ColorR16Signed", typeof(short), true, false, false, false ),
-		( "ColorRG32Signed", typeof(short), true, true, false, false ),
-		( "ColorRGB48Signed", typeof(short), true, true, true, false ),
-		( "ColorRGBA64Signed", typeof(short), true, true, true, true ),
-
-		( "ColorR16Half", typeof(Half), true, false, false, false ),
-		( "ColorRG32Half", typeof(Half), true, true, false, false ),
-		( "ColorRGB48Half", typeof(Half), true, true, true, false ),
-		( "ColorRGBA64Half", typeof(Half), true, true, true, true ),
-
-		( "ColorR32Single", typeof(float), true, false, false, false ),
-		( "ColorRG64Single", typeof(float), true, true, false, false ),
-		( "ColorRGB96Single", typeof(float), true, true, true, false ),
-		( "ColorRGBA128Single", typeof(float), true, true, true, true ),
-
-		( "ColorR64Double", typeof(double), true, false, false, false ),
-		( "ColorRG128Double", typeof(double), true, true, false, false ),
-		( "ColorRGB192Double", typeof(double), true, true, true, false ),
-		( "ColorRGBA256Double", typeof(double), true, true, true, true ),
-	};
-
-	/// <summary>
 	/// Name, Type, Red, Blue, Green, Alpha, Fully Utilized
 	/// </summary>
-	private static readonly List<(string, Type, bool, bool, bool, bool, bool)> OtherColors = new()
+	private static readonly List<(string, Type, bool, bool, bool, bool, bool)> CustomColors = new()
 	{
 		( "ColorARGB16", typeof(byte), true, true, true, true, false ),
 		( "ColorARGB32", typeof(byte), true, true, true, true, true ),
@@ -65,45 +25,49 @@ internal static class Program
 		( "ColorRGB32Half", typeof(Half), true, true, true, false, false ),
 	};
 
+	/// <summary>
+	/// Name, Red, Blue, Green, Alpha
+	/// </summary>
+	private static readonly List<(string, bool, bool, bool, bool)> GenericColors = new()
+	{
+		( "ColorR", true, false, false, false ),
+		( "ColorRG", true, true, false, false ),
+		( "ColorRGB", true, true, true, false ),
+		( "ColorRGBA", true, true, true, true ),
+		( "ColorA", false, false, false, true ),
+	};
+
 	static void Main()
 	{
-		foreach (var color in Colors)
+		foreach (var customColor in CustomColors)
 		{
-			WriteColor(color);
+			WriteCustomColor(customColor);
 		}
-		foreach (var otherColor in OtherColors)
+		foreach (var genericColor in GenericColors)
 		{
-			WriteOtherColor(otherColor);
+			WriteGenericColor(genericColor);
 		}
 		NumericConversionGenerator.Run();
 		Console.WriteLine("Done!");
 	}
 
-	private static void WriteColor((string, Type, bool, bool, bool, bool) details)
-	{
-		(string name, Type type, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha) = details;
-		Console.WriteLine(name);
-		using FileStream stream = File.Create($"{OutputFolder}{name}.g.cs");
-		using StreamWriter streamWriter = new StreamWriter(stream);
-		streamWriter.NewLine = "\n";
-		using IndentedTextWriter writer = new IndentedTextWriter(streamWriter, "\t");
-		writer.NewLine = "\n";
-		WriteColor(writer, name, type, hasRed, hasGreen, hasBlue, hasAlpha);
-	}
-
-	private static void WriteOtherColor((string, Type, bool, bool, bool, bool, bool) details)
+	private static void WriteCustomColor((string, Type, bool, bool, bool, bool, bool) details)
 	{
 		(string name, Type type, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha, bool fullyUtilized) = details;
 		Console.WriteLine(name);
-		using FileStream stream = File.Create($"{OutputFolder}{name}.g.cs");
-		using StreamWriter streamWriter = new StreamWriter(stream);
-		streamWriter.NewLine = "\n";
-		using IndentedTextWriter writer = new IndentedTextWriter(streamWriter, "\t");
-		writer.NewLine = "\n";
-		WriteOtherColor(writer, name, type, hasRed, hasGreen, hasBlue, hasAlpha, fullyUtilized);
+		using IndentedTextWriter writer = IndentedTextWriterFactory.Create(OutputFolder, name);
+		WriteCustomColor(writer, name, type, hasRed, hasGreen, hasBlue, hasAlpha, fullyUtilized);
 	}
 
-	private static void WriteOtherColor(IndentedTextWriter writer, string name, Type type, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha, bool fullyUtilized)
+	private static void WriteGenericColor((string, bool, bool, bool, bool) details)
+	{
+		(string name, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha) = details;
+		Console.WriteLine(name);
+		using IndentedTextWriter writer = IndentedTextWriterFactory.Create(OutputFolder, name);
+		WriteGenericColor(writer, name, hasRed, hasGreen, hasBlue, hasAlpha);
+	}
+
+	private static void WriteCustomColor(IndentedTextWriter writer, string name, Type type, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha, bool fullyUtilized)
 	{
 		string typeName = CSharpPrimitives.TypeNames[type];
 		writer.WriteLine("//This code is source generated. Do not edit manually.");
@@ -111,19 +75,66 @@ internal static class Program
 		writer.WriteLine($"using {AttributeNamespace};");
 		writer.WriteLine();
 		writer.WriteLine($"namespace {OutputNamespace}");
-		writer.WriteLine('{');
-		writer.Indent++;
+		using (new CurlyBrackets(writer))
+		{
+			WriteRgbaAttribute(writer, hasRed, hasGreen, hasBlue, hasAlpha, fullyUtilized);
+			writer.WriteLine($"public partial struct {name} : IColor<{typeName}>");
+			using (new CurlyBrackets(writer))
+			{
+				WriteHasChannelStaticProperties(writer, hasRed, hasGreen, hasBlue, hasAlpha, typeName);
+				writer.WriteLineNoTabs();
+				WriteToString(writer, hasRed, hasGreen, hasBlue, hasAlpha);
+			}
+		}
+	}
 
+	private static void WriteRgbaAttribute(IndentedTextWriter writer, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha, bool fullyUtilized)
+	{
 		writer.WriteLine($"[RgbaAttribute(RedChannel = {hasRed.ToLowerString()}, GreenChannel = {hasGreen.ToLowerString()}, BlueChannel = {hasBlue.ToLowerString()}, AlphaChannel = {hasAlpha.ToLowerString()}, FullyUtilizedChannels = {fullyUtilized.ToLowerString()})]");
-		writer.WriteLine($"public partial struct {name} : IColor<{typeName}>");
-		writer.WriteLine('{');
-		writer.Indent++;
-		WriteHasChannelStaticProperties(writer, hasRed, hasGreen, hasBlue, hasAlpha, typeName);
-		writer.Indent--;
-		writer.WriteLine('}');
+	}
 
-		writer.Indent--;
-		writer.WriteLine('}');
+	private static void WriteToString(IndentedTextWriter writer, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha)
+	{
+		writer.WriteLine("public override string ToString()");
+		using (new CurlyBrackets(writer))
+		{
+			StringBuilder sb = new();
+			sb.Append("return $\"{{ ");
+			bool first = true;
+			if (hasRed)
+			{
+				sb.Append("R: {R}");
+				first = false;
+			}
+			if (hasGreen)
+			{
+				if (!first)
+				{
+					sb.Append(", ");
+				}
+				sb.Append("G: {G}");
+				first = false;
+			}
+			if (hasBlue)
+			{
+				if (!first)
+				{
+					sb.Append(", ");
+				}
+				sb.Append("B: {B}");
+				first = false;
+			}
+			if (hasAlpha)
+			{
+				if (!first)
+				{
+					sb.Append(", ");
+				}
+				sb.Append("A: {A}");
+			}
+			sb.Append(" }}\";");
+			writer.WriteLine(sb.ToString());
+		}
 	}
 
 	private static void WriteHasChannelStaticProperties(IndentedTextWriter writer, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha, string typeName)
@@ -134,81 +145,81 @@ internal static class Program
 		writer.WriteLine($"static bool IColor<{typeName}>.HasAlphaChannel => {hasAlpha.ToLowerString()};");
 	}
 
-	private static void WriteColor(IndentedTextWriter writer, string name, Type type, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha)
+	private static void WriteGenericColor(IndentedTextWriter writer, string name, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha)
 	{
-		string typeName = CSharpPrimitives.TypeNames[type];
-		writer.WriteLine("//This code is source generated. Do not edit manually.");
-		writer.WriteLine();
+		const string typeName = "T";
+		const string minValue = $"NumericConversion.GetMinimumValue<T>()";
+		const string maxValue = $"NumericConversion.GetMaximumValue<T>()";
+
+		writer.WriteGeneratedCodeWarning();
+		writer.WriteLineNoTabs();
+
 		writer.WriteLine($"using {AttributeNamespace};");
-		writer.WriteLine();
-		writer.WriteLine($"namespace {OutputNamespace}");
-		writer.WriteLine('{');
-		writer.Indent++;
+		writer.WriteLineNoTabs();
 
-		writer.WriteLine($"[RgbaAttribute(RedChannel = {hasRed.ToLowerString()}, GreenChannel = {hasGreen.ToLowerString()}, BlueChannel = {hasBlue.ToLowerString()}, AlphaChannel = {hasAlpha.ToLowerString()}, FullyUtilizedChannels = true)]");
-		writer.WriteLine($"public partial struct {name} : IColor<{typeName}>");
-		writer.WriteLine('{');
-		writer.Indent++;
+		writer.WriteFileScopedNamespace(OutputNamespace);
+		writer.WriteLineNoTabs();
 
-		WriteProperty(writer, hasRed, typeName, 'R', CSharpPrimitives.MinimumValues[type]);
-		writer.WriteLine();
-		WriteProperty(writer, hasGreen, typeName, 'G', CSharpPrimitives.MinimumValues[type]);
-		writer.WriteLine();
-		WriteProperty(writer, hasBlue, typeName, 'B', CSharpPrimitives.MinimumValues[type]);
-		writer.WriteLine();
-		WriteProperty(writer, hasAlpha, typeName, 'A', CSharpPrimitives.MaximumValues[type]);
-		writer.WriteLine();
+		WriteRgbaAttribute(writer, hasRed, hasGreen, hasBlue, hasAlpha, true);
+		string constraints = hasRed && hasGreen && hasBlue && hasAlpha
+			? "unmanaged"
+			: "unmanaged, INumberBase<T>, IMinMaxValue<T>";
+		writer.WriteLine($"public partial struct {name}<T> : IColor<{typeName}> where T : {constraints}");
+		using (new CurlyBrackets(writer))
+		{
+			WriteProperty(writer, hasRed, typeName, 'R', minValue);
+			writer.WriteLineNoTabs();
+			WriteProperty(writer, hasGreen, typeName, 'G', minValue);
+			writer.WriteLineNoTabs();
+			WriteProperty(writer, hasBlue, typeName, 'B', minValue);
+			writer.WriteLineNoTabs();
+			WriteProperty(writer, hasAlpha, typeName, 'A', maxValue);
+			writer.WriteLineNoTabs();
 
-		WriteGetChannels(writer, typeName);
-		writer.WriteLine();
-		WriteSetChannels(writer, type, hasRed, hasGreen, hasBlue, hasAlpha);
-		writer.WriteLine();
-		WriteHasChannelStaticProperties(writer, hasRed, hasGreen, hasBlue, hasAlpha, typeName);
-
-		writer.Indent--;
-		writer.WriteLine('}');
-
-		writer.Indent--;
-		writer.WriteLine('}');
+			WriteGetChannels(writer, typeName);
+			writer.WriteLineNoTabs();
+			WriteSetChannels(writer, typeName, hasRed, hasGreen, hasBlue, hasAlpha);
+			writer.WriteLineNoTabs();
+			WriteHasChannelStaticProperties(writer, hasRed, hasGreen, hasBlue, hasAlpha, typeName);
+			writer.WriteLineNoTabs();
+			WriteToString(writer, hasRed, hasGreen, hasBlue, hasAlpha);
+		}
 	}
 
 	private static void WriteGetChannels(IndentedTextWriter writer, string typeName)
 	{
 		writer.WriteLine($"public readonly void GetChannels(out {typeName} r, out {typeName} g, out {typeName} b, out {typeName} a)");
-		writer.WriteLine('{');
-		writer.Indent++;
-		writer.WriteLine("r = R;");
-		writer.WriteLine("g = G;");
-		writer.WriteLine("b = B;");
-		writer.WriteLine("a = A;");
-		writer.Indent--;
-		writer.WriteLine('}');
+		using (new CurlyBrackets(writer))
+		{
+			writer.WriteLine("r = R;");
+			writer.WriteLine("g = G;");
+			writer.WriteLine("b = B;");
+			writer.WriteLine("a = A;");
+		}
 	}
 
-	private static void WriteSetChannels(IndentedTextWriter writer, Type type, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha)
+	private static void WriteSetChannels(IndentedTextWriter writer, string typeName, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha)
 	{
-		string typeName = CSharpPrimitives.TypeNames[type];
 		writer.WriteLine($"public void SetChannels({typeName} r, {typeName} g, {typeName} b, {typeName} a)");
-		writer.WriteLine('{');
-		writer.Indent++;
-		if (hasRed)
+		using (new CurlyBrackets(writer))
 		{
-			writer.WriteLine("R = r;");
+			if (hasRed)
+			{
+				writer.WriteLine("R = r;");
+			}
+			if (hasGreen)
+			{
+				writer.WriteLine("G = g;");
+			}
+			if (hasBlue)
+			{
+				writer.WriteLine("B = b;");
+			}
+			if (hasAlpha)
+			{
+				writer.WriteLine("A = a;");
+			}
 		}
-		if (hasGreen)
-		{
-			writer.WriteLine("G = g;");
-		}
-		if (hasBlue)
-		{
-			writer.WriteLine("B = b;");
-		}
-		if (hasAlpha)
-		{
-			writer.WriteLine("A = a;");
-		}
-		writer.Indent--;
-		writer.WriteLine('}');
 	}
 
 	private static void WriteProperty(IndentedTextWriter writer, bool hasColor, string typeName, char channel, string defaultValue)
@@ -220,12 +231,11 @@ internal static class Program
 		else
 		{
 			writer.WriteLine($"public readonly {typeName} {channel} ");
-			writer.WriteLine('{');
-			writer.Indent++;
-			writer.WriteLine($"get => {defaultValue};");
-			writer.WriteLine("set { }");
-			writer.Indent--;
-			writer.WriteLine('}');
+			using (new CurlyBrackets(writer))
+			{
+				writer.WriteLine($"get => {defaultValue};");
+				writer.WriteLine("set { }");
+			}
 		}
 	}
 

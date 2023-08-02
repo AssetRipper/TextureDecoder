@@ -1,10 +1,11 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
-namespace AssetRipper.TextureDecoder.ColorGenerator;
+namespace AssetRipper.TextureDecoder.SourceGeneration.Common;
 
-internal static class CSharpPrimitives
+public static class CSharpPrimitives
 {
-	internal static IReadOnlyDictionary<Type, string> MinimumValues { get; } = new Dictionary<Type, string>()
+	public static IReadOnlyDictionary<Type, string> MinimumValues { get; } = new Dictionary<Type, string>()
 	{
 		{ typeof(sbyte), "sbyte.MinValue" },
 		{ typeof(byte), "byte.MinValue" },
@@ -20,7 +21,7 @@ internal static class CSharpPrimitives
 		{ typeof(decimal), "0m" },
 	};
 
-	internal static IReadOnlyDictionary<Type, string> MaximumValues { get; } = new Dictionary<Type, string>()
+	public static IReadOnlyDictionary<Type, string> MaximumValues { get; } = new Dictionary<Type, string>()
 	{
 		{ typeof(sbyte), "sbyte.MaxValue" },
 		{ typeof(byte), "byte.MaxValue" },
@@ -36,7 +37,7 @@ internal static class CSharpPrimitives
 		{ typeof(decimal), "1m" },
 	};
 
-	internal static IReadOnlyDictionary<Type, string> TypeNames { get; } = new Dictionary<Type, string>()
+	public static IReadOnlyDictionary<Type, string> TypeNames { get; } = new Dictionary<Type, string>()
 	{
 		{ typeof(sbyte), "sbyte" },
 		{ typeof(byte), "byte" },
@@ -52,7 +53,7 @@ internal static class CSharpPrimitives
 		{ typeof(decimal), "decimal" },
 	};
 
-	internal static IReadOnlyDictionary<Type, int> Sizes { get; } = new Dictionary<Type, int>()
+	public static IReadOnlyDictionary<Type, int> Sizes { get; } = new Dictionary<Type, int>()
 	{
 		{ typeof(sbyte), sizeof(sbyte) },
 		{ typeof(byte), sizeof(byte) },
@@ -68,7 +69,42 @@ internal static class CSharpPrimitives
 		{ typeof(decimal), sizeof(decimal) }
 	};
 
-	internal static IEnumerable<Type> Types => TypeNames.Keys;
+	public static IEnumerable<Type> Types => TypeNames.Keys;
 
-	internal static Type FirstType { get; } = Types.First();
+	public static Type FirstType { get; } = Types.First();
+
+	public static bool IsFloatingPoint(Type type)
+	{
+		return type == typeof(Half) || type == typeof(float) || type == typeof(double) || type == typeof(decimal);
+	}
+
+	public static bool IsSignedInteger(Type type, [NotNullWhen(true)] out Type? unsignedType)
+	{
+		if (type == typeof(sbyte))
+		{
+			unsignedType = typeof(byte);
+		}
+		else if (type == typeof(short))
+		{
+			unsignedType = typeof(ushort);
+		}
+		else if (type == typeof(int))
+		{
+			unsignedType = typeof(uint);
+		}
+		else if (type == typeof(long))
+		{
+			unsignedType = typeof(ulong);
+		}
+		else
+		{
+			unsignedType = null;
+		}
+		return unsignedType is not null;
+	}
+
+	public static bool IsUnsignedInteger(Type type)
+	{
+		return type == typeof(byte) || type == typeof(ushort) || type == typeof(uint) || type == typeof(ulong);
+	}
 }

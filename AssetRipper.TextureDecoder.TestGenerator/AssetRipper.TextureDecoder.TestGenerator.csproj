@@ -8,7 +8,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\AssetRipper.TextureDecoder.SourceGeneration.Common\AssetRipper.TextureDecoder.SourceGeneration.Common.csproj" />
 		<ProjectReference Include="..\AssetRipper.TextureDecoder\AssetRipper.TextureDecoder.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AssetRipper.Text.SourceGeneration" Version="1.0.0" />
 	</ItemGroup>
 
 </Project>

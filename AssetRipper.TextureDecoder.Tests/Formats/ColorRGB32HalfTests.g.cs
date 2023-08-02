@@ -1,6 +1,5 @@
-//This code is source generated. Do not edit manually.
+// Auto-generated code. Do not modify manually.
 
-using AssetRipper.TextureDecoder.Rgb;
 using AssetRipper.TextureDecoder.Rgb.Formats;
 using System.Runtime.CompilerServices;
 
@@ -13,7 +12,7 @@ public partial class ColorRGB32HalfTests
 	{
 		Assert.That(Unsafe.SizeOf<ColorRGB32Half>(), Is.EqualTo(4));
 	}
-	
+
 	[Test]
 	public void PropertyIsSymmetric_R()
 	{
@@ -57,7 +56,7 @@ public partial class ColorRGB32HalfTests
 		var g = color.G;
 		var b = color.B;
 		var a = color.A;
-		color.R = (Half)0.333f;
+		color.R = MakeRandomValue();
 		Assert.Multiple(() =>
 		{
 			Assert.That(color.G, Is.EqualTo(g));
@@ -73,7 +72,7 @@ public partial class ColorRGB32HalfTests
 		var r = color.R;
 		var b = color.B;
 		var a = color.A;
-		color.G = (Half)0.333f;
+		color.G = MakeRandomValue();
 		Assert.Multiple(() =>
 		{
 			Assert.That(color.R, Is.EqualTo(r));
@@ -89,7 +88,7 @@ public partial class ColorRGB32HalfTests
 		var r = color.R;
 		var g = color.G;
 		var a = color.A;
-		color.B = (Half)0.333f;
+		color.B = MakeRandomValue();
 		Assert.Multiple(() =>
 		{
 			Assert.That(color.R, Is.EqualTo(r));
@@ -105,7 +104,7 @@ public partial class ColorRGB32HalfTests
 		var r = color.R;
 		var g = color.G;
 		var b = color.B;
-		color.A = (Half)0.333f;
+		color.A = MakeRandomValue();
 		Assert.Multiple(() =>
 		{
 			Assert.That(color.R, Is.EqualTo(r));
@@ -127,7 +126,7 @@ public partial class ColorRGB32HalfTests
 			Assert.That(color.A, Is.EqualTo(a));
 		});
 	}
-	
+
 	[Test]
 	public void MethodsAreSymmetric()
 	{
@@ -142,69 +141,44 @@ public partial class ColorRGB32HalfTests
 			Assert.That(color.A, Is.EqualTo(a));
 		});
 	}
-	
-	public static ColorRGB32Half MakeRandomColor()
-	{
-		return new()
-		{
-			R = (Half)0.447f,
-			G = (Half)0.224f,
-			B = (Half)0.95f,
-			A = (Half)0.897f,
-		};
-	}
-	
+
+	public static ColorRGB32Half MakeRandomColor() => ColorRandom<ColorRGB32Half, Half>.MakeRandomColor();
+
+	public static Half MakeRandomValue() => ColorRandom<ColorRGB32Half, Half>.MakeRandomValue();
+
 	[Test]
-	public void ConversionToColorRGB48HalfIsLossless()
+	public void ConversionIsLosslessToColorRGBA_Half()
 	{
-		ColorRGB32Half original = MakeRandomColor();
-		ColorRGB48Half converted = original.Convert<ColorRGB32Half, Half, ColorRGB48Half, Half>();
-		ColorRGB32Half convertedBack = converted.Convert<ColorRGB48Half, Half, ColorRGB32Half, Half>();
-		Assert.That(convertedBack, Is.EqualTo(original));
+		LosslessConversion.Assert<ColorRGB32Half, Half, ColorRGBA<Half>, Half>();
 	}
-	
+
 	[Test]
-	public void ConversionToColorRGB96SingleIsLossless()
+	public void ConversionIsLosslessToColorRGB_Half()
 	{
-		ColorRGB32Half original = MakeRandomColor();
-		ColorRGB96Single converted = original.Convert<ColorRGB32Half, Half, ColorRGB96Single, float>();
-		ColorRGB32Half convertedBack = converted.Convert<ColorRGB96Single, float, ColorRGB32Half, Half>();
-		Assert.That(convertedBack, Is.EqualTo(original));
+		LosslessConversion.Assert<ColorRGB32Half, Half, ColorRGB<Half>, Half>();
 	}
-	
+
 	[Test]
-	public void ConversionToColorRGB192DoubleIsLossless()
+	public void ConversionIsLosslessToColorRGBA_float()
 	{
-		ColorRGB32Half original = MakeRandomColor();
-		ColorRGB192Double converted = original.Convert<ColorRGB32Half, Half, ColorRGB192Double, double>();
-		ColorRGB32Half convertedBack = converted.Convert<ColorRGB192Double, double, ColorRGB32Half, Half>();
-		Assert.That(convertedBack, Is.EqualTo(original));
+		LosslessConversion.Assert<ColorRGB32Half, Half, ColorRGBA<float>, float>();
 	}
-	
+
 	[Test]
-	public void ConversionToColorRGBA128SingleIsLossless()
+	public void ConversionIsLosslessToColorRGB_float()
 	{
-		ColorRGB32Half original = MakeRandomColor();
-		ColorRGBA128Single converted = original.Convert<ColorRGB32Half, Half, ColorRGBA128Single, float>();
-		ColorRGB32Half convertedBack = converted.Convert<ColorRGBA128Single, float, ColorRGB32Half, Half>();
-		Assert.That(convertedBack, Is.EqualTo(original));
+		LosslessConversion.Assert<ColorRGB32Half, Half, ColorRGB<float>, float>();
 	}
-	
+
 	[Test]
-	public void ConversionToColorRGBA256DoubleIsLossless()
+	public void ConversionIsLosslessToColorRGBA_double()
 	{
-		ColorRGB32Half original = MakeRandomColor();
-		ColorRGBA256Double converted = original.Convert<ColorRGB32Half, Half, ColorRGBA256Double, double>();
-		ColorRGB32Half convertedBack = converted.Convert<ColorRGBA256Double, double, ColorRGB32Half, Half>();
-		Assert.That(convertedBack, Is.EqualTo(original));
+		LosslessConversion.Assert<ColorRGB32Half, Half, ColorRGBA<double>, double>();
 	}
-	
+
 	[Test]
-	public void ConversionToColorRGBA64HalfIsLossless()
+	public void ConversionIsLosslessToColorRGB_double()
 	{
-		ColorRGB32Half original = MakeRandomColor();
-		ColorRGBA64Half converted = original.Convert<ColorRGB32Half, Half, ColorRGBA64Half, Half>();
-		ColorRGB32Half convertedBack = converted.Convert<ColorRGBA64Half, Half, ColorRGB32Half, Half>();
-		Assert.That(convertedBack, Is.EqualTo(original));
+		LosslessConversion.Assert<ColorRGB32Half, Half, ColorRGB<double>, double>();
 	}
 }
