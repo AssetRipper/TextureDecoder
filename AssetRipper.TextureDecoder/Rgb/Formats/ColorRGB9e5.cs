@@ -1,6 +1,4 @@
-﻿using static System.Math;
-
-namespace AssetRipper.TextureDecoder.Rgb.Formats
+﻿namespace AssetRipper.TextureDecoder.Rgb.Formats
 {
 	/// <summary>
 	/// 9 bits each for RGB and 5 bits for an exponent
@@ -15,7 +13,7 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats
 			set
 			{
 				GetChannels(out _, out double g, out double b, out _);
-				SetChannels(value, g, b, default);
+				SetChannels(value, g, b);
 			}
 		}
 
@@ -25,7 +23,7 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats
 			set
 			{
 				GetChannels(out double r, out _, out double b, out _);
-				SetChannels(r, value, b, default);
+				SetChannels(r, value, b);
 			}
 		}
 
@@ -35,7 +33,7 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats
 			set
 			{
 				GetChannels(out double r, out double g, out _, out _);
-				SetChannels(r, g, value, default);
+				SetChannels(r, g, value);
 			}
 		}
 
@@ -58,30 +56,42 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats
 		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public void SetChannels(double r, double g, double b, double a)
 		{
+			SetChannels(r, g, b);
+		}
+
+		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
+		public void SetChannels(double r, double g, double b)
+		{
 			int exponent = CalculateExponent(r, g, b);
-			double scale = Pow(2, exponent);
-			uint rBits = (uint)(r / scale) & 0x1FF;
-			uint gBits = (uint)(g / scale) & 0x1FF;
-			uint bBits = (uint)(b / scale) & 0x1FF;
+			decimal scale = (decimal)double.Pow(2, exponent);
+			uint rBits = (uint)((decimal)r / scale) & ChannelBitMask;
+			uint gBits = (uint)((decimal)g / scale) & ChannelBitMask;
+			uint bBits = (uint)((decimal)b / scale) & ChannelBitMask;
 			uint exponentBits = unchecked((uint)(exponent + 24));
-			bits = (exponentBits << 27) | (bBits << 18) | (gBits << 9) | (rBits << 0);
+			bits = (exponentBits << ExponentOffset) | (bBits << BlueOffset) | (gBits << GreenOffset) | (rBits << RedOffset);
 		}
 
 		/// <summary>
 		/// Range: -24 to 7 inclusive
 		/// </summary>
-		private readonly int Exponent => unchecked((int)(bits >> 27) - 24);
-		private readonly double Scale => Pow(2, Exponent);
-		private readonly uint RBits => (bits >> 0) & 0x1FF;
-		private readonly uint GBits => (bits >> 9) & 0x1FF;
-		private readonly uint BBits => (bits >> 18) & 0x1FF;
+		private readonly int Exponent => unchecked((int)(bits >> ExponentOffset) - 24);
+		private readonly double Scale => double.Pow(2, Exponent);
+		private readonly uint RBits => (bits >> RedOffset) & ChannelBitMask;
+		private readonly uint GBits => (bits >> GreenOffset) & ChannelBitMask;
+		private readonly uint BBits => (bits >> BlueOffset) & ChannelBitMask;
 
 		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		private static int CalculateExponent(double r, double g, double b)
 		{
-			double maxChannel = Max(r, Max(g, b));
-			double minExponent = Log2(maxChannel / 0x1FF);
-			return (int)Ceiling(minExponent);
+			double maxChannel = double.Max(r, double.Max(g, b));
+			double minExponent = double.Log2(maxChannel / ChannelBitMask);
+			return (int)double.Ceiling(minExponent);
 		}
+
+		private const int ChannelBitMask = 0x1FF;
+		private const int RedOffset = 0;
+		private const int GreenOffset = 9;
+		private const int BlueOffset = 18;
+		private const int ExponentOffset = 27;
 	}
 }
