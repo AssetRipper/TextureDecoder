@@ -406,38 +406,6 @@ namespace AssetRipper.TextureDecoder.Rgb
 		}
 
 		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
-		public static int R11G11B10FloatToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
-		{
-			output = new byte[width * height * 4];
-			return R11G11B10FloatToBGRA32(input, width, height, output);
-		}
-
-		// reference: https://github.com/microsoft/DirectX-Graphics-Samples/blob/e5ea2ac7430ce39e6f6d619fd85ae32581931589/MiniEngine/Core/Shaders/PixelPacking_R11G11B10.hlsli#L31-L37
-		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
-		public static int R11G11B10FloatToBGRA32(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
-		{
-			int io = 0;
-			int oo = 0;
-			for (int i = 0; i < width; i++)
-			{
-				for (int j = 0; j < height; j++)
-				{
-					uint value = BinaryPrimitives.ReadUInt32LittleEndian(input.Slice(io, 4));
-					ushort r = (ushort)((value << 4) & 0x7FF0);
-					ushort g = (ushort)((value >> 7) & 0x7FF0);
-					ushort b = (ushort)((value >> 17) & 0x7FE0);
-					output[oo + 0] = ClampByte((float) Unsafe.As<ushort, Half>(ref b) * 255f);			 // b
-					output[oo + 1] = ClampByte((float) Unsafe.As<ushort, Half>(ref g) * 255f);			 // g
-					output[oo + 2] = ClampByte((float) Unsafe.As<ushort, Half>(ref r) * 255f);			 // r
-					output[oo + 3] = 255;		   // a
-					io += 4;
-					oo += 4;
-				}
-			}
-			return io;
-		}
-
-		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
 		public static int RG32ToBGRA32(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			output = new byte[width * height * 4];

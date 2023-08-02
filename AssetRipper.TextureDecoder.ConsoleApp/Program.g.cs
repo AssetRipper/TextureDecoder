@@ -73,9 +73,8 @@ static partial class Program
 		Console.WriteLine("  61 - ARGB32");
 		Console.WriteLine("  62 - BGRA32");
 		Console.WriteLine("  63 - RGB16");
-		Console.WriteLine("  64 - RGB32Half");
-		Console.WriteLine("  65 - RGB9e5");
-		Console.WriteLine("  66 - RGBA16");
+		Console.WriteLine("  64 - RGB9e5");
+		Console.WriteLine("  65 - RGBA16");
 		int mode = int.Parse(modeString);
 		switch(mode)
 		{
@@ -272,12 +271,9 @@ static partial class Program
 				RgbConverter.Convert<ColorRGB16, byte, ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 64:
-				RgbConverter.Convert<ColorRGB32Half, Half, ColorBGRA32, byte>(input, width, height, output);
-				break;
-			case 65:
 				RgbConverter.Convert<ColorRGB9e5, double, ColorBGRA32, byte>(input, width, height, output);
 				break;
-			case 66:
+			case 65:
 				RgbConverter.Convert<ColorRGBA16, byte, ColorBGRA32, byte>(input, width, height, output);
 				break;
 			default:

@@ -22,7 +22,6 @@ internal static partial class Program
 		( "ColorRGB16", typeof(byte), true, true, true, false, false ),
 		( "ColorRGB9e5", typeof(double), true, true, true, false, false ),
 		( "ColorRGBA16", typeof(byte), true, true, true, true, false ),
-		( "ColorRGB32Half", typeof(Half), true, true, true, false, false ),
 	};
 
 	/// <summary>
