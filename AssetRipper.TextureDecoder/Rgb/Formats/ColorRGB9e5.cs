@@ -63,10 +63,10 @@
 		public void SetChannels(double r, double g, double b)
 		{
 			int exponent = CalculateExponent(r, g, b);
-			decimal scale = (decimal)double.Pow(2, exponent);
-			uint rBits = (uint)((decimal)r / scale) & ChannelBitMask;
-			uint gBits = (uint)((decimal)g / scale) & ChannelBitMask;
-			uint bBits = (uint)((decimal)b / scale) & ChannelBitMask;
+			double scale = double.Pow(2, exponent);
+			uint rBits = (uint)(r / scale) & ChannelBitMask;
+			uint gBits = (uint)(g / scale) & ChannelBitMask;
+			uint bBits = (uint)(b / scale) & ChannelBitMask;
 			uint exponentBits = unchecked((uint)(exponent + 24));
 			bits = (exponentBits << ExponentOffset) | (bBits << BlueOffset) | (gBits << GreenOffset) | (rBits << RedOffset);
 		}
