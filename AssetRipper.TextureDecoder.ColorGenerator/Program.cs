@@ -68,7 +68,7 @@ internal static partial class Program
 
 	private static void WriteCustomColor(IndentedTextWriter writer, string name, Type type, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha, bool fullyUtilized)
 	{
-		string typeName = CSharpPrimitives.TypeNames[type];
+		string typeName = CSharpPrimitives.Dictionary[type].LangName;
 		writer.WriteLine("//This code is source generated. Do not edit manually.");
 		writer.WriteLine();
 		writer.WriteLine($"using {AttributeNamespace};");

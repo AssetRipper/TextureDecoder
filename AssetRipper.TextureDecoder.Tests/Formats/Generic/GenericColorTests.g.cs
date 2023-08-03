@@ -2,8 +2,7 @@
 
 using AssetRipper.TextureDecoder.Rgb.Formats;
 
-namespace AssetRipper.TextureDecoder.Tests.Formats;
-
+namespace AssetRipper.TextureDecoder.Tests.Formats.Generic;
 [TestFixture(TypeArgs = new Type[] { typeof(ColorR<sbyte>), typeof(sbyte) })]
 [TestFixture(TypeArgs = new Type[] { typeof(ColorRG<sbyte>), typeof(sbyte) })]
 [TestFixture(TypeArgs = new Type[] { typeof(ColorRGB<sbyte>), typeof(sbyte) })]
@@ -44,6 +43,16 @@ namespace AssetRipper.TextureDecoder.Tests.Formats;
 [TestFixture(TypeArgs = new Type[] { typeof(ColorRGB<ulong>), typeof(ulong) })]
 [TestFixture(TypeArgs = new Type[] { typeof(ColorRGBA<ulong>), typeof(ulong) })]
 [TestFixture(TypeArgs = new Type[] { typeof(ColorA<ulong>), typeof(ulong) })]
+[TestFixture(TypeArgs = new Type[] { typeof(ColorR<Int128>), typeof(Int128) })]
+[TestFixture(TypeArgs = new Type[] { typeof(ColorRG<Int128>), typeof(Int128) })]
+[TestFixture(TypeArgs = new Type[] { typeof(ColorRGB<Int128>), typeof(Int128) })]
+[TestFixture(TypeArgs = new Type[] { typeof(ColorRGBA<Int128>), typeof(Int128) })]
+[TestFixture(TypeArgs = new Type[] { typeof(ColorA<Int128>), typeof(Int128) })]
+[TestFixture(TypeArgs = new Type[] { typeof(ColorR<UInt128>), typeof(UInt128) })]
+[TestFixture(TypeArgs = new Type[] { typeof(ColorRG<UInt128>), typeof(UInt128) })]
+[TestFixture(TypeArgs = new Type[] { typeof(ColorRGB<UInt128>), typeof(UInt128) })]
+[TestFixture(TypeArgs = new Type[] { typeof(ColorRGBA<UInt128>), typeof(UInt128) })]
+[TestFixture(TypeArgs = new Type[] { typeof(ColorA<UInt128>), typeof(UInt128) })]
 [TestFixture(TypeArgs = new Type[] { typeof(ColorR<Half>), typeof(Half) })]
 [TestFixture(TypeArgs = new Type[] { typeof(ColorRG<Half>), typeof(Half) })]
 [TestFixture(TypeArgs = new Type[] { typeof(ColorRGB<Half>), typeof(Half) })]

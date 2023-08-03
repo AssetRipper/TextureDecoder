@@ -29,9 +29,9 @@ internal static class NumericConversionGenerator
 		using (new CurlyBrackets(writer))
 		{
 			WritePrimaryConvertMethod(writer);
-			foreach (Type type in CSharpPrimitives.Types)
+			foreach (CSharpPrimitives.Data from in CSharpPrimitives.List)
 			{
-				WriteConvertMethod(writer, type);
+				WriteConvertMethod(writer, from);
 			}
 			WriteChangeSignMethods(writer);
 		}
@@ -39,37 +39,33 @@ internal static class NumericConversionGenerator
 
 	private static void WriteChangeSignMethods(IndentedTextWriter writer)
 	{
-		foreach ((string unsignedType, string signedType, int byteSize) in GetIntegerTypes())
+		foreach ((CSharpPrimitives.Data unsignedType, CSharpPrimitives.Data signedType) in GetIntegerTypes())
 		{
-			WriteMethod(writer, unsignedType, signedType, byteSize, false);
-			WriteMethod(writer, signedType, unsignedType, byteSize, true);
+			WriteMethod(writer, unsignedType, signedType, unsignedType);
+			WriteMethod(writer, signedType, unsignedType, unsignedType);
 		}
 
-		static void WriteMethod(IndentedTextWriter writer, string parameterType, string returnType, int byteSize, bool needsCast)
+		static void WriteMethod(IndentedTextWriter writer, CSharpPrimitives.Data parameterType, CSharpPrimitives.Data returnType, CSharpPrimitives.Data unsignedType)
 		{
 			writer.WriteLine("[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]");
-			writer.WriteLine($"private static {returnType} {ChangeSign}({parameterType} value)");
+			writer.WriteLine($"private static {returnType.LangName} {ChangeSign}({parameterType.LangName} value)");
 			using (new CurlyBrackets(writer))
 			{
-				writer.WriteLine("unchecked");
-				using (new CurlyBrackets(writer))
-				{
-					string signBitNumber = $"0x8{new string('0', byteSize * 2 - 1)}";
-					string signBitType = byteSize <= sizeof(uint) ? "uint" : "ulong";
-					string cast = needsCast ? $"({signBitType})" : "";
-					writer.WriteLine($"const {signBitType} SignBit = {signBitNumber};");
-					writer.WriteLine($"return ({returnType})({cast}value ^ SignBit);");
-				}
+				string methodName = parameterType == unsignedType ? "ToSignedNumber" : "ToUnsignedNumber";
+				writer.WriteLine($"return {methodName}<{parameterType.LangName}, {returnType.LangName}>(value);");
 			}
 			writer.WriteLineNoTabs();
 		}
 
-		static IEnumerable<(string, string, int)> GetIntegerTypes()
+		static IEnumerable<(CSharpPrimitives.Data, CSharpPrimitives.Data)> GetIntegerTypes()
 		{
-			yield return ("byte", "sbyte", 1);
-			yield return ("ushort", "short", 2);
-			yield return ("uint", "int", 4);
-			yield return ("ulong", "long", 8);
+			foreach (CSharpPrimitives.Data data in CSharpPrimitives.List)
+			{
+				if (data.IsSignedInteger(out CSharpPrimitives.Data? unsignedData))
+				{
+					yield return (unsignedData, data);
+				}
+			}
 		}
 	}
 
@@ -84,12 +80,12 @@ internal static class NumericConversionGenerator
 			{
 				writer.WriteLine("return Unsafe.As<TFrom, TTo>(ref value);");
 			}
-			foreach ((Type from, string fromName) in CSharpPrimitives.TypeNames)
+			foreach (CSharpPrimitives.Data from in CSharpPrimitives.List)
 			{
-				writer.WriteLine($"else if (typeof(TFrom) == typeof({fromName}))");
+				writer.WriteLine($"else if (typeof(TFrom) == typeof({from.LangName}))");
 				using (new CurlyBrackets(writer))
 				{
-					writer.WriteLine($"return {ConvertMethodName(from)}<TTo>(Unsafe.As<TFrom, {fromName}>(ref value));");
+					writer.WriteLine($"return {ConvertMethodName(from.Type)}<TTo>(Unsafe.As<TFrom, {from.LangName}>(ref value));");
 				}
 			}
 			writer.WriteLine("else");
@@ -101,48 +97,46 @@ internal static class NumericConversionGenerator
 		writer.WriteLineNoTabs();
 	}
 
-	private static void WriteConvertMethod(IndentedTextWriter writer, Type from)
+	private static void WriteConvertMethod(IndentedTextWriter writer, CSharpPrimitives.Data from)
 	{
-		string methodName = ConvertMethodName(from);
-		string fromName = CSharpPrimitives.TypeNames[from];
+		string methodName = ConvertMethodName(from.Type);
 		writer.WriteLine("[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]");
-		writer.WriteLine($"private static TTo {methodName}<TTo>({fromName} value) where TTo : unmanaged");
+		writer.WriteLine($"private static TTo {methodName}<TTo>({from.LangName} value) where TTo : unmanaged");
 		using (new CurlyBrackets(writer))
 		{
-			if (CSharpPrimitives.IsSignedInteger(from, out Type? unsignedFrom))
+			if (from.IsSignedInteger(out CSharpPrimitives.Data? unsignedFromData))
 			{
-				writer.WriteLine($"{CSharpPrimitives.TypeNames[unsignedFrom]} unsigned = {ChangeSign}(value);");
-				writer.WriteLine($"return {ConvertMethodName(unsignedFrom)}<TTo>(unsigned);");
+				writer.WriteLine($"{unsignedFromData.LangName} unsigned = {ChangeSign}(value);");
+				writer.WriteLine($"return {ConvertMethodName(unsignedFromData.Type)}<TTo>(unsigned);");
 			}
 			else
 			{
-				foreach ((Type to, string toName) in CSharpPrimitives.TypeNames)
+				foreach (CSharpPrimitives.Data to in CSharpPrimitives.List)
 				{
-					string ifOrElseIf = to == CSharpPrimitives.FirstType ? "if" : "else if";
-					writer.WriteLine($"{ifOrElseIf} (typeof(TTo) == typeof({toName}))");
+					string ifOrElseIf = to == CSharpPrimitives.FirstData ? "if" : "else if";
+					writer.WriteLine($"{ifOrElseIf} (typeof(TTo) == typeof({to.LangName}))");
 					using (new CurlyBrackets(writer))
 					{
 						if (from == to)
 						{
-							writer.WriteLine($"return Unsafe.As<{toName}, TTo>(ref value);");
+							writer.WriteLine($"return Unsafe.As<{to.LangName}, TTo>(ref value);");
 						}
-						else if (CSharpPrimitives.IsSignedInteger(to, out Type? unsignedTo))
+						else if (to.IsSignedInteger(out CSharpPrimitives.Data? unsignedTo))
 						{
-							string unsignedToName = CSharpPrimitives.TypeNames[unsignedTo];
-							writer.WriteLine($"{toName} converted = {ChangeSign}({methodName}<{unsignedToName}>(value));");
-							writer.WriteLine($"return Unsafe.As<{toName}, TTo>(ref converted);");
+							writer.WriteLine($"{to.LangName} converted = {ChangeSign}({methodName}<{unsignedTo.LangName}>(value));");
+							writer.WriteLine($"return Unsafe.As<{to.LangName}, TTo>(ref converted);");
 						}
-						else if (CSharpPrimitives.IsFloatingPoint(from))
+						else if (from.IsFloatingPoint)
 						{
-							if (CSharpPrimitives.IsFloatingPoint(to))
+							if (to.IsFloatingPoint)
 							{
-								writer.WriteLine($"{toName} converted = ({toName})value;");
-								writer.WriteLine($"return Unsafe.As<{toName}, TTo>(ref converted);");
+								writer.WriteLine($"{to.LangName} converted = ({to.LangName})value;");
+								writer.WriteLine($"return Unsafe.As<{to.LangName}, TTo>(ref converted);");
 							}
 							else
 							{
-								Debug.Assert(CSharpPrimitives.IsUnsignedInteger(to));
-								if (from == typeof(Half))
+								Debug.Assert(to.IsUnsignedInteger);
+								if (from.Type == typeof(Half))
 								{
 									writer.WriteComment("We use float because it has enough precision to convert from Half to any integer type.");
 									writer.WriteLine($"return {ConvertMethodName(typeof(float))}<TTo>((float)value);");
@@ -150,20 +144,20 @@ internal static class NumericConversionGenerator
 								else
 								{
 									writer.WriteComment("x must be clamped because of rounding errors.");
-									string minValue = CSharpPrimitives.MinimumValues[to];
-									string maxValue = CSharpPrimitives.MaximumValues[to];
-									writer.WriteLine($"{fromName} x = value * {maxValue};");
-									writer.WriteLine($"{toName} converted = {maxValue} < x ? {maxValue} : (x > {minValue} ? ({toName})x : {minValue});");
-									writer.WriteLine($"return Unsafe.As<{toName}, TTo>(ref converted);");
+									string minValue = to.MinValue;
+									string maxValue = to.MaxValue;
+									writer.WriteLine($"{from.LangName} x = value * ({from.LangName}){maxValue};");
+									writer.WriteLine($"{to.LangName} converted = ({from.LangName}){maxValue} < x ? {maxValue} : (x > ({from.LangName}){minValue} ? ({to.LangName})x : {minValue});");
+									writer.WriteLine($"return Unsafe.As<{to.LangName}, TTo>(ref converted);");
 								}
 							}
 						}
 						else
 						{
-							Debug.Assert(CSharpPrimitives.IsUnsignedInteger(from));
-							if (CSharpPrimitives.IsFloatingPoint(to))
+							Debug.Assert(from.IsUnsignedInteger);
+							if (to.IsFloatingPoint)
 							{
-								if (to == typeof(Half))
+								if (to.Type == typeof(Half))
 								{
 									writer.WriteComment("There isn't enough precision to convert from anything bigger than byte to Half, so we convert to float first.");
 									writer.WriteLine($"float x = {methodName}<float>(value);");
@@ -172,37 +166,34 @@ internal static class NumericConversionGenerator
 								}
 								else
 								{
-									string maxValue = CSharpPrimitives.MaximumValues[from];
-									writer.WriteLine($"{toName} converted = value / ({toName}){maxValue};");
-									writer.WriteLine($"return Unsafe.As<{toName}, TTo>(ref converted);");
+									writer.WriteLine($"{to.LangName} converted = ({to.LangName})value / ({to.LangName}){from.MaxValue};");
+									writer.WriteLine($"return Unsafe.As<{to.LangName}, TTo>(ref converted);");
 								}
 							}
 							else
 							{
-								Debug.Assert(CSharpPrimitives.IsUnsignedInteger(to));
+								Debug.Assert(to.IsUnsignedInteger);
 								writer.WriteComment("See https://github.com/AssetRipper/TextureDecoder/issues/19");
-								int fromSize = CSharpPrimitives.Sizes[from];
-								int toSize = CSharpPrimitives.Sizes[to];
-								if (fromSize < toSize)
+								if (from.Size < to.Size)
 								{
-									int divided = toSize / fromSize;
-									string conversionType = toSize <= sizeof(uint) ? "uint" : "ulong";
+									int divided = to.Size / from.Size;
+									string conversionType = to.Size < sizeof(uint) ? "uint" : to.LangName;
 									writer.WriteLine("unchecked");
 									using (new CurlyBrackets(writer))
 									{
-										writer.Write($"{toName} converted = ({toName})(");
+										writer.Write($"{to.LangName} converted = ({to.LangName})(");
 										for (int i = divided - 1; i > 0; i--)
 										{
-											writer.Write($"(({conversionType})value << {i * fromSize * 8}) | ");
+											writer.Write($"(({conversionType})value << {i * from.Size * 8}) | ");
 										}
 										writer.WriteLine("value);");
-										writer.WriteLine($"return Unsafe.As<{toName}, TTo>(ref converted);");
+										writer.WriteLine($"return Unsafe.As<{to.LangName}, TTo>(ref converted);");
 									}
 								}
 								else
 								{
-									Debug.Assert(fromSize > toSize);
-									if (from == typeof(ushort) && to == typeof(byte))
+									Debug.Assert(from.Size > to.Size);
+									if (from.Type == typeof(ushort) && to.Type == typeof(byte))
 									{
 										writer.WriteComment("This is a special case where we already know an optimal algorithm.");
 										writer.WriteLine("uint x = (value * 255u + 32895u) >> 16;");
@@ -211,14 +202,14 @@ internal static class NumericConversionGenerator
 									}
 									else
 									{
-										writer.WriteComment($"There are more accurate ways to map {fromName} onto {toName}, but this is the simplest.");
-										string conversionType = fromSize <= sizeof(uint) ? "uint" : "ulong";
+										writer.WriteComment($"There are more accurate ways to map {from.TypeName} onto {to.TypeName}, but this is the simplest.");
+										string conversionType = from.Size < sizeof(uint) ? "uint" : from.LangName;
 										writer.WriteLine("unchecked");
 										using (new CurlyBrackets(writer))
 										{
-											int offset = (fromSize / toSize - 1) * toSize * 8;
-											writer.WriteLine($"{toName} converted = ({toName})(({conversionType})value >> {offset});");
-											writer.WriteLine($"return Unsafe.As<{toName}, TTo>(ref converted);");
+											int offset = (from.Size / to.Size - 1) * to.Size * 8;
+											writer.WriteLine($"{to.LangName} converted = ({to.LangName})(({conversionType})value >> {offset});");
+											writer.WriteLine($"return Unsafe.As<{to.LangName}, TTo>(ref converted);");
 										}
 									}
 								}

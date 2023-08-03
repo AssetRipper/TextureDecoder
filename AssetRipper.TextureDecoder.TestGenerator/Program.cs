@@ -76,13 +76,13 @@ namespace AssetRipper.TextureDecoder.TestGenerator
 
 			static IEnumerable<(string, string, string)> GetColorNames()
 			{
-				foreach ((Type primitiveType, string primitiveName) in CSharpPrimitives.TypeNames)
+				foreach (CSharpPrimitives.Data primitiveData in CSharpPrimitives.List)
 				{
-					int primitiveBitSize = CSharpPrimitives.Sizes[primitiveType] * 8;
+					int primitiveBitSize = primitiveData.Size * 8;
 					foreach (string genericColorName in TestClassGenerator.GetGenericColorNames())
 					{
-						string prettyName = $"{genericColorName}{primitiveBitSize}{primitiveType.Name}";
-						yield return (prettyName, $"{genericColorName}<{primitiveName}>", primitiveName);
+						string prettyName = $"{genericColorName}{primitiveBitSize}{primitiveData.TypeName}";
+						yield return (prettyName, $"{genericColorName}<{primitiveData.LangName}>", primitiveData.LangName);
 					}
 				}
 				foreach (GenerationData data in dataList)

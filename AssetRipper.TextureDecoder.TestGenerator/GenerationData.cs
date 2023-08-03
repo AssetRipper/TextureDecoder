@@ -19,9 +19,9 @@ namespace AssetRipper.TextureDecoder.TestGenerator
 
 		public bool IsFloatingPoint => CSharpPrimitives.IsFloatingPoint(ChannelType);
 
-		public int BitSizePerChannel => CSharpPrimitives.Sizes[ChannelType] * 8;
+		public int BitSizePerChannel => CSharpPrimitives.Dictionary[ChannelType].Size * 8;
 
-		public string ChannelTypeName => CSharpPrimitives.TypeNames[ChannelType];
+		public string ChannelTypeName => CSharpPrimitives.Dictionary[ChannelType].LangName;
 
 		public GenerationData(Type colorType, int colorSize)
 		{

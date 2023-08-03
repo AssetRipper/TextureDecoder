@@ -49,32 +49,42 @@ static partial class Program
 		Console.WriteLine("  37 - RGB64UInt64");
 		Console.WriteLine("  38 - RGBA64UInt64");
 		Console.WriteLine("  39 - A64UInt64");
-		Console.WriteLine("  40 - R16Half");
-		Console.WriteLine("  41 - RG16Half");
-		Console.WriteLine("  42 - RGB16Half");
-		Console.WriteLine("  43 - RGBA16Half");
-		Console.WriteLine("  44 - A16Half");
-		Console.WriteLine("  45 - R32Single");
-		Console.WriteLine("  46 - RG32Single");
-		Console.WriteLine("  47 - RGB32Single");
-		Console.WriteLine("  48 - RGBA32Single");
-		Console.WriteLine("  49 - A32Single");
-		Console.WriteLine("  50 - R64Double");
-		Console.WriteLine("  51 - RG64Double");
-		Console.WriteLine("  52 - RGB64Double");
-		Console.WriteLine("  53 - RGBA64Double");
-		Console.WriteLine("  54 - A64Double");
-		Console.WriteLine("  55 - R128Decimal");
-		Console.WriteLine("  56 - RG128Decimal");
-		Console.WriteLine("  57 - RGB128Decimal");
-		Console.WriteLine("  58 - RGBA128Decimal");
-		Console.WriteLine("  59 - A128Decimal");
-		Console.WriteLine("  60 - ARGB16");
-		Console.WriteLine("  61 - ARGB32");
-		Console.WriteLine("  62 - BGRA32");
-		Console.WriteLine("  63 - RGB16");
-		Console.WriteLine("  64 - RGB9e5");
-		Console.WriteLine("  65 - RGBA16");
+		Console.WriteLine("  40 - R128Int128");
+		Console.WriteLine("  41 - RG128Int128");
+		Console.WriteLine("  42 - RGB128Int128");
+		Console.WriteLine("  43 - RGBA128Int128");
+		Console.WriteLine("  44 - A128Int128");
+		Console.WriteLine("  45 - R128UInt128");
+		Console.WriteLine("  46 - RG128UInt128");
+		Console.WriteLine("  47 - RGB128UInt128");
+		Console.WriteLine("  48 - RGBA128UInt128");
+		Console.WriteLine("  49 - A128UInt128");
+		Console.WriteLine("  50 - R16Half");
+		Console.WriteLine("  51 - RG16Half");
+		Console.WriteLine("  52 - RGB16Half");
+		Console.WriteLine("  53 - RGBA16Half");
+		Console.WriteLine("  54 - A16Half");
+		Console.WriteLine("  55 - R32Single");
+		Console.WriteLine("  56 - RG32Single");
+		Console.WriteLine("  57 - RGB32Single");
+		Console.WriteLine("  58 - RGBA32Single");
+		Console.WriteLine("  59 - A32Single");
+		Console.WriteLine("  60 - R64Double");
+		Console.WriteLine("  61 - RG64Double");
+		Console.WriteLine("  62 - RGB64Double");
+		Console.WriteLine("  63 - RGBA64Double");
+		Console.WriteLine("  64 - A64Double");
+		Console.WriteLine("  65 - R128Decimal");
+		Console.WriteLine("  66 - RG128Decimal");
+		Console.WriteLine("  67 - RGB128Decimal");
+		Console.WriteLine("  68 - RGBA128Decimal");
+		Console.WriteLine("  69 - A128Decimal");
+		Console.WriteLine("  70 - ARGB16");
+		Console.WriteLine("  71 - ARGB32");
+		Console.WriteLine("  72 - BGRA32");
+		Console.WriteLine("  73 - RGB16");
+		Console.WriteLine("  74 - RGB9e5");
+		Console.WriteLine("  75 - RGBA16");
 		int mode = int.Parse(modeString);
 		switch(mode)
 		{
@@ -199,81 +209,111 @@ static partial class Program
 				RgbConverter.Convert<ColorA<ulong>, ulong, ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 40:
-				RgbConverter.Convert<ColorR<Half>, Half, ColorBGRA32, byte>(input, width, height, output);
+				RgbConverter.Convert<ColorR<Int128>, Int128, ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 41:
-				RgbConverter.Convert<ColorRG<Half>, Half, ColorBGRA32, byte>(input, width, height, output);
+				RgbConverter.Convert<ColorRG<Int128>, Int128, ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 42:
-				RgbConverter.Convert<ColorRGB<Half>, Half, ColorBGRA32, byte>(input, width, height, output);
+				RgbConverter.Convert<ColorRGB<Int128>, Int128, ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 43:
-				RgbConverter.Convert<ColorRGBA<Half>, Half, ColorBGRA32, byte>(input, width, height, output);
+				RgbConverter.Convert<ColorRGBA<Int128>, Int128, ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 44:
-				RgbConverter.Convert<ColorA<Half>, Half, ColorBGRA32, byte>(input, width, height, output);
+				RgbConverter.Convert<ColorA<Int128>, Int128, ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 45:
-				RgbConverter.Convert<ColorR<float>, float, ColorBGRA32, byte>(input, width, height, output);
+				RgbConverter.Convert<ColorR<UInt128>, UInt128, ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 46:
-				RgbConverter.Convert<ColorRG<float>, float, ColorBGRA32, byte>(input, width, height, output);
+				RgbConverter.Convert<ColorRG<UInt128>, UInt128, ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 47:
-				RgbConverter.Convert<ColorRGB<float>, float, ColorBGRA32, byte>(input, width, height, output);
+				RgbConverter.Convert<ColorRGB<UInt128>, UInt128, ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 48:
-				RgbConverter.Convert<ColorRGBA<float>, float, ColorBGRA32, byte>(input, width, height, output);
+				RgbConverter.Convert<ColorRGBA<UInt128>, UInt128, ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 49:
-				RgbConverter.Convert<ColorA<float>, float, ColorBGRA32, byte>(input, width, height, output);
+				RgbConverter.Convert<ColorA<UInt128>, UInt128, ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 50:
-				RgbConverter.Convert<ColorR<double>, double, ColorBGRA32, byte>(input, width, height, output);
+				RgbConverter.Convert<ColorR<Half>, Half, ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 51:
-				RgbConverter.Convert<ColorRG<double>, double, ColorBGRA32, byte>(input, width, height, output);
+				RgbConverter.Convert<ColorRG<Half>, Half, ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 52:
-				RgbConverter.Convert<ColorRGB<double>, double, ColorBGRA32, byte>(input, width, height, output);
+				RgbConverter.Convert<ColorRGB<Half>, Half, ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 53:
-				RgbConverter.Convert<ColorRGBA<double>, double, ColorBGRA32, byte>(input, width, height, output);
+				RgbConverter.Convert<ColorRGBA<Half>, Half, ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 54:
-				RgbConverter.Convert<ColorA<double>, double, ColorBGRA32, byte>(input, width, height, output);
+				RgbConverter.Convert<ColorA<Half>, Half, ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 55:
-				RgbConverter.Convert<ColorR<decimal>, decimal, ColorBGRA32, byte>(input, width, height, output);
+				RgbConverter.Convert<ColorR<float>, float, ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 56:
-				RgbConverter.Convert<ColorRG<decimal>, decimal, ColorBGRA32, byte>(input, width, height, output);
+				RgbConverter.Convert<ColorRG<float>, float, ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 57:
-				RgbConverter.Convert<ColorRGB<decimal>, decimal, ColorBGRA32, byte>(input, width, height, output);
+				RgbConverter.Convert<ColorRGB<float>, float, ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 58:
-				RgbConverter.Convert<ColorRGBA<decimal>, decimal, ColorBGRA32, byte>(input, width, height, output);
+				RgbConverter.Convert<ColorRGBA<float>, float, ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 59:
-				RgbConverter.Convert<ColorA<decimal>, decimal, ColorBGRA32, byte>(input, width, height, output);
+				RgbConverter.Convert<ColorA<float>, float, ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 60:
-				RgbConverter.Convert<ColorARGB16, byte, ColorBGRA32, byte>(input, width, height, output);
+				RgbConverter.Convert<ColorR<double>, double, ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 61:
-				RgbConverter.Convert<ColorARGB32, byte, ColorBGRA32, byte>(input, width, height, output);
+				RgbConverter.Convert<ColorRG<double>, double, ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 62:
-				RgbConverter.Convert<ColorBGRA32, byte, ColorBGRA32, byte>(input, width, height, output);
+				RgbConverter.Convert<ColorRGB<double>, double, ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 63:
-				RgbConverter.Convert<ColorRGB16, byte, ColorBGRA32, byte>(input, width, height, output);
+				RgbConverter.Convert<ColorRGBA<double>, double, ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 64:
-				RgbConverter.Convert<ColorRGB9e5, double, ColorBGRA32, byte>(input, width, height, output);
+				RgbConverter.Convert<ColorA<double>, double, ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 65:
+				RgbConverter.Convert<ColorR<decimal>, decimal, ColorBGRA32, byte>(input, width, height, output);
+				break;
+			case 66:
+				RgbConverter.Convert<ColorRG<decimal>, decimal, ColorBGRA32, byte>(input, width, height, output);
+				break;
+			case 67:
+				RgbConverter.Convert<ColorRGB<decimal>, decimal, ColorBGRA32, byte>(input, width, height, output);
+				break;
+			case 68:
+				RgbConverter.Convert<ColorRGBA<decimal>, decimal, ColorBGRA32, byte>(input, width, height, output);
+				break;
+			case 69:
+				RgbConverter.Convert<ColorA<decimal>, decimal, ColorBGRA32, byte>(input, width, height, output);
+				break;
+			case 70:
+				RgbConverter.Convert<ColorARGB16, byte, ColorBGRA32, byte>(input, width, height, output);
+				break;
+			case 71:
+				RgbConverter.Convert<ColorARGB32, byte, ColorBGRA32, byte>(input, width, height, output);
+				break;
+			case 72:
+				RgbConverter.Convert<ColorBGRA32, byte, ColorBGRA32, byte>(input, width, height, output);
+				break;
+			case 73:
+				RgbConverter.Convert<ColorRGB16, byte, ColorBGRA32, byte>(input, width, height, output);
+				break;
+			case 74:
+				RgbConverter.Convert<ColorRGB9e5, double, ColorBGRA32, byte>(input, width, height, output);
+				break;
+			case 75:
 				RgbConverter.Convert<ColorRGBA16, byte, ColorBGRA32, byte>(input, width, height, output);
 				break;
 			default:

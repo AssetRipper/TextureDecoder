@@ -18,6 +18,8 @@
 	/// <item><see cref="uint"/></item>
 	/// <item><see cref="long"/></item>
 	/// <item><see cref="ulong"/></item>
+	/// <item><see cref="Int128"/></item>
+	/// <item><see cref="UInt128"/></item>
 	/// <item><see cref="Half"/></item>
 	/// <item><see cref="float"/></item>
 	/// <item><see cref="double"/></item>

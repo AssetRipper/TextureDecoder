@@ -1,7 +1,7 @@
 ﻿using AssetRipper.TextureDecoder.Rgb;
 using System.Runtime.CompilerServices;
 
-namespace AssetRipper.TextureDecoder.Tests.Formats;
+namespace AssetRipper.TextureDecoder.Tests.Formats.Generic;
 
 internal partial class GenericColorTests<TColor, TChannel> where TColor : unmanaged, IColor<TChannel> where TChannel : unmanaged
 {

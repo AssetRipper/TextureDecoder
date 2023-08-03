@@ -43,6 +43,14 @@ static partial class NumericConversion
 		{
 			return ConvertUInt64<TTo>(Unsafe.As<TFrom, ulong>(ref value));
 		}
+		else if (typeof(TFrom) == typeof(Int128))
+		{
+			return ConvertInt128<TTo>(Unsafe.As<TFrom, Int128>(ref value));
+		}
+		else if (typeof(TFrom) == typeof(UInt128))
+		{
+			return ConvertUInt128<TTo>(Unsafe.As<TFrom, UInt128>(ref value));
+		}
 		else if (typeof(TFrom) == typeof(Half))
 		{
 			return ConvertHalf<TTo>(Unsafe.As<TFrom, Half>(ref value));
@@ -126,6 +134,20 @@ static partial class NumericConversion
 				return Unsafe.As<ulong, TTo>(ref converted);
 			}
 		}
+		else if (typeof(TTo) == typeof(Int128))
+		{
+			Int128 converted = ChangeSign(ConvertByte<UInt128>(value));
+			return Unsafe.As<Int128, TTo>(ref converted);
+		}
+		else if (typeof(TTo) == typeof(UInt128))
+		{
+			// See https://github.com/AssetRipper/TextureDecoder/issues/19
+			unchecked
+			{
+				UInt128 converted = (UInt128)(((UInt128)value << 120) | ((UInt128)value << 112) | ((UInt128)value << 104) | ((UInt128)value << 96) | ((UInt128)value << 88) | ((UInt128)value << 80) | ((UInt128)value << 72) | ((UInt128)value << 64) | ((UInt128)value << 56) | ((UInt128)value << 48) | ((UInt128)value << 40) | ((UInt128)value << 32) | ((UInt128)value << 24) | ((UInt128)value << 16) | ((UInt128)value << 8) | value);
+				return Unsafe.As<UInt128, TTo>(ref converted);
+			}
+		}
 		else if (typeof(TTo) == typeof(Half))
 		{
 			// There isn't enough precision to convert from anything bigger than byte to Half, so we convert to float first.
@@ -135,17 +157,17 @@ static partial class NumericConversion
 		}
 		else if (typeof(TTo) == typeof(float))
 		{
-			float converted = value / (float)byte.MaxValue;
+			float converted = (float)value / (float)byte.MaxValue;
 			return Unsafe.As<float, TTo>(ref converted);
 		}
 		else if (typeof(TTo) == typeof(double))
 		{
-			double converted = value / (double)byte.MaxValue;
+			double converted = (double)value / (double)byte.MaxValue;
 			return Unsafe.As<double, TTo>(ref converted);
 		}
 		else if (typeof(TTo) == typeof(decimal))
 		{
-			decimal converted = value / (decimal)byte.MaxValue;
+			decimal converted = (decimal)value / (decimal)byte.MaxValue;
 			return Unsafe.As<decimal, TTo>(ref converted);
 		}
 		else
@@ -214,6 +236,20 @@ static partial class NumericConversion
 				return Unsafe.As<ulong, TTo>(ref converted);
 			}
 		}
+		else if (typeof(TTo) == typeof(Int128))
+		{
+			Int128 converted = ChangeSign(ConvertUInt16<UInt128>(value));
+			return Unsafe.As<Int128, TTo>(ref converted);
+		}
+		else if (typeof(TTo) == typeof(UInt128))
+		{
+			// See https://github.com/AssetRipper/TextureDecoder/issues/19
+			unchecked
+			{
+				UInt128 converted = (UInt128)(((UInt128)value << 112) | ((UInt128)value << 96) | ((UInt128)value << 80) | ((UInt128)value << 64) | ((UInt128)value << 48) | ((UInt128)value << 32) | ((UInt128)value << 16) | value);
+				return Unsafe.As<UInt128, TTo>(ref converted);
+			}
+		}
 		else if (typeof(TTo) == typeof(Half))
 		{
 			// There isn't enough precision to convert from anything bigger than byte to Half, so we convert to float first.
@@ -223,17 +259,17 @@ static partial class NumericConversion
 		}
 		else if (typeof(TTo) == typeof(float))
 		{
-			float converted = value / (float)ushort.MaxValue;
+			float converted = (float)value / (float)ushort.MaxValue;
 			return Unsafe.As<float, TTo>(ref converted);
 		}
 		else if (typeof(TTo) == typeof(double))
 		{
-			double converted = value / (double)ushort.MaxValue;
+			double converted = (double)value / (double)ushort.MaxValue;
 			return Unsafe.As<double, TTo>(ref converted);
 		}
 		else if (typeof(TTo) == typeof(decimal))
 		{
-			decimal converted = value / (decimal)ushort.MaxValue;
+			decimal converted = (decimal)value / (decimal)ushort.MaxValue;
 			return Unsafe.As<decimal, TTo>(ref converted);
 		}
 		else
@@ -260,7 +296,7 @@ static partial class NumericConversion
 		else if (typeof(TTo) == typeof(byte))
 		{
 			// See https://github.com/AssetRipper/TextureDecoder/issues/19
-			// There are more accurate ways to map uint onto byte, but this is the simplest.
+			// There are more accurate ways to map UInt32 onto Byte, but this is the simplest.
 			unchecked
 			{
 				byte converted = (byte)((uint)value >> 24);
@@ -275,7 +311,7 @@ static partial class NumericConversion
 		else if (typeof(TTo) == typeof(ushort))
 		{
 			// See https://github.com/AssetRipper/TextureDecoder/issues/19
-			// There are more accurate ways to map uint onto ushort, but this is the simplest.
+			// There are more accurate ways to map UInt32 onto UInt16, but this is the simplest.
 			unchecked
 			{
 				ushort converted = (ushort)((uint)value >> 16);
@@ -305,6 +341,20 @@ static partial class NumericConversion
 				return Unsafe.As<ulong, TTo>(ref converted);
 			}
 		}
+		else if (typeof(TTo) == typeof(Int128))
+		{
+			Int128 converted = ChangeSign(ConvertUInt32<UInt128>(value));
+			return Unsafe.As<Int128, TTo>(ref converted);
+		}
+		else if (typeof(TTo) == typeof(UInt128))
+		{
+			// See https://github.com/AssetRipper/TextureDecoder/issues/19
+			unchecked
+			{
+				UInt128 converted = (UInt128)(((UInt128)value << 96) | ((UInt128)value << 64) | ((UInt128)value << 32) | value);
+				return Unsafe.As<UInt128, TTo>(ref converted);
+			}
+		}
 		else if (typeof(TTo) == typeof(Half))
 		{
 			// There isn't enough precision to convert from anything bigger than byte to Half, so we convert to float first.
@@ -314,17 +364,17 @@ static partial class NumericConversion
 		}
 		else if (typeof(TTo) == typeof(float))
 		{
-			float converted = value / (float)uint.MaxValue;
+			float converted = (float)value / (float)uint.MaxValue;
 			return Unsafe.As<float, TTo>(ref converted);
 		}
 		else if (typeof(TTo) == typeof(double))
 		{
-			double converted = value / (double)uint.MaxValue;
+			double converted = (double)value / (double)uint.MaxValue;
 			return Unsafe.As<double, TTo>(ref converted);
 		}
 		else if (typeof(TTo) == typeof(decimal))
 		{
-			decimal converted = value / (decimal)uint.MaxValue;
+			decimal converted = (decimal)value / (decimal)uint.MaxValue;
 			return Unsafe.As<decimal, TTo>(ref converted);
 		}
 		else
@@ -351,7 +401,7 @@ static partial class NumericConversion
 		else if (typeof(TTo) == typeof(byte))
 		{
 			// See https://github.com/AssetRipper/TextureDecoder/issues/19
-			// There are more accurate ways to map ulong onto byte, but this is the simplest.
+			// There are more accurate ways to map UInt64 onto Byte, but this is the simplest.
 			unchecked
 			{
 				byte converted = (byte)((ulong)value >> 56);
@@ -366,7 +416,7 @@ static partial class NumericConversion
 		else if (typeof(TTo) == typeof(ushort))
 		{
 			// See https://github.com/AssetRipper/TextureDecoder/issues/19
-			// There are more accurate ways to map ulong onto ushort, but this is the simplest.
+			// There are more accurate ways to map UInt64 onto UInt16, but this is the simplest.
 			unchecked
 			{
 				ushort converted = (ushort)((ulong)value >> 48);
@@ -381,7 +431,7 @@ static partial class NumericConversion
 		else if (typeof(TTo) == typeof(uint))
 		{
 			// See https://github.com/AssetRipper/TextureDecoder/issues/19
-			// There are more accurate ways to map ulong onto uint, but this is the simplest.
+			// There are more accurate ways to map UInt64 onto UInt32, but this is the simplest.
 			unchecked
 			{
 				uint converted = (uint)((ulong)value >> 32);
@@ -397,6 +447,20 @@ static partial class NumericConversion
 		{
 			return Unsafe.As<ulong, TTo>(ref value);
 		}
+		else if (typeof(TTo) == typeof(Int128))
+		{
+			Int128 converted = ChangeSign(ConvertUInt64<UInt128>(value));
+			return Unsafe.As<Int128, TTo>(ref converted);
+		}
+		else if (typeof(TTo) == typeof(UInt128))
+		{
+			// See https://github.com/AssetRipper/TextureDecoder/issues/19
+			unchecked
+			{
+				UInt128 converted = (UInt128)(((UInt128)value << 64) | value);
+				return Unsafe.As<UInt128, TTo>(ref converted);
+			}
+		}
 		else if (typeof(TTo) == typeof(Half))
 		{
 			// There isn't enough precision to convert from anything bigger than byte to Half, so we convert to float first.
@@ -406,17 +470,124 @@ static partial class NumericConversion
 		}
 		else if (typeof(TTo) == typeof(float))
 		{
-			float converted = value / (float)ulong.MaxValue;
+			float converted = (float)value / (float)ulong.MaxValue;
 			return Unsafe.As<float, TTo>(ref converted);
 		}
 		else if (typeof(TTo) == typeof(double))
 		{
-			double converted = value / (double)ulong.MaxValue;
+			double converted = (double)value / (double)ulong.MaxValue;
 			return Unsafe.As<double, TTo>(ref converted);
 		}
 		else if (typeof(TTo) == typeof(decimal))
 		{
-			decimal converted = value / (decimal)ulong.MaxValue;
+			decimal converted = (decimal)value / (decimal)ulong.MaxValue;
+			return Unsafe.As<decimal, TTo>(ref converted);
+		}
+		else
+		{
+			return ThrowOrReturnDefault<TTo>();
+		}
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+	private static TTo ConvertInt128<TTo>(Int128 value) where TTo : unmanaged
+	{
+		UInt128 unsigned = ChangeSign(value);
+		return ConvertUInt128<TTo>(unsigned);
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+	private static TTo ConvertUInt128<TTo>(UInt128 value) where TTo : unmanaged
+	{
+		if (typeof(TTo) == typeof(sbyte))
+		{
+			sbyte converted = ChangeSign(ConvertUInt128<byte>(value));
+			return Unsafe.As<sbyte, TTo>(ref converted);
+		}
+		else if (typeof(TTo) == typeof(byte))
+		{
+			// See https://github.com/AssetRipper/TextureDecoder/issues/19
+			// There are more accurate ways to map UInt128 onto Byte, but this is the simplest.
+			unchecked
+			{
+				byte converted = (byte)((UInt128)value >> 120);
+				return Unsafe.As<byte, TTo>(ref converted);
+			}
+		}
+		else if (typeof(TTo) == typeof(short))
+		{
+			short converted = ChangeSign(ConvertUInt128<ushort>(value));
+			return Unsafe.As<short, TTo>(ref converted);
+		}
+		else if (typeof(TTo) == typeof(ushort))
+		{
+			// See https://github.com/AssetRipper/TextureDecoder/issues/19
+			// There are more accurate ways to map UInt128 onto UInt16, but this is the simplest.
+			unchecked
+			{
+				ushort converted = (ushort)((UInt128)value >> 112);
+				return Unsafe.As<ushort, TTo>(ref converted);
+			}
+		}
+		else if (typeof(TTo) == typeof(int))
+		{
+			int converted = ChangeSign(ConvertUInt128<uint>(value));
+			return Unsafe.As<int, TTo>(ref converted);
+		}
+		else if (typeof(TTo) == typeof(uint))
+		{
+			// See https://github.com/AssetRipper/TextureDecoder/issues/19
+			// There are more accurate ways to map UInt128 onto UInt32, but this is the simplest.
+			unchecked
+			{
+				uint converted = (uint)((UInt128)value >> 96);
+				return Unsafe.As<uint, TTo>(ref converted);
+			}
+		}
+		else if (typeof(TTo) == typeof(long))
+		{
+			long converted = ChangeSign(ConvertUInt128<ulong>(value));
+			return Unsafe.As<long, TTo>(ref converted);
+		}
+		else if (typeof(TTo) == typeof(ulong))
+		{
+			// See https://github.com/AssetRipper/TextureDecoder/issues/19
+			// There are more accurate ways to map UInt128 onto UInt64, but this is the simplest.
+			unchecked
+			{
+				ulong converted = (ulong)((UInt128)value >> 64);
+				return Unsafe.As<ulong, TTo>(ref converted);
+			}
+		}
+		else if (typeof(TTo) == typeof(Int128))
+		{
+			Int128 converted = ChangeSign(ConvertUInt128<UInt128>(value));
+			return Unsafe.As<Int128, TTo>(ref converted);
+		}
+		else if (typeof(TTo) == typeof(UInt128))
+		{
+			return Unsafe.As<UInt128, TTo>(ref value);
+		}
+		else if (typeof(TTo) == typeof(Half))
+		{
+			// There isn't enough precision to convert from anything bigger than byte to Half, so we convert to float first.
+			float x = ConvertUInt128<float>(value);
+			Half converted = (Half)x;
+			return Unsafe.As<Half, TTo>(ref converted);
+		}
+		else if (typeof(TTo) == typeof(float))
+		{
+			float converted = (float)value / (float)UInt128.MaxValue;
+			return Unsafe.As<float, TTo>(ref converted);
+		}
+		else if (typeof(TTo) == typeof(double))
+		{
+			double converted = (double)value / (double)UInt128.MaxValue;
+			return Unsafe.As<double, TTo>(ref converted);
+		}
+		else if (typeof(TTo) == typeof(decimal))
+		{
+			decimal converted = (decimal)value / (decimal)UInt128.MaxValue;
 			return Unsafe.As<decimal, TTo>(ref converted);
 		}
 		else
@@ -468,6 +639,16 @@ static partial class NumericConversion
 			// We use float because it has enough precision to convert from Half to any integer type.
 			return ConvertSingle<TTo>((float)value);
 		}
+		else if (typeof(TTo) == typeof(Int128))
+		{
+			Int128 converted = ChangeSign(ConvertHalf<UInt128>(value));
+			return Unsafe.As<Int128, TTo>(ref converted);
+		}
+		else if (typeof(TTo) == typeof(UInt128))
+		{
+			// We use float because it has enough precision to convert from Half to any integer type.
+			return ConvertSingle<TTo>((float)value);
+		}
 		else if (typeof(TTo) == typeof(Half))
 		{
 			return Unsafe.As<Half, TTo>(ref value);
@@ -504,8 +685,8 @@ static partial class NumericConversion
 		else if (typeof(TTo) == typeof(byte))
 		{
 			// x must be clamped because of rounding errors.
-			float x = value * byte.MaxValue;
-			byte converted = byte.MaxValue < x ? byte.MaxValue : (x > byte.MinValue ? (byte)x : byte.MinValue);
+			float x = value * (float)byte.MaxValue;
+			byte converted = (float)byte.MaxValue < x ? byte.MaxValue : (x > (float)byte.MinValue ? (byte)x : byte.MinValue);
 			return Unsafe.As<byte, TTo>(ref converted);
 		}
 		else if (typeof(TTo) == typeof(short))
@@ -516,8 +697,8 @@ static partial class NumericConversion
 		else if (typeof(TTo) == typeof(ushort))
 		{
 			// x must be clamped because of rounding errors.
-			float x = value * ushort.MaxValue;
-			ushort converted = ushort.MaxValue < x ? ushort.MaxValue : (x > ushort.MinValue ? (ushort)x : ushort.MinValue);
+			float x = value * (float)ushort.MaxValue;
+			ushort converted = (float)ushort.MaxValue < x ? ushort.MaxValue : (x > (float)ushort.MinValue ? (ushort)x : ushort.MinValue);
 			return Unsafe.As<ushort, TTo>(ref converted);
 		}
 		else if (typeof(TTo) == typeof(int))
@@ -528,8 +709,8 @@ static partial class NumericConversion
 		else if (typeof(TTo) == typeof(uint))
 		{
 			// x must be clamped because of rounding errors.
-			float x = value * uint.MaxValue;
-			uint converted = uint.MaxValue < x ? uint.MaxValue : (x > uint.MinValue ? (uint)x : uint.MinValue);
+			float x = value * (float)uint.MaxValue;
+			uint converted = (float)uint.MaxValue < x ? uint.MaxValue : (x > (float)uint.MinValue ? (uint)x : uint.MinValue);
 			return Unsafe.As<uint, TTo>(ref converted);
 		}
 		else if (typeof(TTo) == typeof(long))
@@ -540,9 +721,21 @@ static partial class NumericConversion
 		else if (typeof(TTo) == typeof(ulong))
 		{
 			// x must be clamped because of rounding errors.
-			float x = value * ulong.MaxValue;
-			ulong converted = ulong.MaxValue < x ? ulong.MaxValue : (x > ulong.MinValue ? (ulong)x : ulong.MinValue);
+			float x = value * (float)ulong.MaxValue;
+			ulong converted = (float)ulong.MaxValue < x ? ulong.MaxValue : (x > (float)ulong.MinValue ? (ulong)x : ulong.MinValue);
 			return Unsafe.As<ulong, TTo>(ref converted);
+		}
+		else if (typeof(TTo) == typeof(Int128))
+		{
+			Int128 converted = ChangeSign(ConvertSingle<UInt128>(value));
+			return Unsafe.As<Int128, TTo>(ref converted);
+		}
+		else if (typeof(TTo) == typeof(UInt128))
+		{
+			// x must be clamped because of rounding errors.
+			float x = value * (float)UInt128.MaxValue;
+			UInt128 converted = (float)UInt128.MaxValue < x ? UInt128.MaxValue : (x > (float)UInt128.MinValue ? (UInt128)x : UInt128.MinValue);
+			return Unsafe.As<UInt128, TTo>(ref converted);
 		}
 		else if (typeof(TTo) == typeof(Half))
 		{
@@ -580,8 +773,8 @@ static partial class NumericConversion
 		else if (typeof(TTo) == typeof(byte))
 		{
 			// x must be clamped because of rounding errors.
-			double x = value * byte.MaxValue;
-			byte converted = byte.MaxValue < x ? byte.MaxValue : (x > byte.MinValue ? (byte)x : byte.MinValue);
+			double x = value * (double)byte.MaxValue;
+			byte converted = (double)byte.MaxValue < x ? byte.MaxValue : (x > (double)byte.MinValue ? (byte)x : byte.MinValue);
 			return Unsafe.As<byte, TTo>(ref converted);
 		}
 		else if (typeof(TTo) == typeof(short))
@@ -592,8 +785,8 @@ static partial class NumericConversion
 		else if (typeof(TTo) == typeof(ushort))
 		{
 			// x must be clamped because of rounding errors.
-			double x = value * ushort.MaxValue;
-			ushort converted = ushort.MaxValue < x ? ushort.MaxValue : (x > ushort.MinValue ? (ushort)x : ushort.MinValue);
+			double x = value * (double)ushort.MaxValue;
+			ushort converted = (double)ushort.MaxValue < x ? ushort.MaxValue : (x > (double)ushort.MinValue ? (ushort)x : ushort.MinValue);
 			return Unsafe.As<ushort, TTo>(ref converted);
 		}
 		else if (typeof(TTo) == typeof(int))
@@ -604,8 +797,8 @@ static partial class NumericConversion
 		else if (typeof(TTo) == typeof(uint))
 		{
 			// x must be clamped because of rounding errors.
-			double x = value * uint.MaxValue;
-			uint converted = uint.MaxValue < x ? uint.MaxValue : (x > uint.MinValue ? (uint)x : uint.MinValue);
+			double x = value * (double)uint.MaxValue;
+			uint converted = (double)uint.MaxValue < x ? uint.MaxValue : (x > (double)uint.MinValue ? (uint)x : uint.MinValue);
 			return Unsafe.As<uint, TTo>(ref converted);
 		}
 		else if (typeof(TTo) == typeof(long))
@@ -616,9 +809,21 @@ static partial class NumericConversion
 		else if (typeof(TTo) == typeof(ulong))
 		{
 			// x must be clamped because of rounding errors.
-			double x = value * ulong.MaxValue;
-			ulong converted = ulong.MaxValue < x ? ulong.MaxValue : (x > ulong.MinValue ? (ulong)x : ulong.MinValue);
+			double x = value * (double)ulong.MaxValue;
+			ulong converted = (double)ulong.MaxValue < x ? ulong.MaxValue : (x > (double)ulong.MinValue ? (ulong)x : ulong.MinValue);
 			return Unsafe.As<ulong, TTo>(ref converted);
+		}
+		else if (typeof(TTo) == typeof(Int128))
+		{
+			Int128 converted = ChangeSign(ConvertDouble<UInt128>(value));
+			return Unsafe.As<Int128, TTo>(ref converted);
+		}
+		else if (typeof(TTo) == typeof(UInt128))
+		{
+			// x must be clamped because of rounding errors.
+			double x = value * (double)UInt128.MaxValue;
+			UInt128 converted = (double)UInt128.MaxValue < x ? UInt128.MaxValue : (x > (double)UInt128.MinValue ? (UInt128)x : UInt128.MinValue);
+			return Unsafe.As<UInt128, TTo>(ref converted);
 		}
 		else if (typeof(TTo) == typeof(Half))
 		{
@@ -656,8 +861,8 @@ static partial class NumericConversion
 		else if (typeof(TTo) == typeof(byte))
 		{
 			// x must be clamped because of rounding errors.
-			decimal x = value * byte.MaxValue;
-			byte converted = byte.MaxValue < x ? byte.MaxValue : (x > byte.MinValue ? (byte)x : byte.MinValue);
+			decimal x = value * (decimal)byte.MaxValue;
+			byte converted = (decimal)byte.MaxValue < x ? byte.MaxValue : (x > (decimal)byte.MinValue ? (byte)x : byte.MinValue);
 			return Unsafe.As<byte, TTo>(ref converted);
 		}
 		else if (typeof(TTo) == typeof(short))
@@ -668,8 +873,8 @@ static partial class NumericConversion
 		else if (typeof(TTo) == typeof(ushort))
 		{
 			// x must be clamped because of rounding errors.
-			decimal x = value * ushort.MaxValue;
-			ushort converted = ushort.MaxValue < x ? ushort.MaxValue : (x > ushort.MinValue ? (ushort)x : ushort.MinValue);
+			decimal x = value * (decimal)ushort.MaxValue;
+			ushort converted = (decimal)ushort.MaxValue < x ? ushort.MaxValue : (x > (decimal)ushort.MinValue ? (ushort)x : ushort.MinValue);
 			return Unsafe.As<ushort, TTo>(ref converted);
 		}
 		else if (typeof(TTo) == typeof(int))
@@ -680,8 +885,8 @@ static partial class NumericConversion
 		else if (typeof(TTo) == typeof(uint))
 		{
 			// x must be clamped because of rounding errors.
-			decimal x = value * uint.MaxValue;
-			uint converted = uint.MaxValue < x ? uint.MaxValue : (x > uint.MinValue ? (uint)x : uint.MinValue);
+			decimal x = value * (decimal)uint.MaxValue;
+			uint converted = (decimal)uint.MaxValue < x ? uint.MaxValue : (x > (decimal)uint.MinValue ? (uint)x : uint.MinValue);
 			return Unsafe.As<uint, TTo>(ref converted);
 		}
 		else if (typeof(TTo) == typeof(long))
@@ -692,9 +897,21 @@ static partial class NumericConversion
 		else if (typeof(TTo) == typeof(ulong))
 		{
 			// x must be clamped because of rounding errors.
-			decimal x = value * ulong.MaxValue;
-			ulong converted = ulong.MaxValue < x ? ulong.MaxValue : (x > ulong.MinValue ? (ulong)x : ulong.MinValue);
+			decimal x = value * (decimal)ulong.MaxValue;
+			ulong converted = (decimal)ulong.MaxValue < x ? ulong.MaxValue : (x > (decimal)ulong.MinValue ? (ulong)x : ulong.MinValue);
 			return Unsafe.As<ulong, TTo>(ref converted);
+		}
+		else if (typeof(TTo) == typeof(Int128))
+		{
+			Int128 converted = ChangeSign(ConvertDecimal<UInt128>(value));
+			return Unsafe.As<Int128, TTo>(ref converted);
+		}
+		else if (typeof(TTo) == typeof(UInt128))
+		{
+			// x must be clamped because of rounding errors.
+			decimal x = value * (decimal)UInt128.MaxValue;
+			UInt128 converted = (decimal)UInt128.MaxValue < x ? UInt128.MaxValue : (x > (decimal)UInt128.MinValue ? (UInt128)x : UInt128.MinValue);
+			return Unsafe.As<UInt128, TTo>(ref converted);
 		}
 		else if (typeof(TTo) == typeof(Half))
 		{
@@ -724,81 +941,61 @@ static partial class NumericConversion
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 	private static sbyte ChangeSign(byte value)
 	{
-		unchecked
-		{
-			const uint SignBit = 0x80;
-			return (sbyte)(value ^ SignBit);
-		}
+		return ToSignedNumber<byte, sbyte>(value);
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 	private static byte ChangeSign(sbyte value)
 	{
-		unchecked
-		{
-			const uint SignBit = 0x80;
-			return (byte)((uint)value ^ SignBit);
-		}
+		return ToUnsignedNumber<sbyte, byte>(value);
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 	private static short ChangeSign(ushort value)
 	{
-		unchecked
-		{
-			const uint SignBit = 0x8000;
-			return (short)(value ^ SignBit);
-		}
+		return ToSignedNumber<ushort, short>(value);
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 	private static ushort ChangeSign(short value)
 	{
-		unchecked
-		{
-			const uint SignBit = 0x8000;
-			return (ushort)((uint)value ^ SignBit);
-		}
+		return ToUnsignedNumber<short, ushort>(value);
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 	private static int ChangeSign(uint value)
 	{
-		unchecked
-		{
-			const uint SignBit = 0x80000000;
-			return (int)(value ^ SignBit);
-		}
+		return ToSignedNumber<uint, int>(value);
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 	private static uint ChangeSign(int value)
 	{
-		unchecked
-		{
-			const uint SignBit = 0x80000000;
-			return (uint)((uint)value ^ SignBit);
-		}
+		return ToUnsignedNumber<int, uint>(value);
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 	private static long ChangeSign(ulong value)
 	{
-		unchecked
-		{
-			const ulong SignBit = 0x8000000000000000;
-			return (long)(value ^ SignBit);
-		}
+		return ToSignedNumber<ulong, long>(value);
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 	private static ulong ChangeSign(long value)
 	{
-		unchecked
-		{
-			const ulong SignBit = 0x8000000000000000;
-			return (ulong)((ulong)value ^ SignBit);
-		}
+		return ToUnsignedNumber<long, ulong>(value);
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+	private static Int128 ChangeSign(UInt128 value)
+	{
+		return ToSignedNumber<UInt128, Int128>(value);
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+	private static UInt128 ChangeSign(Int128 value)
+	{
+		return ToUnsignedNumber<Int128, UInt128>(value);
 	}
 
 }

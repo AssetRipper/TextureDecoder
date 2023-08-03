@@ -205,4 +205,16 @@ public partial class ColorARGB32Tests
 	{
 		LosslessConversion.Assert<ColorARGB32, byte, ColorRGBA<ulong>, ulong>();
 	}
+
+	[Test]
+	public void ConversionIsLosslessToColorRGBA_Int128()
+	{
+		LosslessConversion.Assert<ColorARGB32, byte, ColorRGBA<Int128>, Int128>();
+	}
+
+	[Test]
+	public void ConversionIsLosslessToColorRGBA_UInt128()
+	{
+		LosslessConversion.Assert<ColorARGB32, byte, ColorRGBA<UInt128>, UInt128>();
+	}
 }
