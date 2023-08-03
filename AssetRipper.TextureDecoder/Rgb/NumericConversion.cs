@@ -53,12 +53,4 @@ public static partial class NumericConversion
 		TTo SignBit = TTo.One << (Unsafe.SizeOf<TTo>() * 8 - 1);
 		return SignBit ^ Unsafe.As<TFrom, TTo>(ref value);
 	}
-
-	private static void Test()
-	{
-		uint unum = default;
-		int num = default;
-
-		int converted = ToSignedNumber<uint, int>(unum);
-	}
 }
