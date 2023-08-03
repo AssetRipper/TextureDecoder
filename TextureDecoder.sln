@@ -5,6 +5,7 @@ VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3AAF94E5-9A19-461C-923F-BBC603C630BB}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		.gitignore = .gitignore
 		LICENSE = LICENSE
 		README.md = README.md
@@ -35,7 +36,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssetRipper.TextureDecoder.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntegerConversion.ConstantEstimation", "IntegerConversion.ConstantEstimation\IntegerConversion.ConstantEstimation.csproj", "{9897C52D-2F38-405A-AB85-B06383FDF6E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssetRipper.TextureDecoder.SourceGeneration.Common", "AssetRipper.TextureDecoder.SourceGeneration.Common\AssetRipper.TextureDecoder.SourceGeneration.Common.csproj", "{336CF443-373C-41B3-8E7C-881672E9875E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssetRipper.TextureDecoder.SourceGeneration.Common", "AssetRipper.TextureDecoder.SourceGeneration.Common\AssetRipper.TextureDecoder.SourceGeneration.Common.csproj", "{336CF443-373C-41B3-8E7C-881672E9875E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
