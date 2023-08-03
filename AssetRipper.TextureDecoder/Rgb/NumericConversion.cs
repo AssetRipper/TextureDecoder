@@ -27,6 +27,7 @@ public static partial class NumericConversion
 #endif
 	}
 
+	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 	private static TTo ToSignedNumber<TFrom, TTo>(TFrom value)
 		where TFrom : unmanaged, IUnsignedNumber<TFrom>, IShiftOperators<TFrom, int, TFrom>, IBitwiseOperators<TFrom, TFrom, TFrom>
 		where TTo : unmanaged, ISignedNumber<TTo>
@@ -41,6 +42,7 @@ public static partial class NumericConversion
 		return Unsafe.As<TFrom, TTo>(ref converted);
 	}
 
+	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 	private static TTo ToUnsignedNumber<TFrom, TTo>(TFrom value)
 		where TFrom : unmanaged, ISignedNumber<TFrom>
 		where TTo : unmanaged, IUnsignedNumber<TTo>, IShiftOperators<TTo, int, TTo>, IBitwiseOperators<TTo, TTo, TTo>

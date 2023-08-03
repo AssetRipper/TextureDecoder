@@ -855,19 +855,19 @@ namespace AssetRipper.TextureDecoder.Astc
 			}
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static uint Color(uint r, uint g, uint b, uint a)
 		{
 			return r << 16 | g << 8 | b | a << 24;
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static byte BitReverseU8(byte c, int bits)
 		{
 			return (byte)(BitReverseTable[c] >> (8 - bits));
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static ulong BitReverseU64(ulong d, int bits)
 		{
 			ulong ret;
@@ -886,13 +886,13 @@ namespace AssetRipper.TextureDecoder.Astc
 			return ret >> (64 - bits);
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private unsafe static int GetBits(byte* input, int bit, int len)
 		{
 			return (*((int*)(input + bit / 8)) >> (bit % 8)) & ((1 << len) - 1);
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private unsafe static ulong GetBits64(byte* input, int bit, int len)
 		{
 			ulong mask = len == 64 ? 0xffffffffffffffff : (1UL << len) - 1;
@@ -918,13 +918,13 @@ namespace AssetRipper.TextureDecoder.Astc
 			}
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static byte Clamp(int n)
 		{
 			return n < 0 ? byte.MinValue : n > 255 ? byte.MaxValue : (byte)n;
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static unsafe void BitTransferSigned(int* a, int* b)
 		{
 			*b = (*b >> 1) | (*a & 0x80);
@@ -935,7 +935,7 @@ namespace AssetRipper.TextureDecoder.Astc
 			}
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private unsafe static void SetEndpoint(int* endpoint, int r1, int g1, int b1, int a1, int r2, int g2, int b2, int a2)
 		{
 			endpoint[0] = r1;
@@ -948,7 +948,7 @@ namespace AssetRipper.TextureDecoder.Astc
 			endpoint[7] = a2;
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private unsafe static void SetEndpointClamp(int* endpoint, int r1, int g1, int b1, int a1, int r2, int g2, int b2, int a2)
 		{
 			endpoint[0] = Clamp(r1);
@@ -961,7 +961,7 @@ namespace AssetRipper.TextureDecoder.Astc
 			endpoint[7] = Clamp(a2);
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private unsafe static void SetEndpointBlue(int* endpoint, int r1, int g1, int b1, int a1, int r2, int g2, int b2, int a2)
 		{
 			endpoint[0] = (r1 + b1) >> 1;
@@ -974,7 +974,7 @@ namespace AssetRipper.TextureDecoder.Astc
 			endpoint[7] = a2;
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private unsafe static void SetEndpointBlueClamp(int* endpoint, int r1, int g1, int b1, int a1, int r2, int g2, int b2, int a2)
 		{
 			endpoint[0] = Clamp((r1 + b1) >> 1);
@@ -987,7 +987,7 @@ namespace AssetRipper.TextureDecoder.Astc
 			endpoint[7] = Clamp(a2);
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static byte SelectColor(int v0, int v1, int weight)
 		{
 			return (byte)(((((v0 << 8 | v0) * (64 - weight) + (v1 << 8 | v1) * weight + 32) >> 6) * 255 + 32768) / 65536);

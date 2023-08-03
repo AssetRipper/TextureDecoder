@@ -640,7 +640,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static void DecodeEtc2a1Block(ReadOnlySpan<byte> input, Span<uint> output)
 		{
 			if ((input[3] & 2) != 0)
@@ -856,7 +856,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static void DecodeEac11Block(Span<byte> output, int @base)
 		{
 			for (int i = 0; i < 16; i++)
@@ -865,7 +865,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static void DecodeEac11Block(Span<byte> output, int @base, int ti, int mul, ulong l)
 		{
 			ReadOnlySpan<sbyte> table = Etc2AlphaModTable.AsSpan(ti * 8, 8);
@@ -876,37 +876,37 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static uint Color(int r, int g, int b, int a)
 		{
 			return unchecked((uint)(r << 16 | g << 8 | b | a << 24));
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static byte Clamp255(int n)
 		{
 			return n < 0 ? (byte)0 : n > 255 ? (byte)255 : unchecked((byte)n);
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static uint ApplicateColor(ReadOnlySpan<byte> c, int o, int m)
 		{
 			return Color(Clamp255(c[o * 3 + 0] + m), Clamp255(c[o * 3 + 1] + m), Clamp255(c[o * 3 + 2] + m), 255);
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static uint ApplicateColor(ReadOnlySpan<int> c, int o, int m)
 		{
 			return Color(Clamp255(c[o * 3 + 0] + m), Clamp255(c[o * 3 + 1] + m), Clamp255(c[o * 3 + 2] + m), 255);
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static uint ApplicateColorRaw(ReadOnlySpan<byte> c, int o)
 		{
 			return Color(c[o * 3 + 0], c[o * 3 + 1], c[o * 3 + 2], 255);
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static ulong Get6SwapedBytes(ReadOnlySpan<byte> data)
 		{
 			return data[7] | (uint)data[6] << 8 | (uint)data[5] << 16 | (uint)data[4] << 24 | (ulong)data[3] << 32 | (ulong)data[2] << 40;

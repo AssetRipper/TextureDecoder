@@ -54,7 +54,7 @@
 			}
 		}
 
-		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static uint Convert8BitsTo4Bits(byte value)
 		{
 			//See https://github.com/AssetRipper/TextureDecoder/issues/19

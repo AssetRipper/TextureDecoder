@@ -43,7 +43,7 @@
 			set { }
 		}
 
-		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		public readonly void GetChannels(out double r, out double g, out double b, out double a)
 		{
 			double scale = Scale;
@@ -53,13 +53,13 @@
 			a = 1;
 		}
 
-		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		public void SetChannels(double r, double g, double b, double a)
 		{
 			SetChannels(r, g, b);
 		}
 
-		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		public void SetChannels(double r, double g, double b)
 		{
 			int exponent = CalculateExponent(r, g, b);
@@ -80,7 +80,7 @@
 		private readonly uint GBits => (bits >> GreenOffset) & ChannelBitMask;
 		private readonly uint BBits => (bits >> BlueOffset) & ChannelBitMask;
 
-		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static int CalculateExponent(double r, double g, double b)
 		{
 			double maxChannel = double.Max(r, double.Max(g, b));

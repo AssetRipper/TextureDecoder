@@ -143,13 +143,13 @@ namespace AssetRipper.TextureDecoder.Atc
 			}
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static T ReadAtOffset<T>(this ReadOnlySpan<byte> input, int offset) where T : unmanaged
 		{
 			return MemoryMarshal.Read<T>(input.Slice(offset));
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static void DecodeColors(Span<int> colors, int c0, int c1)
 		{
 			if ((c0 & 0x8000) == 0)
@@ -190,7 +190,7 @@ namespace AssetRipper.TextureDecoder.Atc
 			}
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static void DecodeAlphas(Span<int> alphas, int a0, int a1)
 		{
 			alphas[0] = a0;
@@ -215,14 +215,14 @@ namespace AssetRipper.TextureDecoder.Atc
 			}
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static int Extend(int value, int from, int to)
 		{
 			// bit-pattern replicating scaling (can at most double the bits)
 			return (value << (to - from)) | (value >> (from * 2 - to));
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static uint Color(int r, int g, int b, int a)
 		{
 			return unchecked((uint)(r << 16 | g << 8 | b | a << 24));

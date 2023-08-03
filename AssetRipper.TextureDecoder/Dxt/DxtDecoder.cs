@@ -251,7 +251,7 @@ namespace AssetRipper.TextureDecoder.Dxt
 			return offset;
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static void Rgb565(int c, out int r, out int g, out int b)
 		{
 			r = (c & 0xf800) >> 8;
@@ -262,7 +262,7 @@ namespace AssetRipper.TextureDecoder.Dxt
 			b |= b >> 5;
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static int Color(int r, int g, int b, int a)
 		{
 			return r << 16 | g << 8 | b | a << 24;
@@ -276,19 +276,19 @@ namespace AssetRipper.TextureDecoder.Dxt
 		/// <param name="destination">The destination buffer.</param>
 		/// <param name="destinationOffset">The zero-based byte offset into destination.</param>
 		/// <param name="count">The number of bytes to copy.</param>
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static void BlockCopy(ReadOnlySpan<byte> source, int sourceOffset, Span<byte> destination, int destinationOffset, int count)
 		{
 			source.Slice(sourceOffset, count).CopyTo(destination.Slice(destinationOffset));
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static uint ToUInt32(ReadOnlySpan<byte> input, int offset)
 		{
 			return BinaryPrimitives.ReadUInt32LittleEndian(input.Slice(offset));
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static ulong ToUInt64(ReadOnlySpan<byte> input, int offset)
 		{
 			return BinaryPrimitives.ReadUInt64LittleEndian(input.Slice(offset));

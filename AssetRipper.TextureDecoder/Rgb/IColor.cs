@@ -68,7 +68,7 @@
 
 	public static class ColorExtensions
 	{
-		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		internal static void SetConvertedChannels<TThis, TThisArg, TSourceArg>(this ref TThis color, TSourceArg r, TSourceArg g, TSourceArg b, TSourceArg a)
 			where TThisArg : unmanaged
 			where TSourceArg : unmanaged
@@ -81,7 +81,7 @@
 				NumericConversion.Convert<TSourceArg, TThisArg>(a));
 		}
 
-		[MethodImpl(OptimizationConstants.AggressiveInliningAndOptimization)]
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		public static TTarget Convert<TThis, TThisArg, TTarget, TTargetArg>(this TThis color)
 			where TThisArg : unmanaged
 			where TTargetArg : unmanaged
