@@ -22,6 +22,7 @@ namespace AssetRipper.TextureDecoder.TestGenerator
 		{
 			TestClassGenerator.GenerateTestClasses();
 			GenerateRgbConsoleMethod();
+			TextureDataClassGenerator.Generate();
 			Console.WriteLine("Done!");
 		}
 

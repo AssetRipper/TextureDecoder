@@ -120,7 +120,7 @@ namespace AssetRipper.TextureDecoder.Tests
 			ReadOnlySpan<byte> data = File.ReadAllBytes(path);
 			int bytesRead = Bc6h.Decompress(data, width, height, isSigned, out byte[] decodedData);
 			Assert.That(bytesRead, Is.EqualTo(data.Length));
-			AssertMinimalDeviation(decodedData, originalBgra32LogoData, MaxMeanDeviationBc6h, MaxStandardDeviationBc6h);
+			ByteArrayDeviation.AssertMinimalDeviation(decodedData, originalBgra32LogoData, MaxMeanDeviationBc6h, MaxStandardDeviationBc6h);
 		}
 
 		private static void AssertCorrectBC7Decompression(string path, int width, int height)
@@ -128,7 +128,7 @@ namespace AssetRipper.TextureDecoder.Tests
 			ReadOnlySpan<byte> data = File.ReadAllBytes(path);
 			int bytesRead = Bc7.Decompress(data, width, height, out byte[] decodedData);
 			Assert.That(bytesRead, Is.EqualTo(data.Length));
-			AssertMinimalDeviation(decodedData, originalBgra32LogoData, MaxMeanDeviationBc7, MaxStandardDeviationBc7);
+			ByteArrayDeviation.AssertMinimalDeviation(decodedData, originalBgra32LogoData, MaxMeanDeviationBc7, MaxStandardDeviationBc7);
 		}
 
 		private static void AssertAlmostEqual(byte[] array1, byte[] array2, int maxDifference = 2)
@@ -148,42 +148,6 @@ namespace AssetRipper.TextureDecoder.Tests
 					return;
 				}
 			}
-		}
-
-		private static void AssertMinimalDeviation(byte[] decoded, byte[] original, double maxMeanDeviation, double maxStandardDeviation)
-		{
-			if (decoded.Length != original.Length)
-			{
-				Assert.Fail($"Differing array lengths\nDecoded length {decoded.Length}\nOriginal length {original.Length}");
-				return;
-			}
-
-			long differenceSum = 0;
-			
-			for (int i = 0; i < decoded.Length; i++)
-			{
-				differenceSum += decoded[i] - original[i];
-			}
-
-			double mean = differenceSum / (double)decoded.Length;
-
-			double sumOfSquaredDeviations = 0;
-			
-			for (int i = 0; i < decoded.Length; i++)
-			{
-				double deviation = decoded[i] - original[i] - mean;
-				sumOfSquaredDeviations += deviation * deviation;
-			}
-
-			double standardDeviation = Math.Sqrt(sumOfSquaredDeviations / (decoded.Length - 1)); 
-			//Not sure if Bessel's correction is needed here, but it doesn't hurt, especially since length is around 1 million in the current use.
-
-			Assert.Multiple(() =>
-			{
-				Assert.That(mean, Is.LessThan(maxMeanDeviation), "Mean too far positive");
-				Assert.That(mean, Is.GreaterThan(-maxMeanDeviation), "Mean too far negative");
-				Assert.That(standardDeviation, Is.LessThan(maxStandardDeviation), "Standard deviation too large");
-			});
 		}
 	}
 }
