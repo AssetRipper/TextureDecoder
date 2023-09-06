@@ -5,7 +5,7 @@
 		[Test]
 		public void DecompressPVRTCTest()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.PvrtcTestFilesFolder + "test.pvrtc4");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.PvrtcTestFiles + "test.pvrtc4");
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 512, 256, 128, 64, 32, 16, 8, 4, 2, 1 }) //mip maps
 			{

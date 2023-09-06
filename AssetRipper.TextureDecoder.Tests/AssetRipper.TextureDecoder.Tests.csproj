@@ -17,6 +17,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\AssetRipper.TextureDecoder.Paths\AssetRipper.TextureDecoder.Paths.csproj" />
 		<ProjectReference Include="..\AssetRipper.TextureDecoder\AssetRipper.TextureDecoder.csproj" />
 	</ItemGroup>
 

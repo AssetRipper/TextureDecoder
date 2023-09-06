@@ -11,7 +11,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void DecompressYUY2Test()
 		{
-			byte[] input = File.ReadAllBytes(PathConstants.Yuy2TestFilesFolder + "test.yuy2");
+			byte[] input = File.ReadAllBytes(TestFileFolders.Yuy2TestFiles + "test.yuy2");
 			int bytesRead = Yuy2Decoder.DecompressYUY2(input, TestImageWidth, TestImageHeight, out byte[] originalOutput);
 			Assert.That(bytesRead, Is.EqualTo(input.Length));
 			Yuy2Decoder.DecompressYUY2<ColorBGRA32, byte>(input, TestImageWidth, TestImageHeight, out byte[] genericOutput);

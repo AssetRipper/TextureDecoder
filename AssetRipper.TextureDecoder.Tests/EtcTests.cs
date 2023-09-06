@@ -5,7 +5,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void DecompressETCTest()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.EtcTestFilesFolder + "test.etc");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.EtcTestFiles + "test.etc");
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4, 2, 1 }) //mip maps
 			{
@@ -18,7 +18,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void DecompressETC2Test()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.EtcTestFilesFolder + "test.etc2");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.EtcTestFiles + "test.etc2");
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4, 2, 1 }) //mip maps
 			{
@@ -31,7 +31,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void DecompressETC2A1Test()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.EtcTestFilesFolder + "test.etc2a1");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.EtcTestFiles + "test.etc2a1");
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4, 2, 1 }) //mip maps
 			{
@@ -44,7 +44,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void DecompressETC2A8Test()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.EtcTestFilesFolder + "test.etc2a8");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.EtcTestFiles + "test.etc2a8");
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4, 2, 1 }) //mip maps
 			{
@@ -57,7 +57,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void DecompressEACRSignedTest()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.EtcTestFilesFolder + "test.eac_r");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.EtcTestFiles + "test.eac_r");
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4, 2, 1 }) //mip maps
 			{
@@ -70,7 +70,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void DecompressEACRUnsignedTest()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.EtcTestFilesFolder + "test.eac_r");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.EtcTestFiles + "test.eac_r");
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4, 2, 1 }) //mip maps
 			{
@@ -83,7 +83,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void DecompressEACRGSignedTest()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.EtcTestFilesFolder + "test.eac_rg");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.EtcTestFiles + "test.eac_rg");
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4, 2, 1 }) //mip maps
 			{
@@ -96,7 +96,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void DecompressEACRGUnsignedTest()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.EtcTestFilesFolder + "test.eac_rg");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.EtcTestFiles + "test.eac_rg");
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4, 2, 1 }) //mip maps
 			{

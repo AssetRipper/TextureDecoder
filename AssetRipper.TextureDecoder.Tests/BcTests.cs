@@ -15,13 +15,13 @@ namespace AssetRipper.TextureDecoder.Tests
 		[SetUp]
 		public void InitializeOriginalData()
 		{
-			originalBgra32LogoData = File.ReadAllBytes(PathConstants.BcTestFilesFolder + "test.bgra32");
+			originalBgra32LogoData = File.ReadAllBytes(TestFileFolders.BcTestFiles + "test.bgra32");
 		}
 		
 		[Test]
 		public void DecompressDXT1Test()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.DxtTestFilesFolder + "test.dxt1");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.DxtTestFiles + "test.dxt1");
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4 }) //mipmaps 2 and 1 cause a buffer overrun for the output
 			{
@@ -36,7 +36,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void DecompressDXT3Test()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.DxtTestFilesFolder + "test.dxt3");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.DxtTestFiles + "test.dxt3");
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4 }) //mipmaps 2 and 1 cause a buffer overrun for the output
 			{
@@ -51,7 +51,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void DecompressDXT5Test()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.DxtTestFilesFolder + "test.dxt5");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.DxtTestFiles + "test.dxt5");
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4 }) //mipmaps 2 and 1 cause a buffer overrun for the output
 			{
@@ -66,7 +66,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void DecompressBC4Test()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.BcTestFilesFolder + "test.bc4");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.BcTestFiles + "test.bc4");
 			int bytesRead = Bc4.Decompress(data, 512, 512, out _);
 			Assert.That(bytesRead, Is.EqualTo(data.Length));
 		}
@@ -74,7 +74,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void DecompressBC5Test()
 		{
-			ReadOnlySpan<byte> data = File.ReadAllBytes(PathConstants.BcTestFilesFolder + "test.bc5");
+			ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.BcTestFiles + "test.bc5");
 			int bytesRead = Bc5.Decompress(data, 512, 512, out _);
 			Assert.That(bytesRead, Is.EqualTo(data.Length));
 		}
@@ -82,37 +82,37 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void DecompressBC6HFastTest()
 		{
-			AssertCorrectBC6HDecompression(PathConstants.BcTestFilesFolder + "test.bc6h_fast", 512, 512, false);
+			AssertCorrectBC6HDecompression(TestFileFolders.BcTestFiles + "test.bc6h_fast", 512, 512, false);
 		}
 
 		[Test]
 		public void DecompressBC6HNormalTest()
 		{
-			AssertCorrectBC6HDecompression(PathConstants.BcTestFilesFolder + "test.bc6h_normal", 512, 512, false);
+			AssertCorrectBC6HDecompression(TestFileFolders.BcTestFiles + "test.bc6h_normal", 512, 512, false);
 		}
 
 		[Test]
 		public void DecompressBC6HBestTest()
 		{
-			AssertCorrectBC6HDecompression(PathConstants.BcTestFilesFolder + "test.bc6h_best", 512, 512, false);
+			AssertCorrectBC6HDecompression(TestFileFolders.BcTestFiles + "test.bc6h_best", 512, 512, false);
 		}
 
 		[Test]
 		public void DecompressBC7FastTest()
 		{
-			AssertCorrectBC7Decompression(PathConstants.BcTestFilesFolder + "test.bc7_fast", 512, 512);
+			AssertCorrectBC7Decompression(TestFileFolders.BcTestFiles + "test.bc7_fast", 512, 512);
 		}
 
 		[Test]
 		public void DecompressBC7NormalTest()
 		{
-			AssertCorrectBC7Decompression(PathConstants.BcTestFilesFolder + "test.bc7_normal", 512, 512);
+			AssertCorrectBC7Decompression(TestFileFolders.BcTestFiles + "test.bc7_normal", 512, 512);
 		}
 
 		[Test]
 		public void DecompressBC7BestTest()
 		{
-			AssertCorrectBC7Decompression(PathConstants.BcTestFilesFolder + "test.bc7_best", 512, 512);
+			AssertCorrectBC7Decompression(TestFileFolders.BcTestFiles + "test.bc7_best", 512, 512);
 		}
 
 		private static void AssertCorrectBC6HDecompression(string path, int width, int height, bool isSigned)
