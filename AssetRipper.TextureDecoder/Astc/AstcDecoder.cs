@@ -34,7 +34,7 @@ namespace AssetRipper.TextureDecoder.Astc
 			int bcw = (width + blockWidth - 1) / blockWidth;
 			int bch = (height + blockHeight - 1) / blockHeight;
 			int clen_last = (width + blockWidth - 1) % blockWidth + 1;
-			uint* buf = stackalloc uint[blockWidth * blockHeight];
+			Span<uint> buf = stackalloc uint[blockWidth * blockHeight];
 			int inputOffset = 0;
 			for (int t = 0; t < bch; t++)
 			{
@@ -43,23 +43,21 @@ namespace AssetRipper.TextureDecoder.Astc
 					DecodeBlock(input + inputOffset, blockWidth, blockHeight, buf);
 					int clen = s < bcw - 1 ? blockWidth : clen_last;
 					uint* outputPtr = (uint*)(output + (t * blockHeight * 4 * width + s * 4 * blockWidth));
-					uint* bufPtr = buf;
 					for (int i = 0, y = t * blockHeight; i < blockHeight && y < height; i++, y++)
 					{
 						for (int j = 0; j < clen; j++)
 						{
-							outputPtr[j] = bufPtr[j];
+							outputPtr[j] = buf[j + i * blockWidth];
 						}
 
 						outputPtr += width;
-						bufPtr += blockWidth;
 					}
 				}
 			}
 			return inputOffset;
 		}
 
-		private unsafe static void DecodeBlock(byte* input, int blockWidth, int blockHeight, uint* output)
+		private unsafe static void DecodeBlock(byte* input, int blockWidth, int blockHeight, Span<uint> output)
 		{
 			if (input[0] == 0xfc && (input[1] & 1) == 1)
 			{
@@ -82,7 +80,7 @@ namespace AssetRipper.TextureDecoder.Astc
 				{
 					SelectPartition(input, blockPtr);
 				}
-				ApplicateColor(blockPtr, output);
+				ApplicateColor(blockData, output);
 			}
 		}
 
@@ -680,56 +678,56 @@ namespace AssetRipper.TextureDecoder.Astc
 			}
 		}
 
-		private unsafe static void ApplicateColor(BlockData* block, uint* output)
+		private unsafe static void ApplicateColor(BlockData block, Span<uint> output)
 		{
-			if (block->dual_plane != 0)
+			if (block.dual_plane != 0)
 			{
-				int* ps = stackalloc int[] { 0, 0, 0, 0 };
-				ps[block->plane_selector] = 1;
-				if (block->part_num > 1)
+				Span<int> ps = stackalloc int[] { 0, 0, 0, 0 };
+				ps[block.plane_selector] = 1;
+				if (block.part_num > 1)
 				{
-					for (int i = 0; i < block->bw * block->bh; i++)
+					for (int i = 0; i < block.bw * block.bh; i++)
 					{
-						int p = block->partition[i];
-						byte r = SelectColor(block->endpoints[p * 8 + 0], block->endpoints[p * 8 + 4], block->weights[i * 2 + ps[0]]);
-						byte g = SelectColor(block->endpoints[p * 8 + 1], block->endpoints[p * 8 + 5], block->weights[i * 2 + ps[1]]);
-						byte b = SelectColor(block->endpoints[p * 8 + 2], block->endpoints[p * 8 + 6], block->weights[i * 2 + ps[2]]);
-						byte a = SelectColor(block->endpoints[p * 8 + 3], block->endpoints[p * 8 + 7], block->weights[i * 2 + ps[3]]);
+						int p = block.partition[i];
+						byte r = SelectColor(block.endpoints[p * 8 + 0], block.endpoints[p * 8 + 4], block.weights[i * 2 + ps[0]]);
+						byte g = SelectColor(block.endpoints[p * 8 + 1], block.endpoints[p * 8 + 5], block.weights[i * 2 + ps[1]]);
+						byte b = SelectColor(block.endpoints[p * 8 + 2], block.endpoints[p * 8 + 6], block.weights[i * 2 + ps[2]]);
+						byte a = SelectColor(block.endpoints[p * 8 + 3], block.endpoints[p * 8 + 7], block.weights[i * 2 + ps[3]]);
 						output[i] = Color(r, g, b, a);
 					}
 				}
 				else
 				{
-					for (int i = 0; i < block->bw * block->bh; i++)
+					for (int i = 0; i < block.bw * block.bh; i++)
 					{
-						byte r = SelectColor(block->endpoints[0], block->endpoints[4], block->weights[i * 2 + ps[0]]);
-						byte g = SelectColor(block->endpoints[1], block->endpoints[5], block->weights[i * 2 + ps[1]]);
-						byte b = SelectColor(block->endpoints[2], block->endpoints[6], block->weights[i * 2 + ps[2]]);
-						byte a = SelectColor(block->endpoints[3], block->endpoints[7], block->weights[i * 2 + ps[3]]);
+						byte r = SelectColor(block.endpoints[0], block.endpoints[4], block.weights[i * 2 + ps[0]]);
+						byte g = SelectColor(block.endpoints[1], block.endpoints[5], block.weights[i * 2 + ps[1]]);
+						byte b = SelectColor(block.endpoints[2], block.endpoints[6], block.weights[i * 2 + ps[2]]);
+						byte a = SelectColor(block.endpoints[3], block.endpoints[7], block.weights[i * 2 + ps[3]]);
 						output[i] = Color(r, g, b, a);
 					}
 				}
 			}
-			else if (block->part_num > 1)
+			else if (block.part_num > 1)
 			{
-				for (int i = 0; i < block->bw * block->bh; i++)
+				for (int i = 0; i < block.bw * block.bh; i++)
 				{
-					int p = block->partition[i];
-					byte r = SelectColor(block->endpoints[p * 8 + 0], block->endpoints[p * 8 + 4], block->weights[i * 2]);
-					byte g = SelectColor(block->endpoints[p * 8 + 1], block->endpoints[p * 8 + 5], block->weights[i * 2]);
-					byte b = SelectColor(block->endpoints[p * 8 + 2], block->endpoints[p * 8 + 6], block->weights[i * 2]);
-					byte a = SelectColor(block->endpoints[p * 8 + 3], block->endpoints[p * 8 + 7], block->weights[i * 2]);
+					int p = block.partition[i];
+					byte r = SelectColor(block.endpoints[p * 8 + 0], block.endpoints[p * 8 + 4], block.weights[i * 2]);
+					byte g = SelectColor(block.endpoints[p * 8 + 1], block.endpoints[p * 8 + 5], block.weights[i * 2]);
+					byte b = SelectColor(block.endpoints[p * 8 + 2], block.endpoints[p * 8 + 6], block.weights[i * 2]);
+					byte a = SelectColor(block.endpoints[p * 8 + 3], block.endpoints[p * 8 + 7], block.weights[i * 2]);
 					output[i] = Color(r, g, b, a);
 				}
 			}
 			else
 			{
-				for (int i = 0; i < block->bw * block->bh; i++)
+				for (int i = 0; i < block.bw * block.bh; i++)
 				{
-					byte r = SelectColor(block->endpoints[0], block->endpoints[4], block->weights[i * 2]);
-					byte g = SelectColor(block->endpoints[1], block->endpoints[5], block->weights[i * 2]);
-					byte b = SelectColor(block->endpoints[2], block->endpoints[6], block->weights[i * 2]);
-					byte a = SelectColor(block->endpoints[3], block->endpoints[7], block->weights[i * 2]);
+					byte r = SelectColor(block.endpoints[0], block.endpoints[4], block.weights[i * 2]);
+					byte g = SelectColor(block.endpoints[1], block.endpoints[5], block.weights[i * 2]);
+					byte b = SelectColor(block.endpoints[2], block.endpoints[6], block.weights[i * 2]);
+					byte a = SelectColor(block.endpoints[3], block.endpoints[7], block.weights[i * 2]);
 					output[i] = Color(r, g, b, a);
 				}
 			}
