@@ -238,7 +238,7 @@ namespace AssetRipper.TextureDecoder.Astc
 
 		private unsafe static void DecodeEndpoints(byte* input, ref BlockData pBlock)
 		{
-			IntSeqData* epSeq = stackalloc IntSeqData[32];
+			Span<IntSeqData> epSeq = stackalloc IntSeqData[32];
 			DecodeIntseq(input, pBlock.part_num == 1 ? 17 : 29, CemTableA[pBlock.cem_range], CemTableB[pBlock.cem_range], pBlock.endpoint_value_num, false, epSeq);
 
 			int* ev = stackalloc int[32];
@@ -485,10 +485,10 @@ namespace AssetRipper.TextureDecoder.Astc
 
 		private unsafe static void DecodeWeights(byte* input, ref BlockData block)
 		{
-			IntSeqData* wSeq = stackalloc IntSeqData[128];
+			Span<IntSeqData> wSeq = stackalloc IntSeqData[128];
 			DecodeIntseq(input, 128, WeightPrecTableA[block.weight_range], WeightPrecTableB[block.weight_range], block.weight_num, true, wSeq);
 
-			int* wv = stackalloc int[128];
+			Span<int> wv = stackalloc int[128];
 			if (WeightPrecTableA[block.weight_range] == 0)
 			{
 				switch (WeightPrecTableB[block.weight_range])
@@ -660,7 +660,7 @@ namespace AssetRipper.TextureDecoder.Astc
 				rnum ^= rnum >> 17;
 			}
 
-			int* seeds = stackalloc int[8];
+			Span<int> seeds = stackalloc int[8];
 			for (int i = 0; i < 8; i++)
 			{
 				seeds[i] = (int)((rnum >> (i * 4)) & 0xF);
@@ -668,9 +668,11 @@ namespace AssetRipper.TextureDecoder.Astc
 			}
 
 
-			int* sh = stackalloc int[2];
-			sh[0] = (seed & 2) != 0 ? 4 : 5;
-			sh[1] = block.part_num == 3 ? 6 : 5;
+			ReadOnlySpan<int> sh = stackalloc int[2]
+			{
+				(seed & 2) != 0 ? 4 : 5,
+				block.part_num == 3 ? 6 : 5
+			};
 
 			if ((seed & 1) != 0)
 			{
@@ -774,7 +776,7 @@ namespace AssetRipper.TextureDecoder.Astc
 			}
 		}
 
-		private unsafe static void DecodeIntseq(byte* input, int offset, int a, int b, int count, bool reverse, IntSeqData* _out)
+		private unsafe static void DecodeIntseq(byte* input, int offset, int a, int b, int count, bool reverse, Span<IntSeqData> _out)
 		{
 			if (count <= 0)
 			{
