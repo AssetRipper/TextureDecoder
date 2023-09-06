@@ -69,101 +69,100 @@ namespace AssetRipper.TextureDecoder.Astc
 			}
 			else
 			{
-				BlockData blockData = new BlockData();
+				BlockData blockData = new();
 				blockData.bw = blockWidth;
 				blockData.bh = blockHeight;
-				BlockData* blockPtr = &blockData;
-				DecodeBlockParameters(input, blockPtr);
-				DecodeEndpoints(input, blockPtr);
-				DecodeWeights(input, blockPtr);
+				DecodeBlockParameters(input, ref blockData);
+				DecodeEndpoints(input, ref blockData);
+				DecodeWeights(input, ref blockData);
 				if (blockData.part_num > 1)
 				{
-					SelectPartition(input, blockPtr);
+					SelectPartition(input, ref blockData);
 				}
 				ApplicateColor(blockData, output);
 			}
 		}
 
-		private unsafe static void DecodeBlockParameters(byte* input, BlockData* pBlock)
+		private unsafe static void DecodeBlockParameters(byte* input, ref BlockData pBlock)
 		{
-			pBlock->dual_plane = (input[1] & 4) >> 2;
-			pBlock->weight_range = (input[0] >> 4 & 1) | (input[1] << 2 & 8);
+			pBlock.dual_plane = (input[1] & 4) >> 2;
+			pBlock.weight_range = (input[0] >> 4 & 1) | (input[1] << 2 & 8);
 
 			if ((input[0] & 3) != 0)
 			{
-				pBlock->weight_range |= input[0] << 1 & 6;
+				pBlock.weight_range |= input[0] << 1 & 6;
 				switch (input[0] & 0xc)
 				{
 					case 0:
-						pBlock->width = (*((int*)input) >> 7 & 3) + 4;
-						pBlock->height = (input[0] >> 5 & 3) + 2;
+						pBlock.width = (*((int*)input) >> 7 & 3) + 4;
+						pBlock.height = (input[0] >> 5 & 3) + 2;
 						break;
 					case 4:
-						pBlock->width = (*((int*)input) >> 7 & 3) + 8;
-						pBlock->height = (input[0] >> 5 & 3) + 2;
+						pBlock.width = (*((int*)input) >> 7 & 3) + 8;
+						pBlock.height = (input[0] >> 5 & 3) + 2;
 						break;
 					case 8:
-						pBlock->width = (input[0] >> 5 & 3) + 2;
-						pBlock->height = (*((int*)input) >> 7 & 3) + 8;
+						pBlock.width = (input[0] >> 5 & 3) + 2;
+						pBlock.height = (*((int*)input) >> 7 & 3) + 8;
 						break;
 					case 12:
 						if ((input[1] & 1) != 0)
 						{
-							pBlock->width = (input[0] >> 7 & 1) + 2;
-							pBlock->height = (input[0] >> 5 & 3) + 2;
+							pBlock.width = (input[0] >> 7 & 1) + 2;
+							pBlock.height = (input[0] >> 5 & 3) + 2;
 						}
 						else
 						{
-							pBlock->width = (input[0] >> 5 & 3) + 2;
-							pBlock->height = (input[0] >> 7 & 1) + 6;
+							pBlock.width = (input[0] >> 5 & 3) + 2;
+							pBlock.height = (input[0] >> 7 & 1) + 6;
 						}
 						break;
 				}
 			}
 			else
 			{
-				pBlock->weight_range |= input[0] >> 1 & 6;
+				pBlock.weight_range |= input[0] >> 1 & 6;
 				switch ((*((int*)input)) & 0x180)
 				{
 					case 0:
-						pBlock->width = 12;
-						pBlock->height = (input[0] >> 5 & 3) + 2;
+						pBlock.width = 12;
+						pBlock.height = (input[0] >> 5 & 3) + 2;
 						break;
 					case 0x80:
-						pBlock->width = (input[0] >> 5 & 3) + 2;
-						pBlock->height = 12;
+						pBlock.width = (input[0] >> 5 & 3) + 2;
+						pBlock.height = 12;
 						break;
 					case 0x100:
-						pBlock->width = (input[0] >> 5 & 3) + 6;
-						pBlock->height = (input[1] >> 1 & 3) + 6;
-						pBlock->dual_plane = 0;
-						pBlock->weight_range &= 7;
+						pBlock.width = (input[0] >> 5 & 3) + 6;
+						pBlock.height = (input[1] >> 1 & 3) + 6;
+						pBlock.dual_plane = 0;
+						pBlock.weight_range &= 7;
 						break;
 					case 0x180:
-						pBlock->width = (input[0] & 0x20) != 0 ? 10 : 6;
-						pBlock->height = (input[0] & 0x20) != 0 ? 6 : 10;
+						pBlock.width = (input[0] & 0x20) != 0 ? 10 : 6;
+						pBlock.height = (input[0] & 0x20) != 0 ? 6 : 10;
 						break;
 				}
 			}
 
-			pBlock->part_num = (input[1] >> 3 & 3) + 1;
+			pBlock.part_num = (input[1] >> 3 & 3) + 1;
 
-			pBlock->weight_num = pBlock->width * pBlock->height;
-			if (pBlock->dual_plane != 0)
+			pBlock.weight_num = pBlock.width * pBlock.height;
+			if (pBlock.dual_plane != 0)
 			{
-				pBlock->weight_num *= 2;
+				pBlock.weight_num *= 2;
 			}
 
 			int config_bits, cem_base = 0;
-			int weight_bits = WeightPrecTableA[pBlock->weight_range] switch
+			int weight_bits = WeightPrecTableA[pBlock.weight_range] switch
 			{
-				3 => pBlock->weight_num * WeightPrecTableB[pBlock->weight_range] + (pBlock->weight_num * 8 + 4) / 5,
-				5 => pBlock->weight_num * WeightPrecTableB[pBlock->weight_range] + (pBlock->weight_num * 7 + 2) / 3,
-				_ => pBlock->weight_num * WeightPrecTableB[pBlock->weight_range],
+				3 => pBlock.weight_num * WeightPrecTableB[pBlock.weight_range] + (pBlock.weight_num * 8 + 4) / 5,
+				5 => pBlock.weight_num * WeightPrecTableB[pBlock.weight_range] + (pBlock.weight_num * 7 + 2) / 3,
+				_ => pBlock.weight_num * WeightPrecTableB[pBlock.weight_range],
 			};
-			if (pBlock->part_num == 1)
+			if (pBlock.part_num == 1)
 			{
-				pBlock->cem[0] = *((int*)(input + 1)) >> 5 & 0xf;
+				pBlock.cem[0] = *((int*)(input + 1)) >> 5 & 0xf;
 				config_bits = 17;
 			}
 			else
@@ -172,85 +171,85 @@ namespace AssetRipper.TextureDecoder.Astc
 				if (cem_base == 0)
 				{
 					int cem = input[3] >> 1 & 0xf;
-					for (int i = 0; i < pBlock->part_num; i++)
+					for (int i = 0; i < pBlock.part_num; i++)
 					{
-						pBlock->cem[i] = cem;
+						pBlock.cem[i] = cem;
 					}
 					config_bits = 29;
 				}
 				else
 				{
-					for (int i = 0; i < pBlock->part_num; i++)
+					for (int i = 0; i < pBlock.part_num; i++)
 					{
-						pBlock->cem[i] = ((input[3] >> (i + 1) & 1) + cem_base - 1) << 2;
+						pBlock.cem[i] = ((input[3] >> (i + 1) & 1) + cem_base - 1) << 2;
 					}
-					switch (pBlock->part_num)
+					switch (pBlock.part_num)
 					{
 						case 2:
-							pBlock->cem[0] |= input[3] >> 3 & 3;
-							pBlock->cem[1] |= GetBits(input, 126 - weight_bits, 2);
+							pBlock.cem[0] |= input[3] >> 3 & 3;
+							pBlock.cem[1] |= GetBits(input, 126 - weight_bits, 2);
 							break;
 						case 3:
-							pBlock->cem[0] |= input[3] >> 4 & 1;
-							pBlock->cem[0] |= GetBits(input, 122 - weight_bits, 2) & 2;
-							pBlock->cem[1] |= GetBits(input, 124 - weight_bits, 2);
-							pBlock->cem[2] |= GetBits(input, 126 - weight_bits, 2);
+							pBlock.cem[0] |= input[3] >> 4 & 1;
+							pBlock.cem[0] |= GetBits(input, 122 - weight_bits, 2) & 2;
+							pBlock.cem[1] |= GetBits(input, 124 - weight_bits, 2);
+							pBlock.cem[2] |= GetBits(input, 126 - weight_bits, 2);
 							break;
 						case 4:
 							for (int i = 0; i < 4; i++)
 							{
-								pBlock->cem[i] |= GetBits(input, 120 + i * 2 - weight_bits, 2);
+								pBlock.cem[i] |= GetBits(input, 120 + i * 2 - weight_bits, 2);
 							}
 							break;
 					}
-					config_bits = 25 + pBlock->part_num * 3;
+					config_bits = 25 + pBlock.part_num * 3;
 				}
 			}
 
-			if (pBlock->dual_plane != 0)
+			if (pBlock.dual_plane != 0)
 			{
 				config_bits += 2;
-				pBlock->plane_selector = GetBits(input, cem_base != 0 ? 130 - weight_bits - pBlock->part_num * 3 : 126 - weight_bits, 2);
+				pBlock.plane_selector = GetBits(input, cem_base != 0 ? 130 - weight_bits - pBlock.part_num * 3 : 126 - weight_bits, 2);
 			}
 
 			int remain_bits = 128 - config_bits - weight_bits;
 
-			pBlock->endpoint_value_num = 0;
-			for (int i = 0; i < pBlock->part_num; i++)
+			pBlock.endpoint_value_num = 0;
+			for (int i = 0; i < pBlock.part_num; i++)
 			{
-				pBlock->endpoint_value_num += (pBlock->cem[i] >> 1 & 6) + 2;
+				pBlock.endpoint_value_num += (pBlock.cem[i] >> 1 & 6) + 2;
 			}
 
 			for (int i = 0, endpoint_bits; i < CemTableA.Length; i++)
 			{
 				endpoint_bits = CemTableA[i] switch
 				{
-					3 => pBlock->endpoint_value_num * CemTableB[i] + (pBlock->endpoint_value_num * 8 + 4) / 5,
-					5 => pBlock->endpoint_value_num * CemTableB[i] + (pBlock->endpoint_value_num * 7 + 2) / 3,
-					_ => pBlock->endpoint_value_num * CemTableB[i],
+					3 => pBlock.endpoint_value_num * CemTableB[i] + (pBlock.endpoint_value_num * 8 + 4) / 5,
+					5 => pBlock.endpoint_value_num * CemTableB[i] + (pBlock.endpoint_value_num * 7 + 2) / 3,
+					_ => pBlock.endpoint_value_num * CemTableB[i],
 				};
 				if (endpoint_bits <= remain_bits)
 				{
-					pBlock->cem_range = i;
+					pBlock.cem_range = i;
 					break;
 				}
 			}
 		}
 
-		private unsafe static void DecodeEndpoints(byte* input, BlockData* pBlock)
+		private unsafe static void DecodeEndpoints(byte* input, ref BlockData pBlock)
 		{
 			IntSeqData* epSeq = stackalloc IntSeqData[32];
-			DecodeIntseq(input, pBlock->part_num == 1 ? 17 : 29, CemTableA[pBlock->cem_range], CemTableB[pBlock->cem_range], pBlock->endpoint_value_num, false, epSeq);
+			DecodeIntseq(input, pBlock.part_num == 1 ? 17 : 29, CemTableA[pBlock.cem_range], CemTableB[pBlock.cem_range], pBlock.endpoint_value_num, false, epSeq);
 
 			int* ev = stackalloc int[32];
-			switch (CemTableA[pBlock->cem_range])
+			switch (CemTableA[pBlock.cem_range])
 			{
 				case 3:
-					for (int i = 0, b = 0, c = DETritsTable[CemTableB[pBlock->cem_range]]; i < pBlock->endpoint_value_num; i++)
+					for (int i = 0, b = 0, c = DETritsTable[CemTableB[pBlock.cem_range]]; i < pBlock.endpoint_value_num; i++)
 					{
 						int a = (epSeq[i].bits & 1) * 0x1ff;
 						int x = epSeq[i].bits >> 1;
-						switch (CemTableB[pBlock->cem_range])
+						switch (CemTableB[pBlock.cem_range])
 						{
 							case 1:
 								b = 0;
@@ -276,11 +275,11 @@ namespace AssetRipper.TextureDecoder.Astc
 					break;
 
 				case 5:
-					for (int i = 0, b = 0, c = DEQuintsTable[CemTableB[pBlock->cem_range]]; i < pBlock->endpoint_value_num; i++)
+					for (int i = 0, b = 0, c = DEQuintsTable[CemTableB[pBlock.cem_range]]; i < pBlock.endpoint_value_num; i++)
 					{
 						int a = (epSeq[i].bits & 1) * 0x1ff;
 						int x = epSeq[i].bits >> 1;
-						switch (CemTableB[pBlock->cem_range])
+						switch (CemTableB[pBlock.cem_range])
 						{
 							case 1:
 								b = 0;
@@ -303,52 +302,52 @@ namespace AssetRipper.TextureDecoder.Astc
 					break;
 
 				default:
-					switch (CemTableB[pBlock->cem_range])
+					switch (CemTableB[pBlock.cem_range])
 					{
 						case 1:
-							for (int i = 0; i < pBlock->endpoint_value_num; i++)
+							for (int i = 0; i < pBlock.endpoint_value_num; i++)
 							{
 								ev[i] = epSeq[i].bits * 0xff;
 							}
 							break;
 						case 2:
-							for (int i = 0; i < pBlock->endpoint_value_num; i++)
+							for (int i = 0; i < pBlock.endpoint_value_num; i++)
 							{
 								ev[i] = epSeq[i].bits * 0x55;
 							}
 							break;
 						case 3:
-							for (int i = 0; i < pBlock->endpoint_value_num; i++)
+							for (int i = 0; i < pBlock.endpoint_value_num; i++)
 							{
 								ev[i] = epSeq[i].bits << 5 | epSeq[i].bits << 2 | epSeq[i].bits >> 1;
 							}
 							break;
 						case 4:
-							for (int i = 0; i < pBlock->endpoint_value_num; i++)
+							for (int i = 0; i < pBlock.endpoint_value_num; i++)
 							{
 								ev[i] = epSeq[i].bits << 4 | epSeq[i].bits;
 							}
 							break;
 						case 5:
-							for (int i = 0; i < pBlock->endpoint_value_num; i++)
+							for (int i = 0; i < pBlock.endpoint_value_num; i++)
 							{
 								ev[i] = epSeq[i].bits << 3 | epSeq[i].bits >> 2;
 							}
 							break;
 						case 6:
-							for (int i = 0; i < pBlock->endpoint_value_num; i++)
+							for (int i = 0; i < pBlock.endpoint_value_num; i++)
 							{
 								ev[i] = epSeq[i].bits << 2 | epSeq[i].bits >> 4;
 							}
 							break;
 						case 7:
-							for (int i = 0; i < pBlock->endpoint_value_num; i++)
+							for (int i = 0; i < pBlock.endpoint_value_num; i++)
 							{
 								ev[i] = epSeq[i].bits << 1 | epSeq[i].bits >> 6;
 							}
 							break;
 						case 8:
-							for (int i = 0; i < pBlock->endpoint_value_num; i++)
+							for (int i = 0; i < pBlock.endpoint_value_num; i++)
 							{
 								ev[i] = epSeq[i].bits;
 							}
@@ -358,40 +357,61 @@ namespace AssetRipper.TextureDecoder.Astc
 			}
 
 			int* v = ev;
-			for (int cem = 0, cemOff = 0; cem < pBlock->part_num; v += (pBlock->cem[cem] / 4 + 1) * 2, cem++, cemOff += 8)
+			for (int cem = 0, cemOff = 0; cem < pBlock.part_num; v += (pBlock.cem[cem] / 4 + 1) * 2, cem++, cemOff += 8)
 			{
-				switch (pBlock->cem[cem])
+				switch (pBlock.cem[cem])
 				{
 					case 0:
-						SetEndpoint(&pBlock->endpoints[cemOff], v[0], v[0], v[0], 255, v[1], v[1], v[1], 255);
+						fixed (int* endpoint = &pBlock.endpoints[cemOff])
+						{
+							SetEndpoint(endpoint, v[0], v[0], v[0], 255, v[1], v[1], v[1], 255);
+						}
 						break;
 					case 1:
 						{
 							int l0 = (v[0] >> 2) | (v[1] & 0xc0);
 							int l1 = Clamp(l0 + (v[1] & 0x3f));
-							SetEndpoint(&pBlock->endpoints[cemOff], l0, l0, l0, 255, l1, l1, l1, 255);
+							fixed (int* endpoint = &pBlock.endpoints[cemOff])
+							{
+								SetEndpoint(endpoint, l0, l0, l0, 255, l1, l1, l1, 255);
+							}
 						}
 						break;
 					case 4:
-						SetEndpoint(&pBlock->endpoints[cemOff], v[0], v[0], v[0], v[2], v[1], v[1], v[1], v[3]);
+						fixed (int* endpoint = &pBlock.endpoints[cemOff])
+						{
+							SetEndpoint(endpoint, v[0], v[0], v[0], v[2], v[1], v[1], v[1], v[3]);
+						}
 						break;
 					case 5:
 						BitTransferSigned(&v[1], &v[0]);
 						BitTransferSigned(&v[3], &v[2]);
 						v[1] += v[0];
-						SetEndpointClamp(&pBlock->endpoints[cemOff], v[0], v[0], v[0], v[2], v[1], v[1], v[1], v[2] + v[3]);
+						fixed (int* endpoint = &pBlock.endpoints[cemOff])
+						{
+							SetEndpointClamp(endpoint, v[0], v[0], v[0], v[2], v[1], v[1], v[1], v[2] + v[3]);
+						}
 						break;
 					case 6:
-						SetEndpoint(&pBlock->endpoints[cemOff], v[0] * v[3] >> 8, v[1] * v[3] >> 8, v[2] * v[3] >> 8, 255, v[0], v[1], v[2], 255);
+						fixed (int* endpoint = &pBlock.endpoints[cemOff])
+						{
+							SetEndpoint(endpoint, v[0] * v[3] >> 8, v[1] * v[3] >> 8, v[2] * v[3] >> 8, 255, v[0], v[1], v[2], 255);
+						}
 						break;
 					case 8:
 						if (v[0] + v[2] + v[4] <= v[1] + v[3] + v[5])
 						{
-							SetEndpoint(&pBlock->endpoints[cemOff], v[0], v[2], v[4], 255, v[1], v[3], v[5], 255);
+							fixed (int* endpoint = &pBlock.endpoints[cemOff])
+							{
+								SetEndpoint(endpoint, v[0], v[2], v[4], 255, v[1], v[3], v[5], 255);
+							}
 						}
 						else
 						{
-							SetEndpointBlue(&pBlock->endpoints[cemOff], v[1], v[3], v[5], 255, v[0], v[2], v[4], 255);
+							fixed (int* endpoint = &pBlock.endpoints[cemOff])
+							{
+								SetEndpointBlue(endpoint, v[1], v[3], v[5], 255, v[0], v[2], v[4], 255);
+							}
 						}
 
 						break;
@@ -401,25 +421,40 @@ namespace AssetRipper.TextureDecoder.Astc
 						BitTransferSigned(&v[5], &v[4]);
 						if (v[1] + v[3] + v[5] >= 0)
 						{
-							SetEndpointClamp(&pBlock->endpoints[cemOff], v[0], v[2], v[4], 255, v[0] + v[1], v[2] + v[3], v[4] + v[5], 255);
+							fixed (int* endpoint = &pBlock.endpoints[cemOff])
+							{
+								SetEndpointClamp(endpoint, v[0], v[2], v[4], 255, v[0] + v[1], v[2] + v[3], v[4] + v[5], 255);
+							}
 						}
 						else
 						{
-							SetEndpointBlueClamp(&pBlock->endpoints[cemOff], v[0] + v[1], v[2] + v[3], v[4] + v[5], 255, v[0], v[2], v[4], 255);
+							fixed (int* endpoint = &pBlock.endpoints[cemOff])
+							{
+								SetEndpointBlueClamp(endpoint, v[0] + v[1], v[2] + v[3], v[4] + v[5], 255, v[0], v[2], v[4], 255);
+							}
 						}
 
 						break;
 					case 10:
-						SetEndpoint(&pBlock->endpoints[cemOff], v[0] * v[3] >> 8, v[1] * v[3] >> 8, v[2] * v[3] >> 8, v[4], v[0], v[1], v[2], v[5]);
+						fixed (int* endpoint = &pBlock.endpoints[cemOff])
+						{
+							SetEndpoint(endpoint, v[0] * v[3] >> 8, v[1] * v[3] >> 8, v[2] * v[3] >> 8, v[4], v[0], v[1], v[2], v[5]);
+						}
 						break;
 					case 12:
 						if (v[0] + v[2] + v[4] <= v[1] + v[3] + v[5])
 						{
-							SetEndpoint(&pBlock->endpoints[cemOff], v[0], v[2], v[4], v[6], v[1], v[3], v[5], v[7]);
+							fixed (int* endpoint = &pBlock.endpoints[cemOff])
+							{
+								SetEndpoint(endpoint, v[0], v[2], v[4], v[6], v[1], v[3], v[5], v[7]);
+							}
 						}
 						else
 						{
-							SetEndpointBlue(&pBlock->endpoints[cemOff], v[1], v[3], v[5], v[7], v[0], v[2], v[4], v[6]);
+							fixed (int* endpoint = &pBlock.endpoints[cemOff])
+							{
+								SetEndpointBlue(endpoint, v[1], v[3], v[5], v[7], v[0], v[2], v[4], v[6]);
+							}
 						}
 
 						break;
@@ -430,11 +465,17 @@ namespace AssetRipper.TextureDecoder.Astc
 						BitTransferSigned(&v[7], &v[6]);
 						if (v[1] + v[3] + v[5] >= 0)
 						{
-							SetEndpointClamp(&pBlock->endpoints[cemOff], v[0], v[2], v[4], v[6], v[0] + v[1], v[2] + v[3], v[4] + v[5], v[6] + v[7]);
+							fixed (int* endpoint = &pBlock.endpoints[cemOff])
+							{
+								SetEndpointClamp(endpoint, v[0], v[2], v[4], v[6], v[0] + v[1], v[2] + v[3], v[4] + v[5], v[6] + v[7]);
+							}
 						}
 						else
 						{
-							SetEndpointBlueClamp(&pBlock->endpoints[cemOff], v[0] + v[1], v[2] + v[3], v[4] + v[5], v[6] + v[7], v[0], v[2], v[4], v[6]);
+							fixed (int* endpoint = &pBlock.endpoints[cemOff])
+							{
+								SetEndpointBlueClamp(endpoint, v[0] + v[1], v[2] + v[3], v[4] + v[5], v[6] + v[7], v[0], v[2], v[4], v[6]);
+							}
 						}
 
 						break;
@@ -442,53 +483,53 @@ namespace AssetRipper.TextureDecoder.Astc
 			}
 		}
 
-		private unsafe static void DecodeWeights(byte* input, BlockData* block)
+		private unsafe static void DecodeWeights(byte* input, ref BlockData block)
 		{
 			IntSeqData* wSeq = stackalloc IntSeqData[128];
-			DecodeIntseq(input, 128, WeightPrecTableA[block->weight_range], WeightPrecTableB[block->weight_range], block->weight_num, true, wSeq);
+			DecodeIntseq(input, 128, WeightPrecTableA[block.weight_range], WeightPrecTableB[block.weight_range], block.weight_num, true, wSeq);
 
 			int* wv = stackalloc int[128];
-			if (WeightPrecTableA[block->weight_range] == 0)
+			if (WeightPrecTableA[block.weight_range] == 0)
 			{
-				switch (WeightPrecTableB[block->weight_range])
+				switch (WeightPrecTableB[block.weight_range])
 				{
 					case 1:
-						for (int i = 0; i < block->weight_num; i++)
+						for (int i = 0; i < block.weight_num; i++)
 						{
 							wv[i] = wSeq[i].bits != 0 ? 63 : 0;
 						}
 
 						break;
 					case 2:
-						for (int i = 0; i < block->weight_num; i++)
+						for (int i = 0; i < block.weight_num; i++)
 						{
 							wv[i] = wSeq[i].bits << 4 | wSeq[i].bits << 2 | wSeq[i].bits;
 						}
 
 						break;
 					case 3:
-						for (int i = 0; i < block->weight_num; i++)
+						for (int i = 0; i < block.weight_num; i++)
 						{
 							wv[i] = wSeq[i].bits << 3 | wSeq[i].bits;
 						}
 
 						break;
 					case 4:
-						for (int i = 0; i < block->weight_num; i++)
+						for (int i = 0; i < block.weight_num; i++)
 						{
 							wv[i] = wSeq[i].bits << 2 | wSeq[i].bits >> 2;
 						}
 
 						break;
 					case 5:
-						for (int i = 0; i < block->weight_num; i++)
+						for (int i = 0; i < block.weight_num; i++)
 						{
 							wv[i] = wSeq[i].bits << 1 | wSeq[i].bits >> 4;
 						}
 
 						break;
 				}
-				for (int i = 0; i < block->weight_num; i++)
+				for (int i = 0; i < block.weight_num; i++)
 				{
 					if (wv[i] > 32)
 					{
@@ -496,28 +537,28 @@ namespace AssetRipper.TextureDecoder.Astc
 					}
 				}
 			}
-			else if (WeightPrecTableB[block->weight_range] == 0)
+			else if (WeightPrecTableB[block.weight_range] == 0)
 			{
-				int s = WeightPrecTableA[block->weight_range] == 3 ? 32 : 16;
-				for (int i = 0; i < block->weight_num; i++)
+				int s = WeightPrecTableA[block.weight_range] == 3 ? 32 : 16;
+				for (int i = 0; i < block.weight_num; i++)
 				{
 					wv[i] = wSeq[i].nonbits * s;
 				}
 			}
 			else
 			{
-				if (WeightPrecTableA[block->weight_range] == 3)
+				if (WeightPrecTableA[block.weight_range] == 3)
 				{
-					switch (WeightPrecTableB[block->weight_range])
+					switch (WeightPrecTableB[block.weight_range])
 					{
 						case 1:
-							for (int i = 0; i < block->weight_num; i++)
+							for (int i = 0; i < block.weight_num; i++)
 							{
 								wv[i] = wSeq[i].nonbits * 50;
 							}
 							break;
 						case 2:
-							for (int i = 0; i < block->weight_num; i++)
+							for (int i = 0; i < block.weight_num; i++)
 							{
 								wv[i] = wSeq[i].nonbits * 23;
 								if ((wSeq[i].bits & 2) != 0)
@@ -527,26 +568,26 @@ namespace AssetRipper.TextureDecoder.Astc
 							}
 							break;
 						case 3:
-							for (int i = 0; i < block->weight_num; i++)
+							for (int i = 0; i < block.weight_num; i++)
 							{
 								wv[i] = wSeq[i].nonbits * 11 + ((wSeq[i].bits << 4 | wSeq[i].bits >> 1) & 0b1100011);
 							}
 							break;
 					}
 				}
-				else if (WeightPrecTableA[block->weight_range] == 5)
+				else if (WeightPrecTableA[block.weight_range] == 5)
 				{
-					switch (WeightPrecTableB[block->weight_range])
+					switch (WeightPrecTableB[block.weight_range])
 					{
 						case 1:
-							for (int i = 0; i < block->weight_num; i++)
+							for (int i = 0; i < block.weight_num; i++)
 							{
 								wv[i] = wSeq[i].nonbits * 28;
 							}
 
 							break;
 						case 2:
-							for (int i = 0; i < block->weight_num; i++)
+							for (int i = 0; i < block.weight_num; i++)
 							{
 								wv[i] = wSeq[i].nonbits * 13;
 								if ((wSeq[i].bits & 2) != 0)
@@ -557,7 +598,7 @@ namespace AssetRipper.TextureDecoder.Astc
 							break;
 					}
 				}
-				for (int i = 0; i < block->weight_num; i++)
+				for (int i = 0; i < block.weight_num; i++)
 				{
 					int a = (wSeq[i].bits & 1) * 0x7f;
 					wv[i] = (a & 0x20) | ((wv[i] ^ a) >> 2);
@@ -568,19 +609,19 @@ namespace AssetRipper.TextureDecoder.Astc
 				}
 			}
 
-			int ds = (1024 + block->bw / 2) / (block->bw - 1);
-			int dt = (1024 + block->bh / 2) / (block->bh - 1);
-			int pn = block->dual_plane != 0 ? 2 : 1;
+			int ds = (1024 + block.bw / 2) / (block.bw - 1);
+			int dt = (1024 + block.bh / 2) / (block.bh - 1);
+			int pn = block.dual_plane != 0 ? 2 : 1;
 
-			for (int t = 0, i = 0; t < block->bh; t++)
+			for (int t = 0, i = 0; t < block.bh; t++)
 			{
-				for (int s = 0; s < block->bw; s++, i++)
+				for (int s = 0; s < block.bw; s++, i++)
 				{
-					int gs = (ds * s * (block->width - 1) + 32) >> 6;
-					int gt = (dt * t * (block->height - 1) + 32) >> 6;
+					int gs = (ds * s * (block.width - 1) + 32) >> 6;
+					int gt = (dt * t * (block.height - 1) + 32) >> 6;
 					int fs = gs & 0xf;
 					int ft = gt & 0xf;
-					int v = (gs >> 4) + (gt >> 4) * block->width;
+					int v = (gs >> 4) + (gt >> 4) * block.width;
 					int w11 = (fs * ft + 8) >> 4;
 					int w10 = ft - w11;
 					int w01 = fs - w11;
@@ -590,18 +631,18 @@ namespace AssetRipper.TextureDecoder.Astc
 					{
 						int p00 = wv[v * pn + p];
 						int p01 = wv[(v + 1) * pn + p];
-						int p10 = wv[(v + block->width) * pn + p];
-						int p11 = wv[(v + block->width + 1) * pn + p];
-						block->weights[i * 2 + p] = (p00 * w00 + p01 * w01 + p10 * w10 + p11 * w11 + 8) >> 4;
+						int p10 = wv[(v + block.width) * pn + p];
+						int p11 = wv[(v + block.width + 1) * pn + p];
+						block.weights[i * 2 + p] = (p00 * w00 + p01 * w01 + p10 * w10 + p11 * w11 + 8) >> 4;
 					}
 				}
 			}
 		}
 
-		private unsafe static void SelectPartition(byte* input, BlockData* block)
+		private unsafe static void SelectPartition(byte* input, ref BlockData block)
 		{
-			bool small_block = block->bw * block->bh < 31;
-			int seed = (*((int*)input) >> 13 & 0x3ff) | (block->part_num - 1) << 10;
+			bool small_block = block.bw * block.bh < 31;
+			int seed = (*((int*)input) >> 13 & 0x3ff) | (block.part_num - 1) << 10;
 
 			uint rnum;
 			unchecked
@@ -629,7 +670,7 @@ namespace AssetRipper.TextureDecoder.Astc
 
 			int* sh = stackalloc int[2];
 			sh[0] = (seed & 2) != 0 ? 4 : 5;
-			sh[1] = block->part_num == 3 ? 6 : 5;
+			sh[1] = block.part_num == 3 ? 6 : 5;
 
 			if ((seed & 1) != 0)
 			{
@@ -648,31 +689,31 @@ namespace AssetRipper.TextureDecoder.Astc
 
 			if (small_block)
 			{
-				for (int t = 0, i = 0; t < block->bh; t++)
+				for (int t = 0, i = 0; t < block.bh; t++)
 				{
-					for (int s = 0; s < block->bw; s++, i++)
+					for (int s = 0; s < block.bw; s++, i++)
 					{
 						int x = s << 1;
 						int y = t << 1;
 						int a = (int)((seeds[0] * x + seeds[1] * y + (rnum >> 14)) & 0x3f);
 						int b = (int)((seeds[2] * x + seeds[3] * y + (rnum >> 10)) & 0x3f);
-						int c = (int)(block->part_num < 3 ? 0 : (seeds[4] * x + seeds[5] * y + (rnum >> 6)) & 0x3f);
-						int d = (int)(block->part_num < 4 ? 0 : (seeds[6] * x + seeds[7] * y + (rnum >> 2)) & 0x3f);
-						block->partition[i] = (a >= b && a >= c && a >= d) ? 0 : (b >= c && b >= d) ? 1 : (c >= d) ? 2 : 3;
+						int c = (int)(block.part_num < 3 ? 0 : (seeds[4] * x + seeds[5] * y + (rnum >> 6)) & 0x3f);
+						int d = (int)(block.part_num < 4 ? 0 : (seeds[6] * x + seeds[7] * y + (rnum >> 2)) & 0x3f);
+						block.partition[i] = (a >= b && a >= c && a >= d) ? 0 : (b >= c && b >= d) ? 1 : (c >= d) ? 2 : 3;
 					}
 				}
 			}
 			else
 			{
-				for (int y = 0, i = 0; y < block->bh; y++)
+				for (int y = 0, i = 0; y < block.bh; y++)
 				{
-					for (int x = 0; x < block->bw; x++, i++)
+					for (int x = 0; x < block.bw; x++, i++)
 					{
 						int a = (int)((seeds[0] * x + seeds[1] * y + (rnum >> 14)) & 0x3f);
 						int b = (int)((seeds[2] * x + seeds[3] * y + (rnum >> 10)) & 0x3f);
-						int c = (int)(block->part_num < 3 ? 0 : (seeds[4] * x + seeds[5] * y + (rnum >> 6)) & 0x3f);
-						int d = (int)(block->part_num < 4 ? 0 : (seeds[6] * x + seeds[7] * y + (rnum >> 2)) & 0x3f);
-						block->partition[i] = (a >= b && a >= c && a >= d) ? 0 : (b >= c && b >= d) ? 1 : (c >= d) ? 2 : 3;
+						int c = (int)(block.part_num < 3 ? 0 : (seeds[4] * x + seeds[5] * y + (rnum >> 6)) & 0x3f);
+						int d = (int)(block.part_num < 4 ? 0 : (seeds[6] * x + seeds[7] * y + (rnum >> 2)) & 0x3f);
+						block.partition[i] = (a >= b && a >= c && a >= d) ? 0 : (b >= c && b >= d) ? 1 : (c >= d) ? 2 : 3;
 					}
 				}
 			}
