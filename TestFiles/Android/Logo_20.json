@@ -1,0 +1,10 @@
+{
+	"Type" : "Texture2D",
+	"Format" : "ASTC_HDR_6x6",
+	"FileSize" : 158432,
+	"ImageSize" : 158432,
+	"ImageCount" : 1,
+	"Mips" : true,
+	"Width" : 512,
+	"Height" : 512
+}

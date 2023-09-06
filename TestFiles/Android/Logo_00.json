@@ -1,0 +1,10 @@
+{
+	"Type" : "Texture2D",
+	"Format" : "BGRA32_14",
+	"FileSize" : 1048576,
+	"ImageSize" : 1048576,
+	"ImageCount" : 1,
+	"Mips" : false,
+	"Width" : 512,
+	"Height" : 512
+}

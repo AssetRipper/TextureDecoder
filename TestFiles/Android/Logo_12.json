@@ -1,0 +1,10 @@
+{
+	"Type" : "Texture2D",
+	"Format" : "ETC_RGB4",
+	"FileSize" : 174776,
+	"ImageSize" : 174776,
+	"ImageCount" : 1,
+	"Mips" : true,
+	"Width" : 512,
+	"Height" : 512
+}

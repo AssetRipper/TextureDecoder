@@ -1,0 +1,10 @@
+{
+	"Type" : "Texture2D",
+	"Format" : "PVRTC_RGBA2",
+	"FileSize" : 87488,
+	"ImageSize" : 87488,
+	"ImageCount" : 1,
+	"Mips" : true,
+	"Width" : 512,
+	"Height" : 512
+}

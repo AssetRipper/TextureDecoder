@@ -1,0 +1,10 @@
+{
+	"Type" : "Texture2D",
+	"Format" : "ETC2_RGBA8",
+	"FileSize" : 349552,
+	"ImageSize" : 349552,
+	"ImageCount" : 1,
+	"Mips" : true,
+	"Width" : 512,
+	"Height" : 512
+}
