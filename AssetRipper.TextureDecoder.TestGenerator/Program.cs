@@ -58,7 +58,7 @@ namespace AssetRipper.TextureDecoder.TestGenerator
 						{
 							(string prettyName, string colorName, string channelName) = list[i];
 							writer.WriteLine($"case {i}:");
-							using (new IndentedBlock(writer))
+							using (new Indented(writer))
 							{
 								writer.WriteLine($"RgbConverter.Convert<{colorName}, {channelName}, ColorBGRA32, byte>(input, width, height, output);");
 								writer.WriteLine("break;");
@@ -66,7 +66,7 @@ namespace AssetRipper.TextureDecoder.TestGenerator
 						}
 						{
 							writer.WriteLine("default:");
-							using (new IndentedBlock(writer))
+							using (new Indented(writer))
 							{
 								writer.WriteLine("throw new NotSupportedException(mode.ToString());");
 							}
