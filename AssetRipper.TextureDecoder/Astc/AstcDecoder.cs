@@ -1,3 +1,5 @@
+using System.Buffers.Binary;
+
 namespace AssetRipper.TextureDecoder.Astc
 {
 	public static partial class AstcDecoder
@@ -18,16 +20,13 @@ namespace AssetRipper.TextureDecoder.Astc
 
 		public unsafe static int DecodeASTC(ReadOnlySpan<byte> input, int width, int height, int blockWidth, int blockHeight, Span<byte> output)
 		{
-			fixed (byte* inputPtr = input)
+			fixed (byte* outputPtr = output)
 			{
-				fixed (byte* outputPtr = output)
-				{
-					return DecodeASTC(inputPtr, width, height, blockWidth, blockHeight, outputPtr);
-				}
+				return DecodeASTC(input, width, height, blockWidth, blockHeight, outputPtr);
 			}
 		}
 
-		private unsafe static int DecodeASTC(byte* input, int width, int height, int blockWidth, int blockHeight, byte* output)
+		private unsafe static int DecodeASTC(ReadOnlySpan<byte> input, int width, int height, int blockWidth, int blockHeight, byte* output)
 		{
 			ValidateBlockDimension(blockWidth);
 			ValidateBlockDimension(blockHeight);
@@ -40,7 +39,7 @@ namespace AssetRipper.TextureDecoder.Astc
 			{
 				for (int s = 0; s < bcw; s++, inputOffset += 16)
 				{
-					DecodeBlock(input + inputOffset, blockWidth, blockHeight, buf);
+					DecodeBlock(input[inputOffset..], blockWidth, blockHeight, buf);
 					int clen = s < bcw - 1 ? blockWidth : clen_last;
 					uint* outputPtr = (uint*)(output + (t * blockHeight * 4 * width + s * 4 * blockWidth));
 					for (int i = 0, y = t * blockHeight; i < blockHeight && y < height; i++, y++)
@@ -57,7 +56,7 @@ namespace AssetRipper.TextureDecoder.Astc
 			return inputOffset;
 		}
 
-		private unsafe static void DecodeBlock(byte* input, int blockWidth, int blockHeight, Span<uint> output)
+		private unsafe static void DecodeBlock(ReadOnlySpan<byte> input, int blockWidth, int blockHeight, Span<uint> output)
 		{
 			if (input[0] == 0xfc && (input[1] & 1) == 1)
 			{
@@ -83,7 +82,7 @@ namespace AssetRipper.TextureDecoder.Astc
 			}
 		}
 
-		private unsafe static void DecodeBlockParameters(byte* input, ref BlockData pBlock)
+		private unsafe static void DecodeBlockParameters(ReadOnlySpan<byte> input, ref BlockData pBlock)
 		{
 			pBlock.dual_plane = (input[1] & 4) >> 2;
 			pBlock.weight_range = (input[0] >> 4 & 1) | (input[1] << 2 & 8);
@@ -94,16 +93,16 @@ namespace AssetRipper.TextureDecoder.Astc
 				switch (input[0] & 0xc)
 				{
 					case 0:
-						pBlock.width = (*((int*)input) >> 7 & 3) + 4;
+						pBlock.width = (BinaryPrimitives.ReadInt32LittleEndian(input) >> 7 & 3) + 4;
 						pBlock.height = (input[0] >> 5 & 3) + 2;
 						break;
 					case 4:
-						pBlock.width = (*((int*)input) >> 7 & 3) + 8;
+						pBlock.width = (BinaryPrimitives.ReadInt32LittleEndian(input) >> 7 & 3) + 8;
 						pBlock.height = (input[0] >> 5 & 3) + 2;
 						break;
 					case 8:
 						pBlock.width = (input[0] >> 5 & 3) + 2;
-						pBlock.height = (*((int*)input) >> 7 & 3) + 8;
+						pBlock.height = (BinaryPrimitives.ReadInt32LittleEndian(input) >> 7 & 3) + 8;
 						break;
 					case 12:
 						if ((input[1] & 1) != 0)
@@ -122,7 +121,7 @@ namespace AssetRipper.TextureDecoder.Astc
 			else
 			{
 				pBlock.weight_range |= input[0] >> 1 & 6;
-				switch ((*((int*)input)) & 0x180)
+				switch (BinaryPrimitives.ReadInt32LittleEndian(input) & 0x180)
 				{
 					case 0:
 						pBlock.width = 12;
@@ -162,12 +161,12 @@ namespace AssetRipper.TextureDecoder.Astc
 			};
 			if (pBlock.part_num == 1)
 			{
-				pBlock.cem[0] = *((int*)(input + 1)) >> 5 & 0xf;
+				pBlock.cem[0] = BinaryPrimitives.ReadInt32LittleEndian(input[1..]) >> 5 & 0xf;
 				config_bits = 17;
 			}
 			else
 			{
-				cem_base = *((int*)(input + 2)) >> 7 & 3;
+				cem_base = BinaryPrimitives.ReadInt32LittleEndian(input[2..]) >> 7 & 3;
 				if (cem_base == 0)
 				{
 					int cem = input[3] >> 1 & 0xf;
@@ -236,7 +235,7 @@ namespace AssetRipper.TextureDecoder.Astc
 			}
 		}
 
-		private unsafe static void DecodeEndpoints(byte* input, ref BlockData pBlock)
+		private unsafe static void DecodeEndpoints(ReadOnlySpan<byte> input, ref BlockData pBlock)
 		{
 			Span<IntSeqData> epSeq = stackalloc IntSeqData[32];
 			DecodeIntseq(input, pBlock.part_num == 1 ? 17 : 29, CemTableA[pBlock.cem_range], CemTableB[pBlock.cem_range], pBlock.endpoint_value_num, false, epSeq);
@@ -483,7 +482,7 @@ namespace AssetRipper.TextureDecoder.Astc
 			}
 		}
 
-		private unsafe static void DecodeWeights(byte* input, ref BlockData block)
+		private unsafe static void DecodeWeights(ReadOnlySpan<byte> input, ref BlockData block)
 		{
 			Span<IntSeqData> wSeq = stackalloc IntSeqData[128];
 			DecodeIntseq(input, 128, WeightPrecTableA[block.weight_range], WeightPrecTableB[block.weight_range], block.weight_num, true, wSeq);
@@ -639,10 +638,10 @@ namespace AssetRipper.TextureDecoder.Astc
 			}
 		}
 
-		private unsafe static void SelectPartition(byte* input, ref BlockData block)
+		private unsafe static void SelectPartition(ReadOnlySpan<byte> input, ref BlockData block)
 		{
 			bool small_block = block.bw * block.bh < 31;
-			int seed = (*((int*)input) >> 13 & 0x3ff) | (block.part_num - 1) << 10;
+			int seed = (BinaryPrimitives.ReadInt32LittleEndian(input) >> 13 & 0x3ff) | (block.part_num - 1) << 10;
 
 			uint rnum;
 			unchecked
@@ -776,7 +775,7 @@ namespace AssetRipper.TextureDecoder.Astc
 			}
 		}
 
-		private unsafe static void DecodeIntseq(byte* input, int offset, int a, int b, int count, bool reverse, Span<IntSeqData> _out)
+		private unsafe static void DecodeIntseq(ReadOnlySpan<byte> input, int offset, int a, int b, int count, bool reverse, Span<IntSeqData> _out)
 		{
 			if (count <= 0)
 			{
@@ -928,13 +927,13 @@ namespace AssetRipper.TextureDecoder.Astc
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-		private unsafe static int GetBits(byte* input, int bit, int len)
+		private unsafe static int GetBits(ReadOnlySpan<byte> input, int bit, int len)
 		{
-			return (*((int*)(input + bit / 8)) >> (bit % 8)) & ((1 << len) - 1);
+			return (BinaryPrimitives.ReadInt32LittleEndian(input[(bit / 8)..]) >> (bit % 8)) & ((1 << len) - 1);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-		private unsafe static ulong GetBits64(byte* input, int bit, int len)
+		private unsafe static ulong GetBits64(ReadOnlySpan<byte> input, int bit, int len)
 		{
 			ulong mask = len == 64 ? 0xffffffffffffffff : (1UL << len) - 1;
 			if (len < 1)
@@ -943,19 +942,19 @@ namespace AssetRipper.TextureDecoder.Astc
 			}
 			else if (bit >= 64)
 			{
-				return *((ulong*)(input + 8)) >> (bit - 64) & mask;
+				return BinaryPrimitives.ReadUInt64LittleEndian(input[sizeof(ulong)..]) >> (bit - 64) & mask;
 			}
 			else if (bit <= 0)
 			{
-				return *((ulong*)input) << -bit & mask;
+				return BinaryPrimitives.ReadUInt64LittleEndian(input) << -bit & mask;
 			}
 			else if (bit + len <= 64)
 			{
-				return *((ulong*)input) >> bit & mask;
+				return BinaryPrimitives.ReadUInt64LittleEndian(input) >> bit & mask;
 			}
 			else
 			{
-				return (*((ulong*)input) >> bit | *((ulong*)(input + 8)) << (64 - bit)) & mask;
+				return (BinaryPrimitives.ReadUInt64LittleEndian(input) >> bit | BinaryPrimitives.ReadUInt64LittleEndian(input[sizeof(ulong)..]) << (64 - bit)) & mask;
 			}
 		}
 
