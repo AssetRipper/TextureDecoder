@@ -363,7 +363,7 @@ namespace AssetRipper.TextureDecoder.Astc
 					case 0:
 						fixed (int* endpoint = &pBlock.endpoints[cemOff])
 						{
-							SetEndpoint(endpoint, v[0], v[0], v[0], 255, v[1], v[1], v[1], 255);
+							SetEndpoint(new Span<int>(endpoint, 8), v[0], v[0], v[0], 255, v[1], v[1], v[1], 255);
 						}
 						break;
 					case 1:
@@ -372,14 +372,14 @@ namespace AssetRipper.TextureDecoder.Astc
 							int l1 = Clamp(l0 + (v[1] & 0x3f));
 							fixed (int* endpoint = &pBlock.endpoints[cemOff])
 							{
-								SetEndpoint(endpoint, l0, l0, l0, 255, l1, l1, l1, 255);
+								SetEndpoint(new Span<int>(endpoint, 8), l0, l0, l0, 255, l1, l1, l1, 255);
 							}
 						}
 						break;
 					case 4:
 						fixed (int* endpoint = &pBlock.endpoints[cemOff])
 						{
-							SetEndpoint(endpoint, v[0], v[0], v[0], v[2], v[1], v[1], v[1], v[3]);
+							SetEndpoint(new Span<int>(endpoint, 8), v[0], v[0], v[0], v[2], v[1], v[1], v[1], v[3]);
 						}
 						break;
 					case 5:
@@ -388,13 +388,13 @@ namespace AssetRipper.TextureDecoder.Astc
 						v[1] += v[0];
 						fixed (int* endpoint = &pBlock.endpoints[cemOff])
 						{
-							SetEndpointClamp(endpoint, v[0], v[0], v[0], v[2], v[1], v[1], v[1], v[2] + v[3]);
+							SetEndpointClamp(new Span<int>(endpoint, 8), v[0], v[0], v[0], v[2], v[1], v[1], v[1], v[2] + v[3]);
 						}
 						break;
 					case 6:
 						fixed (int* endpoint = &pBlock.endpoints[cemOff])
 						{
-							SetEndpoint(endpoint, v[0] * v[3] >> 8, v[1] * v[3] >> 8, v[2] * v[3] >> 8, 255, v[0], v[1], v[2], 255);
+							SetEndpoint(new Span<int>(endpoint, 8), v[0] * v[3] >> 8, v[1] * v[3] >> 8, v[2] * v[3] >> 8, 255, v[0], v[1], v[2], 255);
 						}
 						break;
 					case 8:
@@ -402,14 +402,14 @@ namespace AssetRipper.TextureDecoder.Astc
 						{
 							fixed (int* endpoint = &pBlock.endpoints[cemOff])
 							{
-								SetEndpoint(endpoint, v[0], v[2], v[4], 255, v[1], v[3], v[5], 255);
+								SetEndpoint(new Span<int>(endpoint, 8), v[0], v[2], v[4], 255, v[1], v[3], v[5], 255);
 							}
 						}
 						else
 						{
 							fixed (int* endpoint = &pBlock.endpoints[cemOff])
 							{
-								SetEndpointBlue(endpoint, v[1], v[3], v[5], 255, v[0], v[2], v[4], 255);
+								SetEndpointBlue(new Span<int>(endpoint, 8), v[1], v[3], v[5], 255, v[0], v[2], v[4], 255);
 							}
 						}
 
@@ -422,14 +422,14 @@ namespace AssetRipper.TextureDecoder.Astc
 						{
 							fixed (int* endpoint = &pBlock.endpoints[cemOff])
 							{
-								SetEndpointClamp(endpoint, v[0], v[2], v[4], 255, v[0] + v[1], v[2] + v[3], v[4] + v[5], 255);
+								SetEndpointClamp(new Span<int>(endpoint, 8), v[0], v[2], v[4], 255, v[0] + v[1], v[2] + v[3], v[4] + v[5], 255);
 							}
 						}
 						else
 						{
 							fixed (int* endpoint = &pBlock.endpoints[cemOff])
 							{
-								SetEndpointBlueClamp(endpoint, v[0] + v[1], v[2] + v[3], v[4] + v[5], 255, v[0], v[2], v[4], 255);
+								SetEndpointBlueClamp(new Span<int>(endpoint, 8), v[0] + v[1], v[2] + v[3], v[4] + v[5], 255, v[0], v[2], v[4], 255);
 							}
 						}
 
@@ -437,7 +437,7 @@ namespace AssetRipper.TextureDecoder.Astc
 					case 10:
 						fixed (int* endpoint = &pBlock.endpoints[cemOff])
 						{
-							SetEndpoint(endpoint, v[0] * v[3] >> 8, v[1] * v[3] >> 8, v[2] * v[3] >> 8, v[4], v[0], v[1], v[2], v[5]);
+							SetEndpoint(new Span<int>(endpoint, 8), v[0] * v[3] >> 8, v[1] * v[3] >> 8, v[2] * v[3] >> 8, v[4], v[0], v[1], v[2], v[5]);
 						}
 						break;
 					case 12:
@@ -445,14 +445,14 @@ namespace AssetRipper.TextureDecoder.Astc
 						{
 							fixed (int* endpoint = &pBlock.endpoints[cemOff])
 							{
-								SetEndpoint(endpoint, v[0], v[2], v[4], v[6], v[1], v[3], v[5], v[7]);
+								SetEndpoint(new Span<int>(endpoint, 8), v[0], v[2], v[4], v[6], v[1], v[3], v[5], v[7]);
 							}
 						}
 						else
 						{
 							fixed (int* endpoint = &pBlock.endpoints[cemOff])
 							{
-								SetEndpointBlue(endpoint, v[1], v[3], v[5], v[7], v[0], v[2], v[4], v[6]);
+								SetEndpointBlue(new Span<int>(endpoint, 8), v[1], v[3], v[5], v[7], v[0], v[2], v[4], v[6]);
 							}
 						}
 
@@ -466,14 +466,14 @@ namespace AssetRipper.TextureDecoder.Astc
 						{
 							fixed (int* endpoint = &pBlock.endpoints[cemOff])
 							{
-								SetEndpointClamp(endpoint, v[0], v[2], v[4], v[6], v[0] + v[1], v[2] + v[3], v[4] + v[5], v[6] + v[7]);
+								SetEndpointClamp(new Span<int>(endpoint, 8), v[0], v[2], v[4], v[6], v[0] + v[1], v[2] + v[3], v[4] + v[5], v[6] + v[7]);
 							}
 						}
 						else
 						{
 							fixed (int* endpoint = &pBlock.endpoints[cemOff])
 							{
-								SetEndpointBlueClamp(endpoint, v[0] + v[1], v[2] + v[3], v[4] + v[5], v[6] + v[7], v[0], v[2], v[4], v[6]);
+								SetEndpointBlueClamp(new Span<int>(endpoint, 8), v[0] + v[1], v[2] + v[3], v[4] + v[5], v[6] + v[7], v[0], v[2], v[4], v[6]);
 							}
 						}
 
@@ -914,26 +914,26 @@ namespace AssetRipper.TextureDecoder.Astc
 			unchecked
 			{
 				ret =
-				   (ulong)BitReverseTable[(int)(d >> 0 & 0xff)] << 56 |
-				   (ulong)BitReverseTable[(int)(d >> 8 & 0xff)] << 48 |
-				   (ulong)BitReverseTable[(int)(d >> 16 & 0xff)] << 40 |
-				   (ulong)BitReverseTable[(int)(d >> 24 & 0xff)] << 32 |
-				   (ulong)BitReverseTable[(int)(d >> 32 & 0xff)] << 24 |
-				   (ulong)BitReverseTable[(int)(d >> 40 & 0xff)] << 16 |
-				   (ulong)BitReverseTable[(int)(d >> 48 & 0xff)] << 8 |
-				   (ulong)BitReverseTable[(int)(d >> 56 & 0xff)];
+					(ulong)BitReverseTable[(int)(d >> 0 & 0xff)] << 56 |
+					(ulong)BitReverseTable[(int)(d >> 8 & 0xff)] << 48 |
+					(ulong)BitReverseTable[(int)(d >> 16 & 0xff)] << 40 |
+					(ulong)BitReverseTable[(int)(d >> 24 & 0xff)] << 32 |
+					(ulong)BitReverseTable[(int)(d >> 32 & 0xff)] << 24 |
+					(ulong)BitReverseTable[(int)(d >> 40 & 0xff)] << 16 |
+					(ulong)BitReverseTable[(int)(d >> 48 & 0xff)] << 8 |
+					(ulong)BitReverseTable[(int)(d >> 56 & 0xff)];
 			}
 			return ret >> (64 - bits);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-		private unsafe static int GetBits(ReadOnlySpan<byte> input, int bit, int len)
+		private static int GetBits(ReadOnlySpan<byte> input, int bit, int len)
 		{
 			return (BinaryPrimitives.ReadInt32LittleEndian(input[(bit / 8)..]) >> (bit % 8)) & ((1 << len) - 1);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-		private unsafe static ulong GetBits64(ReadOnlySpan<byte> input, int bit, int len)
+		private static ulong GetBits64(ReadOnlySpan<byte> input, int bit, int len)
 		{
 			ulong mask = len == 64 ? 0xffffffffffffffff : (1UL << len) - 1;
 			if (len < 1)
@@ -976,7 +976,7 @@ namespace AssetRipper.TextureDecoder.Astc
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-		private unsafe static void SetEndpoint(int* endpoint, int r1, int g1, int b1, int a1, int r2, int g2, int b2, int a2)
+		private static void SetEndpoint(Span<int> endpoint, int r1, int g1, int b1, int a1, int r2, int g2, int b2, int a2)
 		{
 			endpoint[0] = r1;
 			endpoint[1] = g1;
@@ -989,7 +989,7 @@ namespace AssetRipper.TextureDecoder.Astc
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-		private unsafe static void SetEndpointClamp(int* endpoint, int r1, int g1, int b1, int a1, int r2, int g2, int b2, int a2)
+		private static void SetEndpointClamp(Span<int> endpoint, int r1, int g1, int b1, int a1, int r2, int g2, int b2, int a2)
 		{
 			endpoint[0] = Clamp(r1);
 			endpoint[1] = Clamp(g1);
@@ -1002,7 +1002,7 @@ namespace AssetRipper.TextureDecoder.Astc
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-		private unsafe static void SetEndpointBlue(int* endpoint, int r1, int g1, int b1, int a1, int r2, int g2, int b2, int a2)
+		private static void SetEndpointBlue(Span<int> endpoint, int r1, int g1, int b1, int a1, int r2, int g2, int b2, int a2)
 		{
 			endpoint[0] = (r1 + b1) >> 1;
 			endpoint[1] = (g1 + b1) >> 1;
@@ -1015,7 +1015,7 @@ namespace AssetRipper.TextureDecoder.Astc
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-		private unsafe static void SetEndpointBlueClamp(int* endpoint, int r1, int g1, int b1, int a1, int r2, int g2, int b2, int a2)
+		private static void SetEndpointBlueClamp(Span<int> endpoint, int r1, int g1, int b1, int a1, int r2, int g2, int b2, int a2)
 		{
 			endpoint[0] = Clamp((r1 + b1) >> 1);
 			endpoint[1] = Clamp((g1 + b1) >> 1);
