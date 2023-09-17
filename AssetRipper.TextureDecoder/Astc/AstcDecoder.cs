@@ -240,7 +240,7 @@ namespace AssetRipper.TextureDecoder.Astc
 			Span<IntSeqData> epSeq = stackalloc IntSeqData[32];
 			DecodeIntseq(input, pBlock.part_num == 1 ? 17 : 29, CemTableA[pBlock.cem_range], CemTableB[pBlock.cem_range], pBlock.endpoint_value_num, false, epSeq);
 
-			int* ev = stackalloc int[32];
+			Span<int> ev = stackalloc int[32];
 			switch (CemTableA[pBlock.cem_range])
 			{
 				case 3:
@@ -355,8 +355,8 @@ namespace AssetRipper.TextureDecoder.Astc
 					break;
 			}
 
-			int* v = ev;
-			for (int cem = 0, cemOff = 0; cem < pBlock.part_num; v += (pBlock.cem[cem] / 4 + 1) * 2, cem++, cemOff += 8)
+			Span<int> v = ev;
+			for (int cem = 0, cemOff = 0; cem < pBlock.part_num; v = v.Slice((pBlock.cem[cem] / 4 + 1) * 2), cem++, cemOff += 8)
 			{
 				switch (pBlock.cem[cem])
 				{
@@ -383,8 +383,8 @@ namespace AssetRipper.TextureDecoder.Astc
 						}
 						break;
 					case 5:
-						BitTransferSigned(&v[1], &v[0]);
-						BitTransferSigned(&v[3], &v[2]);
+						BitTransferSigned(ref v[1], ref v[0]);
+						BitTransferSigned(ref v[3], ref v[2]);
 						v[1] += v[0];
 						fixed (int* endpoint = &pBlock.endpoints[cemOff])
 						{
@@ -415,9 +415,9 @@ namespace AssetRipper.TextureDecoder.Astc
 
 						break;
 					case 9:
-						BitTransferSigned(&v[1], &v[0]);
-						BitTransferSigned(&v[3], &v[2]);
-						BitTransferSigned(&v[5], &v[4]);
+						BitTransferSigned(ref v[1], ref v[0]);
+						BitTransferSigned(ref v[3], ref v[2]);
+						BitTransferSigned(ref v[5], ref v[4]);
 						if (v[1] + v[3] + v[5] >= 0)
 						{
 							fixed (int* endpoint = &pBlock.endpoints[cemOff])
@@ -458,10 +458,10 @@ namespace AssetRipper.TextureDecoder.Astc
 
 						break;
 					case 13:
-						BitTransferSigned(&v[1], &v[0]);
-						BitTransferSigned(&v[3], &v[2]);
-						BitTransferSigned(&v[5], &v[4]);
-						BitTransferSigned(&v[7], &v[6]);
+						BitTransferSigned(ref v[1], ref v[0]);
+						BitTransferSigned(ref v[3], ref v[2]);
+						BitTransferSigned(ref v[5], ref v[4]);
+						BitTransferSigned(ref v[7], ref v[6]);
 						if (v[1] + v[3] + v[5] >= 0)
 						{
 							fixed (int* endpoint = &pBlock.endpoints[cemOff])
@@ -965,13 +965,13 @@ namespace AssetRipper.TextureDecoder.Astc
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-		private static unsafe void BitTransferSigned(int* a, int* b)
+		private static void BitTransferSigned(ref int a, ref int b)
 		{
-			*b = (*b >> 1) | (*a & 0x80);
-			*a = (*a >> 1) & 0x3f;
-			if ((*a & 0x20) != 0)
+			b = (b >> 1) | (a & 0x80);
+			a = (a >> 1) & 0x3f;
+			if ((a & 0x20) != 0)
 			{
-				*a -= 0x40;
+				a -= 0x40;
 			}
 		}
 
