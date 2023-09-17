@@ -18,15 +18,7 @@ namespace AssetRipper.TextureDecoder.Astc
 			return DecodeASTC(input, width, height, blockWidth, blockHeight, output);
 		}
 
-		public unsafe static int DecodeASTC(ReadOnlySpan<byte> input, int width, int height, int blockWidth, int blockHeight, Span<byte> output)
-		{
-			fixed (byte* outputPtr = output)
-			{
-				return DecodeASTC(input, width, height, blockWidth, blockHeight, outputPtr);
-			}
-		}
-
-		private unsafe static int DecodeASTC(ReadOnlySpan<byte> input, int width, int height, int blockWidth, int blockHeight, byte* output)
+		public static int DecodeASTC(ReadOnlySpan<byte> input, int width, int height, int blockWidth, int blockHeight, Span<byte> output)
 		{
 			ValidateBlockDimension(blockWidth);
 			ValidateBlockDimension(blockHeight);
@@ -41,19 +33,23 @@ namespace AssetRipper.TextureDecoder.Astc
 				{
 					DecodeBlock(input[inputOffset..], blockWidth, blockHeight, buf);
 					int clen = s < bcw - 1 ? blockWidth : clen_last;
-					uint* outputPtr = (uint*)(output + (t * blockHeight * 4 * width + s * 4 * blockWidth));
 					for (int i = 0, y = t * blockHeight; i < blockHeight && y < height; i++, y++)
 					{
+						int outputOffsetUInt32 = t * blockHeight * width + s * blockWidth + i * width;
 						for (int j = 0; j < clen; j++)
 						{
-							outputPtr[j] = buf[j + i * blockWidth];
+							WriteUInt32(output, outputOffsetUInt32 + j, buf[j + i * blockWidth]);
 						}
-
-						outputPtr += width;
 					}
 				}
 			}
 			return inputOffset;
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+			static void WriteUInt32(Span<byte> buffer, int offsetUInt32, uint value)
+			{
+				BinaryPrimitives.WriteUInt32LittleEndian(buffer.Slice(offsetUInt32 * sizeof(uint)), value);
+			}
 		}
 
 		private unsafe static void DecodeBlock(ReadOnlySpan<byte> input, int blockWidth, int blockHeight, Span<uint> output)
@@ -775,7 +771,7 @@ namespace AssetRipper.TextureDecoder.Astc
 			}
 		}
 
-		private unsafe static void DecodeIntseq(ReadOnlySpan<byte> input, int offset, int a, int b, int count, bool reverse, Span<IntSeqData> _out)
+		private static void DecodeIntseq(ReadOnlySpan<byte> input, int offset, int a, int b, int count, bool reverse, Span<IntSeqData> _out)
 		{
 			if (count <= 0)
 			{
