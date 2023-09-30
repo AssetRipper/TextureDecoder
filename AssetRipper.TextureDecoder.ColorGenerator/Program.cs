@@ -69,27 +69,18 @@ internal static partial class Program
 	private static void WriteCustomColor(IndentedTextWriter writer, string name, Type type, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha, bool fullyUtilized)
 	{
 		string typeName = CSharpPrimitives.Dictionary[type].LangName;
-		writer.WriteLine("//This code is source generated. Do not edit manually.");
+		writer.WriteGeneratedCodeWarning();
 		writer.WriteLine();
-		writer.WriteLine($"using {AttributeNamespace};");
-		writer.WriteLine();
-		writer.WriteLine($"namespace {OutputNamespace}");
-		using (new CurlyBrackets(writer))
+		using (new Namespace(writer, OutputNamespace))
 		{
-			WriteRgbaAttribute(writer, hasRed, hasGreen, hasBlue, hasAlpha, fullyUtilized);
 			writer.WriteLine($"public partial struct {name} : IColor<{typeName}>");
 			using (new CurlyBrackets(writer))
 			{
-				WriteHasChannelStaticProperties(writer, hasRed, hasGreen, hasBlue, hasAlpha, typeName);
+				WriteColorBaseStaticProperties(writer, hasRed, hasGreen, hasBlue, hasAlpha, fullyUtilized, typeName);
 				writer.WriteLineNoTabs();
 				WriteToString(writer, hasRed, hasGreen, hasBlue, hasAlpha);
 			}
 		}
-	}
-
-	private static void WriteRgbaAttribute(IndentedTextWriter writer, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha, bool fullyUtilized)
-	{
-		writer.WriteLine($"[RgbaAttribute(RedChannel = {hasRed.ToLowerString()}, GreenChannel = {hasGreen.ToLowerString()}, BlueChannel = {hasBlue.ToLowerString()}, AlphaChannel = {hasAlpha.ToLowerString()}, FullyUtilizedChannels = {fullyUtilized.ToLowerString()})]");
 	}
 
 	private static void WriteToString(IndentedTextWriter writer, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha)
@@ -136,12 +127,14 @@ internal static partial class Program
 		}
 	}
 
-	private static void WriteHasChannelStaticProperties(IndentedTextWriter writer, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha, string typeName)
+	private static void WriteColorBaseStaticProperties(IndentedTextWriter writer, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha, bool fullyUtilized, string typeName)
 	{
-		writer.WriteLine($"static bool IColor<{typeName}>.HasRedChannel => {hasRed.ToLowerString()};");
-		writer.WriteLine($"static bool IColor<{typeName}>.HasGreenChannel => {hasGreen.ToLowerString()};");
-		writer.WriteLine($"static bool IColor<{typeName}>.HasBlueChannel => {hasBlue.ToLowerString()};");
-		writer.WriteLine($"static bool IColor<{typeName}>.HasAlphaChannel => {hasAlpha.ToLowerString()};");
+		writer.WriteLine($"static bool IColorBase.HasRedChannel => {hasRed.ToLowerString()};");
+		writer.WriteLine($"static bool IColorBase.HasGreenChannel => {hasGreen.ToLowerString()};");
+		writer.WriteLine($"static bool IColorBase.HasBlueChannel => {hasBlue.ToLowerString()};");
+		writer.WriteLine($"static bool IColorBase.HasAlphaChannel => {hasAlpha.ToLowerString()};");
+		writer.WriteLine($"static bool IColorBase.ChannelsAreFullyUtilized => {fullyUtilized.ToLowerString()};");
+		writer.WriteLine($"static Type IColorBase.ChannelType => typeof({typeName});");
 	}
 
 	private static void WriteGenericColor(IndentedTextWriter writer, string name, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha)
@@ -153,13 +146,9 @@ internal static partial class Program
 		writer.WriteGeneratedCodeWarning();
 		writer.WriteLineNoTabs();
 
-		writer.WriteLine($"using {AttributeNamespace};");
-		writer.WriteLineNoTabs();
-
 		writer.WriteFileScopedNamespace(OutputNamespace);
 		writer.WriteLineNoTabs();
 
-		WriteRgbaAttribute(writer, hasRed, hasGreen, hasBlue, hasAlpha, true);
 		string constraints = hasRed && hasGreen && hasBlue && hasAlpha
 			? "unmanaged"
 			: "unmanaged, INumberBase<T>, IMinMaxValue<T>";
@@ -179,7 +168,7 @@ internal static partial class Program
 			writer.WriteLineNoTabs();
 			WriteSetChannels(writer, typeName, hasRed, hasGreen, hasBlue, hasAlpha);
 			writer.WriteLineNoTabs();
-			WriteHasChannelStaticProperties(writer, hasRed, hasGreen, hasBlue, hasAlpha, typeName);
+			WriteColorBaseStaticProperties(writer, hasRed, hasGreen, hasBlue, hasAlpha, true, typeName);
 			writer.WriteLineNoTabs();
 			WriteToString(writer, hasRed, hasGreen, hasBlue, hasAlpha);
 		}

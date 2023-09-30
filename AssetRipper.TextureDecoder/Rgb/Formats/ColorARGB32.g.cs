@@ -1,16 +1,15 @@
-//This code is source generated. Do not edit manually.
-
-using AssetRipper.TextureDecoder.Attributes;
+// Auto-generated code. Do not modify manually.
 
 namespace AssetRipper.TextureDecoder.Rgb.Formats
 {
-	[RgbaAttribute(RedChannel = true, GreenChannel = true, BlueChannel = true, AlphaChannel = true, FullyUtilizedChannels = true)]
 	public partial struct ColorARGB32 : IColor<byte>
 	{
-		static bool IColor<byte>.HasRedChannel => true;
-		static bool IColor<byte>.HasGreenChannel => true;
-		static bool IColor<byte>.HasBlueChannel => true;
-		static bool IColor<byte>.HasAlphaChannel => true;
+		static bool IColorBase.HasRedChannel => true;
+		static bool IColorBase.HasGreenChannel => true;
+		static bool IColorBase.HasBlueChannel => true;
+		static bool IColorBase.HasAlphaChannel => true;
+		static bool IColorBase.ChannelsAreFullyUtilized => true;
+		static Type IColorBase.ChannelType => typeof(byte);
 
 		public override string ToString()
 		{

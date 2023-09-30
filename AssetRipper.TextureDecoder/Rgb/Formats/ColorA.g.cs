@@ -1,10 +1,7 @@
 // Auto-generated code. Do not modify manually.
 
-using AssetRipper.TextureDecoder.Attributes;
-
 namespace AssetRipper.TextureDecoder.Rgb.Formats;
 
-[RgbaAttribute(RedChannel = false, GreenChannel = false, BlueChannel = false, AlphaChannel = true, FullyUtilizedChannels = true)]
 public partial struct ColorA<T> : IColor<T> where T : unmanaged, INumberBase<T>, IMinMaxValue<T>
 {
 	public readonly T R 
@@ -40,10 +37,12 @@ public partial struct ColorA<T> : IColor<T> where T : unmanaged, INumberBase<T>,
 		A = a;
 	}
 
-	static bool IColor<T>.HasRedChannel => false;
-	static bool IColor<T>.HasGreenChannel => false;
-	static bool IColor<T>.HasBlueChannel => false;
-	static bool IColor<T>.HasAlphaChannel => true;
+	static bool IColorBase.HasRedChannel => false;
+	static bool IColorBase.HasGreenChannel => false;
+	static bool IColorBase.HasBlueChannel => false;
+	static bool IColorBase.HasAlphaChannel => true;
+	static bool IColorBase.ChannelsAreFullyUtilized => true;
+	static Type IColorBase.ChannelType => typeof(T);
 
 	public override string ToString()
 	{

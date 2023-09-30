@@ -10,12 +10,12 @@ namespace AssetRipper.TextureDecoder.TestGenerator
 	{
 		internal static readonly List<GenerationData> dataList = new()
 		{
-			new GenerationData(typeof(ColorARGB16), 2),
-			new GenerationData(typeof(ColorARGB32), 4),
-			new GenerationData(typeof(ColorBGRA32), 4),
-			new GenerationData(typeof(ColorRGB16), 2),
-			new GenerationData(typeof(ColorRGB9e5), 4),
-			new GenerationData(typeof(ColorRGBA16), 2),
+			GenerationData.Create<ColorARGB16>(2),
+			GenerationData.Create<ColorARGB32>(4),
+			GenerationData.Create<ColorBGRA32>(4),
+			GenerationData.Create<ColorRGB16>(2),
+			GenerationData.Create<ColorRGB9e5>(4),
+			GenerationData.Create<ColorRGBA16>(2),
 		};
 
 		static void Main()

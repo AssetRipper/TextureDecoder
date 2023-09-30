@@ -1,21 +1,19 @@
-﻿using AssetRipper.TextureDecoder.Attributes;
-using AssetRipper.TextureDecoder.Rgb;
+﻿using AssetRipper.TextureDecoder.Rgb;
 using AssetRipper.TextureDecoder.SourceGeneration.Common;
-using System.Reflection;
 
 namespace AssetRipper.TextureDecoder.TestGenerator
 {
 	internal readonly struct GenerationData
 	{
-		public Type ColorType { get; }
-		public Type ChannelType { get; }
-		public int ColorSize { get; }
+		public Type ColorType { get; private init; }
+		public Type ChannelType { get; private init; }
+		public int ColorSize { get; private init; }
 
-		public bool RedChannel { get; }
-		public bool GreenChannel { get; }
-		public bool BlueChannel { get; }
-		public bool AlphaChannel { get; }
-		public bool FullyUtilizedChannels { get; }
+		public bool RedChannel { get; private init; }
+		public bool GreenChannel { get; private init; }
+		public bool BlueChannel { get; private init; }
+		public bool AlphaChannel { get; private init; }
+		public bool FullyUtilizedChannels { get; private init; }
 
 		public bool IsFloatingPoint => CSharpPrimitives.IsFloatingPoint(ChannelType);
 
@@ -23,18 +21,19 @@ namespace AssetRipper.TextureDecoder.TestGenerator
 
 		public string ChannelTypeName => CSharpPrimitives.Dictionary[ChannelType].LangName;
 
-		public GenerationData(Type colorType, int colorSize)
+		public static GenerationData Create<T>(int colorSize) where T : IColorBase
 		{
-			ColorType = colorType;
-			ChannelType = ColorType.GetInterfaces().Single(t => t.Name == $"{nameof(IColor<byte>)}`1").GenericTypeArguments[0];
-			ColorSize = colorSize;
-
-			RgbaAttribute attribute = colorType.GetCustomAttribute<RgbaAttribute>() ?? throw new NullReferenceException(colorType.Name);
-			RedChannel = attribute.RedChannel;
-			GreenChannel = attribute.GreenChannel;
-			BlueChannel = attribute.BlueChannel;
-			AlphaChannel = attribute.AlphaChannel;
-			FullyUtilizedChannels = attribute.FullyUtilizedChannels;
+			return new GenerationData()
+			{
+				ColorType = typeof(T),
+				ChannelType = T.ChannelType,
+				ColorSize = colorSize,
+				RedChannel = T.HasRedChannel,
+				GreenChannel = T.HasGreenChannel,
+				BlueChannel = T.HasBlueChannel,
+				AlphaChannel = T.HasAlphaChannel,
+				FullyUtilizedChannels = T.ChannelsAreFullyUtilized,
+			};
 		}
 
 		public bool Contains(GenerationData other)
