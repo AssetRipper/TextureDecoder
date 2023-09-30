@@ -29,6 +29,12 @@ public static class Color
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+	public static int GetChannelCount<T>() where T : IColorBase
+	{
+		return (T.HasRedChannel ? 1 : 0) + (T.HasGreenChannel ? 1 : 0) + (T.HasBlueChannel ? 1 : 0) + (T.HasAlphaChannel ? 1 : 0);
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 	public static TTarget Convert<TThis, TThisChannel, TTarget, TTargetChannel>(this TThis color)
 		where TThisChannel : unmanaged
 		where TTargetChannel : unmanaged

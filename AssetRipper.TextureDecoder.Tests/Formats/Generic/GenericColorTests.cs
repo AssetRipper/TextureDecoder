@@ -8,8 +8,7 @@ internal partial class GenericColorTests<TColor, TChannel> where TColor : unmana
 	[Test]
 	public void CorrectSizeTest()
 	{
-		int numChannels = (TColor.HasRedChannel ? 1 : 0) + (TColor.HasGreenChannel ? 1 : 0) + (TColor.HasBlueChannel ? 1 : 0) + (TColor.HasAlphaChannel ? 1 : 0);
-		Assert.That(Unsafe.SizeOf<TColor>(), Is.EqualTo(numChannels * Unsafe.SizeOf<TChannel>()));
+		Assert.That(Unsafe.SizeOf<TColor>(), Is.EqualTo(Color.GetChannelCount<TColor>() * Unsafe.SizeOf<TChannel>()));
 	}
 
 	[Test]
