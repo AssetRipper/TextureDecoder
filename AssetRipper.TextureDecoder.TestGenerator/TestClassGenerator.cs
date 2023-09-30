@@ -1,5 +1,4 @@
 ﻿using AssetRipper.Text.SourceGeneration;
-using AssetRipper.TextureDecoder.Rgb;
 using AssetRipper.TextureDecoder.Rgb.Formats;
 using AssetRipper.TextureDecoder.SourceGeneration.Common;
 using AssetRipper.TextureDecoder.TestGenerator;

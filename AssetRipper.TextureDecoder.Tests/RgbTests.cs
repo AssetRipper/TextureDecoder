@@ -1,7 +1,4 @@
-﻿using AssetRipper.TextureDecoder.Rgb;
-using AssetRipper.TextureDecoder.Rgb.Formats;
-
-namespace AssetRipper.TextureDecoder.Tests
+﻿namespace AssetRipper.TextureDecoder.Tests
 {
 	public sealed class RgbTests
 	{

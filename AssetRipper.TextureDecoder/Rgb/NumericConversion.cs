@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-
-namespace AssetRipper.TextureDecoder.Rgb;
+﻿namespace AssetRipper.TextureDecoder.Rgb;
 public static partial class NumericConversion
 {
 	public static T GetMinimumValue<T>() where T : unmanaged, INumberBase<T>, IMinMaxValue<T>
@@ -17,6 +15,9 @@ public static partial class NumericConversion
 			: T.MaxValue;
 	}
 
+#if DEBUG
+	[DoesNotReturn]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 	private static T ThrowOrReturnDefault<T>() where T : struct
 	{

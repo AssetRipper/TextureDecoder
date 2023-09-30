@@ -2,7 +2,6 @@
 using AssetRipper.TextureDecoder.SourceGeneration.Common;
 using System.CodeDom.Compiler;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 
 namespace AssetRipper.TextureDecoder.ColorGenerator;
 internal static class NumericConversionGenerator
