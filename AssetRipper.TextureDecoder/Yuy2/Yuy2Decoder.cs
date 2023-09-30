@@ -133,12 +133,12 @@ namespace AssetRipper.TextureDecoder.Yuy2
 					byte b0 = ClampByte((298 * c + 516 * d + 128) >> 8);            // blue
 					byte g0 = ClampByte((298 * c - 100 * d - 208 * e + 128) >> 8);  // green
 					byte r0 = ClampByte((298 * c + 409 * e + 128) >> 8);            // red
-					output[o++].SetConvertedChannels<TOutputColor, TOutputChannel, byte>(r0, g0, b0, byte.MaxValue);
+					output[o++].SetConvertedChannels<TOutputColor, TOutputChannel, byte>(r0, g0, b0);
 					c = y1 - 16;
 					byte b1 = ClampByte((298 * c + 516 * d + 128) >> 8);            // blue
 					byte g1 = ClampByte((298 * c - 100 * d - 208 * e + 128) >> 8);  // green
 					byte r1 = ClampByte((298 * c + 409 * e + 128) >> 8);            // red
-					output[o++].SetConvertedChannels<TOutputColor, TOutputChannel, byte>(r1, g1, b1, byte.MaxValue);
+					output[o++].SetConvertedChannels<TOutputColor, TOutputChannel, byte>(r1, g1, b1);
 				}
 			}
 

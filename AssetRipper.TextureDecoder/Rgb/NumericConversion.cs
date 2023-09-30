@@ -1,16 +1,20 @@
-﻿namespace AssetRipper.TextureDecoder.Rgb;
+﻿using System.Runtime.InteropServices;
+
+namespace AssetRipper.TextureDecoder.Rgb;
 public static partial class NumericConversion
 {
-	public static T GetMinimumValue<T>() where T : unmanaged, INumberBase<T>, IMinMaxValue<T>
+	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+	private static T GetMinimumValueSafe<T>() where T : unmanaged, INumberBase<T>, IMinMaxValue<T>
 	{
-		return typeof(T) == typeof(Half) || typeof(T) == typeof(float) || typeof(T) == typeof(double) || typeof(T) == typeof(decimal)
+		return typeof(T) == typeof(Half) || typeof(T) == typeof(float) || typeof(T) == typeof(NFloat) || typeof(T) == typeof(double) || typeof(T) == typeof(decimal)
 			? T.Zero
 			: T.MinValue;
 	}
 
-	public static T GetMaximumValue<T>() where T : unmanaged, INumberBase<T>, IMinMaxValue<T>
+	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+	private static T GetMaximumValueSafe<T>() where T : unmanaged, INumberBase<T>, IMinMaxValue<T>
 	{
-		return typeof(T) == typeof(Half) || typeof(T) == typeof(float) || typeof(T) == typeof(double) || typeof(T) == typeof(decimal)
+		return typeof(T) == typeof(Half) || typeof(T) == typeof(float) || typeof(T) == typeof(NFloat) || typeof(T) == typeof(double) || typeof(T) == typeof(decimal)
 			? T.One
 			: T.MaxValue;
 	}

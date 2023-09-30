@@ -20,7 +20,7 @@ internal static class NumericConversionGenerator
 
 	private static void Write(IndentedTextWriter writer)
 	{
-		writer.WriteLine("//This code is source generated. Do not edit manually.");
+		writer.WriteGeneratedCodeWarning();
 		writer.WriteLine();
 		writer.WriteFileScopedNamespace(OutputNamespace);
 		writer.WriteLine();
@@ -32,6 +32,8 @@ internal static class NumericConversionGenerator
 			{
 				WriteConvertMethod(writer, from);
 			}
+			WriteGetValueMethod(writer, "GetMinimumValue");
+			WriteGetValueMethod(writer, "GetMaximumValue");
 			WriteChangeSignMethods(writer);
 		}
 	}
@@ -221,6 +223,31 @@ internal static class NumericConversionGenerator
 				{
 					writer.WriteLine("return ThrowOrReturnDefault<TTo>();");
 				}
+			}
+		}
+		writer.WriteLineNoTabs();
+	}
+
+	private static void WriteGetValueMethod(IndentedTextWriter writer, string methodName)
+	{
+		writer.WriteLine("[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]");
+		writer.WriteLine($"public static T {methodName}<T>() where T : unmanaged");
+		using (new CurlyBrackets(writer))
+		{
+			foreach (CSharpPrimitives.Data from in CSharpPrimitives.List)
+			{
+				string ifOrElseIf = from == CSharpPrimitives.FirstData ? "if" : "else if";
+				writer.WriteLine($"{ifOrElseIf} (typeof(T) == typeof({from.LangName}))");
+				using (new CurlyBrackets(writer))
+				{
+					writer.WriteLine($"{from.LangName} value = {methodName}Safe<{from.LangName}>();");
+					writer.WriteLine($"return Unsafe.As<{from.LangName}, T>(ref value);");
+				}
+			}
+			writer.WriteLine("else");
+			using (new CurlyBrackets(writer))
+			{
+				writer.WriteLine("return ThrowOrReturnDefault<T>();");
 			}
 		}
 		writer.WriteLineNoTabs();

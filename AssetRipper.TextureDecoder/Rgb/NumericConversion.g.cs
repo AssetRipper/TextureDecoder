@@ -1,4 +1,4 @@
-//This code is source generated. Do not edit manually.
+// Auto-generated code. Do not modify manually.
 
 namespace AssetRipper.TextureDecoder.Rgb;
 
@@ -935,6 +935,164 @@ static partial class NumericConversion
 		else
 		{
 			return ThrowOrReturnDefault<TTo>();
+		}
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+	public static T GetMinimumValue<T>() where T : unmanaged
+	{
+		if (typeof(T) == typeof(sbyte))
+		{
+			sbyte value = GetMinimumValueSafe<sbyte>();
+			return Unsafe.As<sbyte, T>(ref value);
+		}
+		else if (typeof(T) == typeof(byte))
+		{
+			byte value = GetMinimumValueSafe<byte>();
+			return Unsafe.As<byte, T>(ref value);
+		}
+		else if (typeof(T) == typeof(short))
+		{
+			short value = GetMinimumValueSafe<short>();
+			return Unsafe.As<short, T>(ref value);
+		}
+		else if (typeof(T) == typeof(ushort))
+		{
+			ushort value = GetMinimumValueSafe<ushort>();
+			return Unsafe.As<ushort, T>(ref value);
+		}
+		else if (typeof(T) == typeof(int))
+		{
+			int value = GetMinimumValueSafe<int>();
+			return Unsafe.As<int, T>(ref value);
+		}
+		else if (typeof(T) == typeof(uint))
+		{
+			uint value = GetMinimumValueSafe<uint>();
+			return Unsafe.As<uint, T>(ref value);
+		}
+		else if (typeof(T) == typeof(long))
+		{
+			long value = GetMinimumValueSafe<long>();
+			return Unsafe.As<long, T>(ref value);
+		}
+		else if (typeof(T) == typeof(ulong))
+		{
+			ulong value = GetMinimumValueSafe<ulong>();
+			return Unsafe.As<ulong, T>(ref value);
+		}
+		else if (typeof(T) == typeof(Int128))
+		{
+			Int128 value = GetMinimumValueSafe<Int128>();
+			return Unsafe.As<Int128, T>(ref value);
+		}
+		else if (typeof(T) == typeof(UInt128))
+		{
+			UInt128 value = GetMinimumValueSafe<UInt128>();
+			return Unsafe.As<UInt128, T>(ref value);
+		}
+		else if (typeof(T) == typeof(Half))
+		{
+			Half value = GetMinimumValueSafe<Half>();
+			return Unsafe.As<Half, T>(ref value);
+		}
+		else if (typeof(T) == typeof(float))
+		{
+			float value = GetMinimumValueSafe<float>();
+			return Unsafe.As<float, T>(ref value);
+		}
+		else if (typeof(T) == typeof(double))
+		{
+			double value = GetMinimumValueSafe<double>();
+			return Unsafe.As<double, T>(ref value);
+		}
+		else if (typeof(T) == typeof(decimal))
+		{
+			decimal value = GetMinimumValueSafe<decimal>();
+			return Unsafe.As<decimal, T>(ref value);
+		}
+		else
+		{
+			return ThrowOrReturnDefault<T>();
+		}
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+	public static T GetMaximumValue<T>() where T : unmanaged
+	{
+		if (typeof(T) == typeof(sbyte))
+		{
+			sbyte value = GetMaximumValueSafe<sbyte>();
+			return Unsafe.As<sbyte, T>(ref value);
+		}
+		else if (typeof(T) == typeof(byte))
+		{
+			byte value = GetMaximumValueSafe<byte>();
+			return Unsafe.As<byte, T>(ref value);
+		}
+		else if (typeof(T) == typeof(short))
+		{
+			short value = GetMaximumValueSafe<short>();
+			return Unsafe.As<short, T>(ref value);
+		}
+		else if (typeof(T) == typeof(ushort))
+		{
+			ushort value = GetMaximumValueSafe<ushort>();
+			return Unsafe.As<ushort, T>(ref value);
+		}
+		else if (typeof(T) == typeof(int))
+		{
+			int value = GetMaximumValueSafe<int>();
+			return Unsafe.As<int, T>(ref value);
+		}
+		else if (typeof(T) == typeof(uint))
+		{
+			uint value = GetMaximumValueSafe<uint>();
+			return Unsafe.As<uint, T>(ref value);
+		}
+		else if (typeof(T) == typeof(long))
+		{
+			long value = GetMaximumValueSafe<long>();
+			return Unsafe.As<long, T>(ref value);
+		}
+		else if (typeof(T) == typeof(ulong))
+		{
+			ulong value = GetMaximumValueSafe<ulong>();
+			return Unsafe.As<ulong, T>(ref value);
+		}
+		else if (typeof(T) == typeof(Int128))
+		{
+			Int128 value = GetMaximumValueSafe<Int128>();
+			return Unsafe.As<Int128, T>(ref value);
+		}
+		else if (typeof(T) == typeof(UInt128))
+		{
+			UInt128 value = GetMaximumValueSafe<UInt128>();
+			return Unsafe.As<UInt128, T>(ref value);
+		}
+		else if (typeof(T) == typeof(Half))
+		{
+			Half value = GetMaximumValueSafe<Half>();
+			return Unsafe.As<Half, T>(ref value);
+		}
+		else if (typeof(T) == typeof(float))
+		{
+			float value = GetMaximumValueSafe<float>();
+			return Unsafe.As<float, T>(ref value);
+		}
+		else if (typeof(T) == typeof(double))
+		{
+			double value = GetMaximumValueSafe<double>();
+			return Unsafe.As<double, T>(ref value);
+		}
+		else if (typeof(T) == typeof(decimal))
+		{
+			decimal value = GetMaximumValueSafe<decimal>();
+			return Unsafe.As<decimal, T>(ref value);
+		}
+		else
+		{
+			return ThrowOrReturnDefault<T>();
 		}
 	}
 
