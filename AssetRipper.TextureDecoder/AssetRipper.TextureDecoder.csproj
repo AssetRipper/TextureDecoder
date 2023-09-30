@@ -11,7 +11,7 @@
 		<RootNamespace>AssetRipper.TextureDecoder</RootNamespace>
 		<Authors>ds5678</Authors>
 		<Company>AssetRipper</Company>
-		<Version>1.3.0.0</Version>
+		<Version>2.0.0</Version>
 		<AssemblyVersion>$(Version)</AssemblyVersion>
 		<PackageId>AssetRipper.TextureDecoder</PackageId>
 		<PackageTags>C# Texture</PackageTags>
