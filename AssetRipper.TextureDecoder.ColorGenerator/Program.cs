@@ -140,8 +140,8 @@ internal static partial class Program
 	private static void WriteGenericColor(IndentedTextWriter writer, string name, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha)
 	{
 		const string typeName = "T";
-		const string minValue = $"NumericConversion.GetMinimumValue<T>()";
-		const string maxValue = $"NumericConversion.GetMaximumValue<T>()";
+		const string minValue = $"NumericConversion.GetMinimumValueSafe<T>()";
+		const string maxValue = $"NumericConversion.GetMaximumValueSafe<T>()";
 
 		writer.WriteGeneratedCodeWarning();
 		writer.WriteLineNoTabs();

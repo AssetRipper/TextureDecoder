@@ -6,19 +6,19 @@ public partial struct ColorA<T> : IColor<T> where T : unmanaged, INumberBase<T>,
 {
 	public readonly T R 
 	{
-		get => NumericConversion.GetMinimumValue<T>();
+		get => NumericConversion.GetMinimumValueSafe<T>();
 		set { }
 	}
 
 	public readonly T G 
 	{
-		get => NumericConversion.GetMinimumValue<T>();
+		get => NumericConversion.GetMinimumValueSafe<T>();
 		set { }
 	}
 
 	public readonly T B 
 	{
-		get => NumericConversion.GetMinimumValue<T>();
+		get => NumericConversion.GetMinimumValueSafe<T>();
 		set { }
 	}
 

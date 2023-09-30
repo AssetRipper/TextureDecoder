@@ -10,13 +10,13 @@ public partial struct ColorRG<T> : IColor<T> where T : unmanaged, INumberBase<T>
 
 	public readonly T B 
 	{
-		get => NumericConversion.GetMinimumValue<T>();
+		get => NumericConversion.GetMinimumValueSafe<T>();
 		set { }
 	}
 
 	public readonly T A 
 	{
-		get => NumericConversion.GetMaximumValue<T>();
+		get => NumericConversion.GetMaximumValueSafe<T>();
 		set { }
 	}
 

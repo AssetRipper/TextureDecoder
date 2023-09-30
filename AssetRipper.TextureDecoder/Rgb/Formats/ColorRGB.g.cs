@@ -12,7 +12,7 @@ public partial struct ColorRGB<T> : IColor<T> where T : unmanaged, INumberBase<T
 
 	public readonly T A 
 	{
-		get => NumericConversion.GetMaximumValue<T>();
+		get => NumericConversion.GetMaximumValueSafe<T>();
 		set { }
 	}
 

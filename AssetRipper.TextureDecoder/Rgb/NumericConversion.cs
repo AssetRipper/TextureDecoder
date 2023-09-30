@@ -4,7 +4,7 @@ namespace AssetRipper.TextureDecoder.Rgb;
 public static partial class NumericConversion
 {
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-	private static T GetMinimumValueSafe<T>() where T : unmanaged, INumberBase<T>, IMinMaxValue<T>
+	internal static T GetMinimumValueSafe<T>() where T : unmanaged, INumberBase<T>, IMinMaxValue<T>
 	{
 		return typeof(T) == typeof(Half) || typeof(T) == typeof(float) || typeof(T) == typeof(NFloat) || typeof(T) == typeof(double) || typeof(T) == typeof(decimal)
 			? T.Zero
@@ -12,7 +12,7 @@ public static partial class NumericConversion
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-	private static T GetMaximumValueSafe<T>() where T : unmanaged, INumberBase<T>, IMinMaxValue<T>
+	internal static T GetMaximumValueSafe<T>() where T : unmanaged, INumberBase<T>, IMinMaxValue<T>
 	{
 		return typeof(T) == typeof(Half) || typeof(T) == typeof(float) || typeof(T) == typeof(NFloat) || typeof(T) == typeof(double) || typeof(T) == typeof(decimal)
 			? T.One
