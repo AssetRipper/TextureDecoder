@@ -65,54 +65,54 @@ namespace AssetRipper.TextureDecoder.Yuy2
 		/// <summary>
 		/// Decompress a YUY2 image
 		/// </summary>
-		/// <typeparam name="TOutput"></typeparam>
-		/// <typeparam name="TOutputArg"></typeparam>
+		/// <typeparam name="TOutputColor"></typeparam>
+		/// <typeparam name="TOutputChannel"></typeparam>
 		/// <param name="input">Input buffer containing the compressed image.</param>
 		/// <param name="width">Pixel width of the image.</param>
 		/// <param name="height">Pixel height of the image.</param>
 		/// <param name="output">An output buffer. Must be at least width * height * pixelSize.</param>
 		/// <returns>Number of bytes read from <paramref name="input"/></returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-		public static int DecompressYUY2<TOutput, TOutputArg>(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
-			where TOutputArg : unmanaged
-			where TOutput : unmanaged, IColor<TOutputArg>
+		public static int DecompressYUY2<TOutputColor, TOutputChannel>(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+			where TOutputChannel : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannel>
 		{
-			output = new byte[width * height * Unsafe.SizeOf<TOutput>()];
-			return DecompressYUY2<TOutput, TOutputArg>(input, width, height, output);
+			output = new byte[width * height * Unsafe.SizeOf<TOutputColor>()];
+			return DecompressYUY2<TOutputColor, TOutputChannel>(input, width, height, output);
 		}
 
 		/// <summary>
 		/// Decompress a YUY2 image
 		/// </summary>
-		/// <typeparam name="TOutput"></typeparam>
-		/// <typeparam name="TOutputArg"></typeparam>
+		/// <typeparam name="TOutputColor"></typeparam>
+		/// <typeparam name="TOutputChannel"></typeparam>
 		/// <param name="input">Input buffer containing the compressed image.</param>
 		/// <param name="width">Pixel width of the image.</param>
 		/// <param name="height">Pixel height of the image.</param>
 		/// <param name="output">An output buffer. Must be at least width * height * pixelSize.</param>
 		/// <returns>Number of bytes read from <paramref name="input"/></returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-		public static int DecompressYUY2<TOutput, TOutputArg>(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
-			where TOutputArg : unmanaged
-			where TOutput : unmanaged, IColor<TOutputArg>
+		public static int DecompressYUY2<TOutputColor, TOutputChannel>(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+			where TOutputChannel : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannel>
 		{
-			return DecompressYUY2<TOutput, TOutputArg>(input, width, height, MemoryMarshal.Cast<byte, TOutput>(output));
+			return DecompressYUY2<TOutputColor, TOutputChannel>(input, width, height, MemoryMarshal.Cast<byte, TOutputColor>(output));
 		}
 
 		/// <summary>
 		/// Decompress a YUY2 image
 		/// </summary>
-		/// <typeparam name="TOutput"></typeparam>
-		/// <typeparam name="TOutputArg"></typeparam>
+		/// <typeparam name="TOutputColor"></typeparam>
+		/// <typeparam name="TOutputChannel"></typeparam>
 		/// <param name="input">Input buffer containing the compressed image.</param>
 		/// <param name="width">Pixel width of the image.</param>
 		/// <param name="height">Pixel height of the image.</param>
 		/// <param name="output">An output buffer. Must be at least width * height.</param>
 		/// <returns>Number of bytes read from <paramref name="input"/></returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-		public static int DecompressYUY2<TOutput, TOutputArg>(ReadOnlySpan<byte> input, int width, int height, Span<TOutput> output)
-			where TOutputArg : unmanaged
-			where TOutput : unmanaged, IColor<TOutputArg>
+		public static int DecompressYUY2<TOutputColor, TOutputChannel>(ReadOnlySpan<byte> input, int width, int height, Span<TOutputColor> output)
+			where TOutputChannel : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannel>
 		{
 			ThrowHelper.ThrowIfNotEnoughSpace(output.Length, width * height);
 
@@ -133,12 +133,12 @@ namespace AssetRipper.TextureDecoder.Yuy2
 					byte b0 = ClampByte((298 * c + 516 * d + 128) >> 8);            // blue
 					byte g0 = ClampByte((298 * c - 100 * d - 208 * e + 128) >> 8);  // green
 					byte r0 = ClampByte((298 * c + 409 * e + 128) >> 8);            // red
-					output[o++].SetConvertedChannels<TOutput, TOutputArg, byte>(r0, g0, b0, byte.MaxValue);
+					output[o++].SetConvertedChannels<TOutputColor, TOutputChannel, byte>(r0, g0, b0, byte.MaxValue);
 					c = y1 - 16;
 					byte b1 = ClampByte((298 * c + 516 * d + 128) >> 8);            // blue
 					byte g1 = ClampByte((298 * c - 100 * d - 208 * e + 128) >> 8);  // green
 					byte r1 = ClampByte((298 * c + 409 * e + 128) >> 8);            // red
-					output[o++].SetConvertedChannels<TOutput, TOutputArg, byte>(r1, g1, b1, byte.MaxValue);
+					output[o++].SetConvertedChannels<TOutputColor, TOutputChannel, byte>(r1, g1, b1, byte.MaxValue);
 				}
 			}
 

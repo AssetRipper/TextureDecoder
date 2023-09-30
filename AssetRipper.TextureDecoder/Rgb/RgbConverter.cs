@@ -487,39 +487,39 @@ namespace AssetRipper.TextureDecoder.Rgb
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-		public static int Convert<TSource, TSourceArg, TDestination, TDestinationArg>(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
-			where TSourceArg : unmanaged
-			where TSource : unmanaged, IColor<TSourceArg>
-			where TDestinationArg : unmanaged
-			where TDestination : unmanaged, IColor<TDestinationArg>
+		public static int Convert<TSourceColor, TSourceChannel, TDestinationColor, TDestinationChannel>(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+			where TSourceChannel : unmanaged
+			where TSourceColor : unmanaged, IColor<TSourceChannel>
+			where TDestinationChannel : unmanaged
+			where TDestinationColor : unmanaged, IColor<TDestinationChannel>
 		{
-			output = new byte[width * height * Unsafe.SizeOf<TDestination>()];
-			return Convert<TSource, TSourceArg, TDestination, TDestinationArg>(input, width, height, output);
+			output = new byte[width * height * Unsafe.SizeOf<TDestinationColor>()];
+			return Convert<TSourceColor, TSourceChannel, TDestinationColor, TDestinationChannel>(input, width, height, output);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-		public static int Convert<TSource, TSourceArg, TDestination, TDestinationArg>(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
-			where TSourceArg : unmanaged
-			where TSource : unmanaged, IColor<TSourceArg>
-			where TDestinationArg : unmanaged
-			where TDestination : unmanaged, IColor<TDestinationArg>
+		public static int Convert<TSourceColor, TSourceChannel, TDestinationColor, TDestinationChannel>(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+			where TSourceChannel : unmanaged
+			where TSourceColor : unmanaged, IColor<TSourceChannel>
+			where TDestinationChannel : unmanaged
+			where TDestinationColor : unmanaged, IColor<TDestinationChannel>
 		{
-			ReadOnlySpan<TSource> sourceSpan = MemoryMarshal.Cast<byte, TSource>(input).Slice(0, width * height);
-			Span<TDestination> destinationSpan = MemoryMarshal.Cast<byte, TDestination>(output).Slice(0, width * height);
-			Convert<TSource, TSourceArg, TDestination, TDestinationArg>(sourceSpan, destinationSpan);
-			return width * height * Unsafe.SizeOf<TSource>();
+			ReadOnlySpan<TSourceColor> sourceSpan = MemoryMarshal.Cast<byte, TSourceColor>(input).Slice(0, width * height);
+			Span<TDestinationColor> destinationSpan = MemoryMarshal.Cast<byte, TDestinationColor>(output).Slice(0, width * height);
+			Convert<TSourceColor, TSourceChannel, TDestinationColor, TDestinationChannel>(sourceSpan, destinationSpan);
+			return width * height * Unsafe.SizeOf<TSourceColor>();
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-		public static void Convert<TSource, TSourceArg, TDestination, TDestinationArg>(ReadOnlySpan<TSource> sourceSpan, Span<TDestination> destinationSpan)
-			where TSourceArg : unmanaged
-			where TSource : unmanaged, IColor<TSourceArg>
-			where TDestinationArg : unmanaged
-			where TDestination : unmanaged, IColor<TDestinationArg>
+		public static void Convert<TSourceColor, TSourceChannel, TDestinationColor, TDestinationChannel>(ReadOnlySpan<TSourceColor> sourceSpan, Span<TDestinationColor> destinationSpan)
+			where TSourceChannel : unmanaged
+			where TSourceColor : unmanaged, IColor<TSourceChannel>
+			where TDestinationChannel : unmanaged
+			where TDestinationColor : unmanaged, IColor<TDestinationChannel>
 		{
 			for (int i = 0; i < sourceSpan.Length; i++)
 			{
-				destinationSpan[i] = sourceSpan[i].Convert<TSource, TSourceArg, TDestination, TDestinationArg>();
+				destinationSpan[i] = sourceSpan[i].Convert<TSourceColor, TSourceChannel, TDestinationColor, TDestinationChannel>();
 			}
 		}
 

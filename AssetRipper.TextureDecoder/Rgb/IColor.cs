@@ -69,24 +69,24 @@
 	public static class ColorExtensions
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-		internal static void SetConvertedChannels<TThis, TThisArg, TSourceArg>(this ref TThis color, TSourceArg r, TSourceArg g, TSourceArg b, TSourceArg a)
-			where TThisArg : unmanaged
-			where TSourceArg : unmanaged
-			where TThis : unmanaged, IColor<TThisArg>
+		internal static void SetConvertedChannels<TThis, TThisChannel, TSourceChannel>(this ref TThis color, TSourceChannel r, TSourceChannel g, TSourceChannel b, TSourceChannel a)
+			where TThisChannel : unmanaged
+			where TSourceChannel : unmanaged
+			where TThis : unmanaged, IColor<TThisChannel>
 		{
 			color.SetChannels(
-				NumericConversion.Convert<TSourceArg, TThisArg>(r),
-				NumericConversion.Convert<TSourceArg, TThisArg>(g),
-				NumericConversion.Convert<TSourceArg, TThisArg>(b),
-				NumericConversion.Convert<TSourceArg, TThisArg>(a));
+				NumericConversion.Convert<TSourceChannel, TThisChannel>(r),
+				NumericConversion.Convert<TSourceChannel, TThisChannel>(g),
+				NumericConversion.Convert<TSourceChannel, TThisChannel>(b),
+				NumericConversion.Convert<TSourceChannel, TThisChannel>(a));
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-		public static TTarget Convert<TThis, TThisArg, TTarget, TTargetArg>(this TThis color)
-			where TThisArg : unmanaged
-			where TTargetArg : unmanaged
-			where TThis : unmanaged, IColor<TThisArg>
-			where TTarget : unmanaged, IColor<TTargetArg>
+		public static TTarget Convert<TThis, TThisChannel, TTarget, TTargetChannel>(this TThis color)
+			where TThisChannel : unmanaged
+			where TTargetChannel : unmanaged
+			where TThis : unmanaged, IColor<TThisChannel>
+			where TTarget : unmanaged, IColor<TTargetChannel>
 		{
 			if (typeof(TThis) == typeof(TTarget))
 			{
@@ -95,8 +95,8 @@
 			else
 			{
 				TTarget destination = default;
-				color.GetChannels(out TThisArg r, out TThisArg g, out TThisArg b, out TThisArg a);
-				destination.SetConvertedChannels<TTarget, TTargetArg, TThisArg>(r, g, b, a);
+				color.GetChannels(out TThisChannel r, out TThisChannel g, out TThisChannel b, out TThisChannel a);
+				destination.SetConvertedChannels<TTarget, TTargetChannel, TThisChannel>(r, g, b, a);
 				return destination;
 			}
 		}
