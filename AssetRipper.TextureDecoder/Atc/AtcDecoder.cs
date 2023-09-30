@@ -11,38 +11,26 @@ namespace AssetRipper.TextureDecoder.Atc
 			return DecompressAtcRgb4(input, width, height, output);
 		}
 
-		public unsafe static int DecompressAtcRgb4(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
-		{
-			fixed (byte* outputPtr = output)
-			{
-				return DecompressAtcRgb4(input, width, height, outputPtr);
-			}
-		}
-
-		private unsafe static int DecompressAtcRgb4(ReadOnlySpan<byte> input, int width, int height, byte* output)
+		public static int DecompressAtcRgb4(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
 			int clen_last = (width + 3) % 4 + 1;
-			uint* buf = stackalloc uint[16];
+			Span<uint> buf = stackalloc uint[16];
 			int inputOffset = 0;
 			for (int t = 0; t < bch; t++)
 			{
 				for (int s = 0; s < bcw; s++, inputOffset += 8)
 				{
-					DecodeAtcRgb4Block(input.Slice(inputOffset, 8), new Span<uint>(buf, 16));
+					DecodeAtcRgb4Block(input.Slice(inputOffset, 8), buf);
 					int clen = s < bcw - 1 ? 4 : clen_last;
-					uint* outputPtr = (uint*)(output + (t * 16 * width + s * 16));
-					uint* bufPtr = buf;
 					for (int i = 0, y = t * 4; i < 4 && y < height; i++, y++)
 					{
+						int outputOffset = t * 16 * width + s * 16 + i * width * sizeof(uint);
 						for (int j = 0; j < clen; j++)
 						{
-							outputPtr[j] = bufPtr[j];
+							BinaryPrimitives.WriteUInt32LittleEndian(output.Slice(outputOffset + j * sizeof(uint)), buf[j + 4 * i]);
 						}
-
-						outputPtr += width;
-						bufPtr += 4;
 					}
 				}
 			}
@@ -55,38 +43,26 @@ namespace AssetRipper.TextureDecoder.Atc
 			return DecompressAtcRgba8(input, width, height, output);
 		}
 
-		public unsafe static int DecompressAtcRgba8(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
-		{
-			fixed (byte* outputPtr = output)
-			{
-				return DecompressAtcRgba8(input, width, height, outputPtr);
-			}
-		}
-
-		private unsafe static int DecompressAtcRgba8(ReadOnlySpan<byte> input, int width, int height, byte* output)
+		public static int DecompressAtcRgba8(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
 			int clen_last = (width + 3) % 4 + 1;
-			uint* buf = stackalloc uint[16];
+			Span<uint> buf = stackalloc uint[16];
 			int inputOffset = 0;
 			for (int t = 0; t < bch; t++)
 			{
 				for (int s = 0; s < bcw; s++, inputOffset += 16)
 				{
-					DecodeAtcRgba8Block(input.Slice(inputOffset, 16), new Span<uint>(buf, 16));
+					DecodeAtcRgba8Block(input.Slice(inputOffset, 16), buf);
 					int clen = s < bcw - 1 ? 4 : clen_last;
-					uint* outputPtr = (uint*)(output + (t * 16 * width + s * 16));
-					uint* bufPtr = buf;
 					for (int i = 0, y = t * 4; i < 4 && y < height; i++, y++)
 					{
+						int outputOffset = t * 16 * width + s * 16 + i * width * sizeof(uint);
 						for (int j = 0; j < clen; j++)
 						{
-							outputPtr[j] = bufPtr[j];
+							BinaryPrimitives.WriteUInt32LittleEndian(output.Slice(outputOffset + j * sizeof(uint)), buf[j + 4 * i]);
 						}
-
-						outputPtr += width;
-						bufPtr += 4;
 					}
 				}
 			}
