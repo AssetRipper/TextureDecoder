@@ -55,11 +55,10 @@ public static class Color
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-	internal static void SetConvertedChannels<TThis, TThisChannel, TSourceColor, TSourceChannel>(this ref TThis color, TSourceColor rgb, TSourceChannel a)
+	internal static void SetConvertedChannels<TThis, TThisChannel, TSourceChannel>(this ref TThis color, ColorRGB<TSourceChannel> rgb, TSourceChannel a)
 		where TThisChannel : unmanaged
-		where TSourceChannel : unmanaged
+		where TSourceChannel : unmanaged, INumberBase<TSourceChannel>, IMinMaxValue<TSourceChannel>
 		where TThis : unmanaged, IColor<TThisChannel>
-		where TSourceColor : unmanaged, IColor<TSourceChannel>
 	{
 		color.SetChannels(
 			NumericConversion.Convert<TSourceChannel, TThisChannel>(rgb.R),

@@ -245,7 +245,7 @@ namespace AssetRipper.TextureDecoder.Dxt
 					uint d = ToUInt32(input, offset + 12);
 					for (int i = 0; i < 16; i++, d >>= 2)
 					{
-						buffer[i].SetConvertedChannels<TOutputColor, TOutputChannel, ColorRGB<byte>, byte>(colors[unchecked((int)(d & 3))], alphas[i]);
+						buffer[i].SetConvertedChannels<TOutputColor, TOutputChannel, byte>(colors[unchecked((int)(d & 3))], alphas[i]);
 					}
 
 					int clen = s < bcw - 1 ? 4 : clen_last;
@@ -391,7 +391,7 @@ namespace AssetRipper.TextureDecoder.Dxt
 					uint dc = ToUInt32(input, offset + 12);
 					for (int i = 0; i < 16; i++, da >>= 3, dc >>= 2)
 					{
-						buffer[i].SetConvertedChannels<TOutputColor, TOutputChannel, ColorRGB<byte>, byte>(colors[unchecked((int)(dc & 3))], alphas[unchecked((int)(da & 7))]);
+						buffer[i].SetConvertedChannels<TOutputColor, TOutputChannel, byte>(colors[unchecked((int)(dc & 3))], alphas[unchecked((int)(da & 7))]);
 					}
 
 					int clen = s < bcw - 1 ? 4 : clen_last;
