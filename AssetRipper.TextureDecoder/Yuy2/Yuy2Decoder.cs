@@ -14,7 +14,6 @@ namespace AssetRipper.TextureDecoder.Yuy2
 		/// <param name="height">Pixel height of the image.</param>
 		/// <param name="output">An output buffer of size 4 * width * height.</param>
 		/// <returns>Number of bytes read from <paramref name="input"/></returns>
-		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		public static int DecompressYUY2(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
 			return DecompressYUY2<ColorBGRA32, byte>(input, width, height, out output);
@@ -28,7 +27,6 @@ namespace AssetRipper.TextureDecoder.Yuy2
 		/// <param name="height">Pixel height of the image.</param>
 		/// <param name="output">An output buffer. Must be at least 4 * width * height.</param>
 		/// <returns>Number of bytes read from <paramref name="input"/></returns>
-		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		public static int DecompressYUY2(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			return DecompressYUY2<ColorBGRA32, byte>(input, width, height, output);
@@ -44,7 +42,6 @@ namespace AssetRipper.TextureDecoder.Yuy2
 		/// <param name="height">Pixel height of the image.</param>
 		/// <param name="output">An output buffer. Must be at least width * height * pixelSize.</param>
 		/// <returns>Number of bytes read from <paramref name="input"/></returns>
-		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		public static int DecompressYUY2<TOutputColor, TOutputChannel>(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 			where TOutputChannel : unmanaged
 			where TOutputColor : unmanaged, IColor<TOutputChannel>
@@ -63,7 +60,6 @@ namespace AssetRipper.TextureDecoder.Yuy2
 		/// <param name="height">Pixel height of the image.</param>
 		/// <param name="output">An output buffer. Must be at least width * height * pixelSize.</param>
 		/// <returns>Number of bytes read from <paramref name="input"/></returns>
-		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		public static int DecompressYUY2<TOutputColor, TOutputChannel>(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 			where TOutputChannel : unmanaged
 			where TOutputColor : unmanaged, IColor<TOutputChannel>
@@ -81,7 +77,6 @@ namespace AssetRipper.TextureDecoder.Yuy2
 		/// <param name="height">Pixel height of the image.</param>
 		/// <param name="output">An output buffer. Must be at least width * height.</param>
 		/// <returns>Number of bytes read from <paramref name="input"/></returns>
-		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		public static int DecompressYUY2<TOutputColor, TOutputChannel>(ReadOnlySpan<byte> input, int width, int height, Span<TOutputColor> output)
 			where TOutputChannel : unmanaged
 			where TOutputColor : unmanaged, IColor<TOutputChannel>
