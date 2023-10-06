@@ -164,6 +164,8 @@ internal static partial class Program
 			WriteProperty(writer, hasAlpha, typeName, 'A', maxValue);
 			writer.WriteLineNoTabs();
 
+			WriteConstructor(writer, name, hasRed, hasGreen, hasBlue, hasAlpha, typeName);
+			writer.WriteLineNoTabs();
 			WriteGetChannels(writer, typeName);
 			writer.WriteLineNoTabs();
 			WriteSetChannels(writer, typeName, hasRed, hasGreen, hasBlue, hasAlpha);
@@ -171,6 +173,59 @@ internal static partial class Program
 			WriteColorBaseStaticProperties(writer, hasRed, hasGreen, hasBlue, hasAlpha, true, typeName);
 			writer.WriteLineNoTabs();
 			WriteToString(writer, hasRed, hasGreen, hasBlue, hasAlpha);
+		}
+	}
+
+	private static void WriteConstructor(IndentedTextWriter writer, string declaringTypeName, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha, string channelTypeName)
+	{
+		writer.Write($"public {declaringTypeName}(");
+		if (hasRed)
+		{
+			writer.Write($"{channelTypeName} r");
+			if (hasGreen || hasBlue || hasAlpha)
+			{
+				writer.Write(", ");
+			}
+		}
+		if (hasGreen)
+		{
+			writer.Write($"{channelTypeName} g");
+			if (hasBlue || hasAlpha)
+			{
+				writer.Write(", ");
+			}
+		}
+		if (hasBlue)
+		{
+			writer.Write($"{channelTypeName} b");
+			if (hasAlpha)
+			{
+				writer.Write(", ");
+			}
+		}
+		if (hasAlpha)
+		{
+			writer.Write($"{channelTypeName} a");
+		}
+		writer.WriteLine(")");
+		using (new CurlyBrackets(writer))
+		{
+			if (hasRed)
+			{
+				writer.WriteLine("R = r;");
+			}
+			if (hasGreen)
+			{
+				writer.WriteLine("G = g;");
+			}
+			if (hasBlue)
+			{
+				writer.WriteLine("B = b;");
+			}
+			if (hasAlpha)
+			{
+				writer.WriteLine("A = a;");
+			}
 		}
 	}
 

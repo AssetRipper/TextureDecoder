@@ -12,6 +12,14 @@ public partial struct ColorRGBA<T> : IColor<T> where T : unmanaged
 
 	public T A { get; set; }
 
+	public ColorRGBA(T r, T g, T b, T a)
+	{
+		R = r;
+		G = g;
+		B = b;
+		A = a;
+	}
+
 	public readonly void GetChannels(out T r, out T g, out T b, out T a)
 	{
 		r = R;

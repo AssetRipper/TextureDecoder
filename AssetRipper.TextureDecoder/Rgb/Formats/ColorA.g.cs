@@ -24,6 +24,11 @@ public partial struct ColorA<T> : IColor<T> where T : unmanaged, INumberBase<T>,
 
 	public T A { get; set; }
 
+	public ColorA(T a)
+	{
+		A = a;
+	}
+
 	public readonly void GetChannels(out T r, out T g, out T b, out T a)
 	{
 		r = R;

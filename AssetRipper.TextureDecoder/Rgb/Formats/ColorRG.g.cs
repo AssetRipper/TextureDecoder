@@ -20,6 +20,12 @@ public partial struct ColorRG<T> : IColor<T> where T : unmanaged, INumberBase<T>
 		set { }
 	}
 
+	public ColorRG(T r, T g)
+	{
+		R = r;
+		G = g;
+	}
+
 	public readonly void GetChannels(out T r, out T g, out T b, out T a)
 	{
 		r = R;
