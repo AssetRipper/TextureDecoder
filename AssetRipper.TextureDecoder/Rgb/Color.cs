@@ -1,4 +1,6 @@
-﻿namespace AssetRipper.TextureDecoder.Rgb;
+﻿using AssetRipper.TextureDecoder.Rgb.Formats;
+
+namespace AssetRipper.TextureDecoder.Rgb;
 
 public static class Color
 {
@@ -49,6 +51,20 @@ public static class Color
 			NumericConversion.Convert<TSourceChannel, TThisChannel>(r),
 			NumericConversion.Convert<TSourceChannel, TThisChannel>(g),
 			NumericConversion.Convert<TSourceChannel, TThisChannel>(b),
+			NumericConversion.Convert<TSourceChannel, TThisChannel>(a));
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+	internal static void SetConvertedChannels<TThis, TThisChannel, TSourceColor, TSourceChannel>(this ref TThis color, TSourceColor rgb, TSourceChannel a)
+		where TThisChannel : unmanaged
+		where TSourceChannel : unmanaged
+		where TThis : unmanaged, IColor<TThisChannel>
+		where TSourceColor : unmanaged, IColor<TSourceChannel>
+	{
+		color.SetChannels(
+			NumericConversion.Convert<TSourceChannel, TThisChannel>(rgb.R),
+			NumericConversion.Convert<TSourceChannel, TThisChannel>(rgb.G),
+			NumericConversion.Convert<TSourceChannel, TThisChannel>(rgb.B),
 			NumericConversion.Convert<TSourceChannel, TThisChannel>(a));
 	}
 
