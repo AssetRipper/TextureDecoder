@@ -35,8 +35,8 @@ namespace AssetRipper.TextureDecoder.Yuy2
 		/// <summary>
 		/// Decompress a YUY2 image
 		/// </summary>
-		/// <typeparam name="TOutputColor"></typeparam>
-		/// <typeparam name="TOutputChannel"></typeparam>
+		/// <typeparam name="TOutputColor">The <see cref="IColor{T}"/> type used for each pixel.</typeparam>
+		/// <typeparam name="TOutputChannel">The channel type used in <typeparamref name="TOutputColor"/>.</typeparam>
 		/// <param name="input">Input buffer containing the compressed image.</param>
 		/// <param name="width">Pixel width of the image.</param>
 		/// <param name="height">Pixel height of the image.</param>
@@ -53,8 +53,8 @@ namespace AssetRipper.TextureDecoder.Yuy2
 		/// <summary>
 		/// Decompress a YUY2 image
 		/// </summary>
-		/// <typeparam name="TOutputColor"></typeparam>
-		/// <typeparam name="TOutputChannel"></typeparam>
+		/// <typeparam name="TOutputColor">The <see cref="IColor{T}"/> type used for each pixel.</typeparam>
+		/// <typeparam name="TOutputChannel">The channel type used in <typeparamref name="TOutputColor"/>.</typeparam>
 		/// <param name="input">Input buffer containing the compressed image.</param>
 		/// <param name="width">Pixel width of the image.</param>
 		/// <param name="height">Pixel height of the image.</param>
@@ -70,8 +70,8 @@ namespace AssetRipper.TextureDecoder.Yuy2
 		/// <summary>
 		/// Decompress a YUY2 image
 		/// </summary>
-		/// <typeparam name="TOutputColor"></typeparam>
-		/// <typeparam name="TOutputChannel"></typeparam>
+		/// <typeparam name="TOutputColor">The <see cref="IColor{T}"/> type used for each pixel.</typeparam>
+		/// <typeparam name="TOutputChannel">The channel type used in <typeparamref name="TOutputColor"/>.</typeparam>
 		/// <param name="input">Input buffer containing the compressed image.</param>
 		/// <param name="width">Pixel width of the image.</param>
 		/// <param name="height">Pixel height of the image.</param>

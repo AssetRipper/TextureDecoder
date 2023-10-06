@@ -1,3 +1,5 @@
+using AssetRipper.TextureDecoder.Rgb;
+using AssetRipper.TextureDecoder.Rgb.Formats;
 using System.Buffers.Binary;
 using System.Runtime.InteropServices;
 
@@ -15,8 +17,7 @@ namespace AssetRipper.TextureDecoder.Dxt
 		/// <returns>Number of bytes read from <paramref name="input"/></returns>
 		public static int DecompressDXT1(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 		{
-			output = new byte[width * height * sizeof(uint)];
-			return DecompressDXT1(input, width, height, output);
+			return DecompressDXT1<ColorBGRA32, byte>(input, width, height, out output);
 		}
 
 		/// <summary>
@@ -29,45 +30,97 @@ namespace AssetRipper.TextureDecoder.Dxt
 		/// <returns>Number of bytes read from <paramref name="input"/></returns>
 		public static int DecompressDXT1(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
-			ThrowHelper.ThrowIfNotEnoughSpace(output, width, height);
-			
+			return DecompressDXT1<ColorBGRA32, byte>(input, width, height, output);
+		}
+
+		/// <summary>
+		/// Decompress a DXT1 image
+		/// </summary>
+		/// <typeparam name="TOutputColor">The <see cref="IColor{T}"/> type used for each pixel.</typeparam>
+		/// <typeparam name="TOutputChannel">The channel type used in <typeparamref name="TOutputColor"/>.</typeparam>
+		/// <param name="input">Input buffer containing the compressed image.</param>
+		/// <param name="width">Pixel width of the image.</param>
+		/// <param name="height">Pixel height of the image.</param>
+		/// <param name="output">An output buffer. Must be at least width * height * pixelSize.</param>
+		/// <returns>Number of bytes read from <paramref name="input"/></returns>
+		public static int DecompressDXT1<TOutputColor, TOutputChannel>(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+			where TOutputChannel : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannel>
+		{
+			output = new byte[width * height * Unsafe.SizeOf<TOutputColor>()];
+			return DecompressDXT1<TOutputColor, TOutputChannel>(input, width, height, output);
+		}
+
+		/// <summary>
+		/// Decompress a DXT1 image
+		/// </summary>
+		/// <typeparam name="TOutputColor">The <see cref="IColor{T}"/> type used for each pixel.</typeparam>
+		/// <typeparam name="TOutputChannel">The channel type used in <typeparamref name="TOutputColor"/>.</typeparam>
+		/// <param name="input">Input buffer containing the compressed image.</param>
+		/// <param name="width">Pixel width of the image.</param>
+		/// <param name="height">Pixel height of the image.</param>
+		/// <param name="output">An output buffer. Must be at least width * height * pixelSize.</param>
+		/// <returns>Number of bytes read from <paramref name="input"/></returns>
+		public static int DecompressDXT1<TOutputColor, TOutputChannel>(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+			where TOutputChannel : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannel>
+		{
+			return DecompressDXT1<TOutputColor, TOutputChannel>(input, width, height, MemoryMarshal.Cast<byte, TOutputColor>(output));
+		}
+
+		/// <summary>
+		/// Decompress a DXT1 image
+		/// </summary>
+		/// <typeparam name="TOutputColor">The <see cref="IColor{T}"/> type used for each pixel.</typeparam>
+		/// <typeparam name="TOutputChannel">The channel type used in <typeparamref name="TOutputColor"/>.</typeparam>
+		/// <param name="input">Input buffer containing the compressed image.</param>
+		/// <param name="width">Pixel width of the image.</param>
+		/// <param name="height">Pixel height of the image.</param>
+		/// <param name="output">An output buffer. Must be at least width * height * pixelSize.</param>
+		/// <returns>Number of bytes read from <paramref name="input"/></returns>
+		public static int DecompressDXT1<TOutputColor, TOutputChannel>(ReadOnlySpan<byte> input, int width, int height, Span<TOutputColor> output)
+			where TOutputChannel : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannel>
+		{
+			ThrowHelper.ThrowIfNotEnoughSpace(output.Length, width * height);
+
 			int offset = 0;
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
 			int clen_last = (width + 3) % 4 + 1;
-			uint[] buffer = new uint[16];
-			int[] colors = new int[4];
+			Span<TOutputColor> buffer = stackalloc TOutputColor[16];
+			Span<TOutputColor> colors = stackalloc TOutputColor[4];
 			for (int t = 0; t < bch; t++)
 			{
 				for (int s = 0; s < bcw; s++, offset += 8)
 				{
 					int q0 = input[offset + 0] | input[offset + 1] << 8;
 					int q1 = input[offset + 2] | input[offset + 3] << 8;
-					Rgb565(q0, out int r0, out int g0, out int b0);
-					Rgb565(q1, out int r1, out int g1, out int b1);
-					colors[0] = Color(r0, g0, b0, 255);
-					colors[1] = Color(r1, g1, b1, 255);
+					Rgb565(q0, out byte r0, out byte g0, out byte b0);
+					Rgb565(q1, out byte r1, out byte g1, out byte b1);
+					colors[0].SetConvertedChannels<TOutputColor, TOutputChannel, byte>(r0, g0, b0);
+					colors[1].SetConvertedChannels<TOutputColor, TOutputChannel, byte>(r1, g1, b1);
 					if (q0 > q1)
 					{
-						colors[2] = Color((r0 * 2 + r1) / 3, (g0 * 2 + g1) / 3, (b0 * 2 + b1) / 3, 255);
-						colors[3] = Color((r0 + r1 * 2) / 3, (g0 + g1 * 2) / 3, (b0 + b1 * 2) / 3, 255);
+						colors[2].SetConvertedChannels<TOutputColor, TOutputChannel, byte>((byte)((r0 * 2 + r1) / 3), (byte)((g0 * 2 + g1) / 3), (byte)((b0 * 2 + b1) / 3));
+						colors[3].SetConvertedChannels<TOutputColor, TOutputChannel, byte>((byte)((r0 + r1 * 2) / 3), (byte)((g0 + g1 * 2) / 3), (byte)((b0 + b1 * 2) / 3));
 					}
 					else
 					{
-						colors[2] = Color((r0 + r1) / 2, (g0 + g1) / 2, (b0 + b1) / 2, 255);
+						colors[2].SetConvertedChannels<TOutputColor, TOutputChannel, byte>((byte)((r0 + r1) / 2), (byte)((g0 + g1) / 2), (byte)((b0 + b1) / 2));
+						colors[3].SetBlack<TOutputColor, TOutputChannel>();
 					}
 
 					uint d = ToUInt32(input, offset + 4);
 					for (int i = 0; i < 16; i++, d >>= 2)
 					{
-						buffer[i] = unchecked((uint)colors[d & 3]);
+						buffer[i] = colors[unchecked((int)(d & 3))];
 					}
 
-					int clen = (s < bcw - 1 ? 4 : clen_last) * 4;
+					int clen = s < bcw - 1 ? 4 : clen_last;
 					for (int i = 0, y = t * 4; i < 4 && y < height; i++, y++)
 					{
-						ReadOnlySpan<byte> bufferSpan = MemoryMarshal.Cast<uint, byte>(new ReadOnlySpan<uint>(buffer));
-						BlockCopy(bufferSpan, i * 4 * 4, output, (y * width + s * 4) * 4, clen);
+						BlockCopy(buffer, i * 4, output, y * width + s * 4, clen);
 					}
 				}
 			}
@@ -123,8 +176,8 @@ namespace AssetRipper.TextureDecoder.Dxt
 
 					int q0 = input[offset + 8] | input[offset + 9] << 8;
 					int q1 = input[offset + 10] | input[offset + 11] << 8;
-					Rgb565(q0, out int r0, out int g0, out int b0);
-					Rgb565(q1, out int r1, out int g1, out int b1);
+					Rgb565(q0, out byte r0, out byte g0, out byte b0);
+					Rgb565(q1, out byte r1, out byte g1, out byte b1);
 					colors[0] = Color(r0, g0, b0, 0);
 					colors[1] = Color(r1, g1, b1, 0);
 					if (q0 > q1)
@@ -218,8 +271,8 @@ namespace AssetRipper.TextureDecoder.Dxt
 
 					int q0 = input[offset + 8] | input[offset + 9] << 8;
 					int q1 = input[offset + 10] | input[offset + 11] << 8;
-					Rgb565(q0, out int r0, out int g0, out int b0);
-					Rgb565(q1, out int r1, out int g1, out int b1);
+					Rgb565(q0, out byte r0, out byte g0, out byte b0);
+					Rgb565(q1, out byte r1, out byte g1, out byte b1);
 					colors[0] = Color(r0, g0, b0, 0);
 					colors[1] = Color(r1, g1, b1, 0);
 					if (q0 > q1)
@@ -252,32 +305,32 @@ namespace AssetRipper.TextureDecoder.Dxt
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-		private static void Rgb565(int c, out int r, out int g, out int b)
+		private static void Rgb565(int c, out byte r, out byte g, out byte b)
 		{
-			r = (c & 0xf800) >> 8;
-			g = (c & 0x07e0) >> 3;
-			b = (c & 0x001f) << 3;
-			r |= r >> 5;
-			g |= g >> 6;
-			b |= b >> 5;
+			r = unchecked((byte)((c & 0xf800) >> 8));
+			g = unchecked((byte)((c & 0x07e0) >> 3));
+			b = unchecked((byte)((c & 0x001f) << 3));
+			r |= (byte)(r >> 5);
+			g |= (byte)(g >> 6);
+			b |= (byte)(b >> 5);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static int Color(int r, int g, int b, int a)
 		{
-			return r << 16 | g << 8 | b | a << 24;
+			return (byte)r << 16 | (byte)g << 8 | (byte)b | (byte)a << 24;
 		}
 
 		/// <summary>
 		/// Based on <see cref="Buffer.BlockCopy(Array, int, Array, int, int)"/>
 		/// </summary>
 		/// <param name="source">The source buffer.</param>
-		/// <param name="sourceOffset">The zero-based byte offset into source.</param>
+		/// <param name="sourceOffset">The zero-based offset into source.</param>
 		/// <param name="destination">The destination buffer.</param>
-		/// <param name="destinationOffset">The zero-based byte offset into destination.</param>
-		/// <param name="count">The number of bytes to copy.</param>
+		/// <param name="destinationOffset">The zero-based offset into destination.</param>
+		/// <param name="count">The number of items to copy.</param>
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-		private static void BlockCopy(ReadOnlySpan<byte> source, int sourceOffset, Span<byte> destination, int destinationOffset, int count)
+		private static void BlockCopy<T>(ReadOnlySpan<T> source, int sourceOffset, Span<T> destination, int destinationOffset, int count)
 		{
 			source.Slice(sourceOffset, count).CopyTo(destination.Slice(destinationOffset));
 		}

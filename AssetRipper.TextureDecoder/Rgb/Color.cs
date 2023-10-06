@@ -3,6 +3,30 @@
 public static class Color
 {
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+	internal static void SetBlack<TThis, TThisChannel>(this ref TThis color)
+		where TThisChannel : unmanaged
+		where TThis : unmanaged, IColor<TThisChannel>
+	{
+		color.SetChannels(
+			NumericConversion.GetMinimumValue<TThisChannel>(),
+			NumericConversion.GetMinimumValue<TThisChannel>(),
+			NumericConversion.GetMinimumValue<TThisChannel>(),
+			NumericConversion.GetMaximumValue<TThisChannel>());
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+	internal static void SetWhite<TThis, TThisChannel>(this ref TThis color)
+		where TThisChannel : unmanaged
+		where TThis : unmanaged, IColor<TThisChannel>
+	{
+		color.SetChannels(
+			NumericConversion.GetMaximumValue<TThisChannel>(),
+			NumericConversion.GetMaximumValue<TThisChannel>(),
+			NumericConversion.GetMaximumValue<TThisChannel>(),
+			NumericConversion.GetMaximumValue<TThisChannel>());
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 	internal static void SetConvertedChannels<TThis, TThisChannel, TSourceChannel>(this ref TThis color, TSourceChannel r, TSourceChannel g, TSourceChannel b)
 		where TThisChannel : unmanaged
 		where TSourceChannel : unmanaged
