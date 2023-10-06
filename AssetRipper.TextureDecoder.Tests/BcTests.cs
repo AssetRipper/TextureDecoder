@@ -79,40 +79,20 @@ namespace AssetRipper.TextureDecoder.Tests
 			Assert.That(bytesRead, Is.EqualTo(data.Length));
 		}
 
-		[Test]
-		public void DecompressBC6HFastTest()
+		[TestCase("test.bc6h_fast")]
+		[TestCase("test.bc6h_normal")]
+		[TestCase("test.bc6h_best")]
+		public void DecompressBC6HTest(string fileName)
 		{
-			AssertCorrectBC6HDecompression(TestFileFolders.BcTestFiles + "test.bc6h_fast", 512, 512, false);
+			AssertCorrectBC6HDecompression(TestFileFolders.BcTestFiles + fileName, 512, 512, false);
 		}
 
-		[Test]
-		public void DecompressBC6HNormalTest()
+		[TestCase("test.bc7_fast")]
+		[TestCase("test.bc7_normal")]
+		[TestCase("test.bc7_best")]
+		public void DecompressBC7Test(string fileName)
 		{
-			AssertCorrectBC6HDecompression(TestFileFolders.BcTestFiles + "test.bc6h_normal", 512, 512, false);
-		}
-
-		[Test]
-		public void DecompressBC6HBestTest()
-		{
-			AssertCorrectBC6HDecompression(TestFileFolders.BcTestFiles + "test.bc6h_best", 512, 512, false);
-		}
-
-		[Test]
-		public void DecompressBC7FastTest()
-		{
-			AssertCorrectBC7Decompression(TestFileFolders.BcTestFiles + "test.bc7_fast", 512, 512);
-		}
-
-		[Test]
-		public void DecompressBC7NormalTest()
-		{
-			AssertCorrectBC7Decompression(TestFileFolders.BcTestFiles + "test.bc7_normal", 512, 512);
-		}
-
-		[Test]
-		public void DecompressBC7BestTest()
-		{
-			AssertCorrectBC7Decompression(TestFileFolders.BcTestFiles + "test.bc7_best", 512, 512);
+			AssertCorrectBC7Decompression(TestFileFolders.BcTestFiles + fileName, 512, 512);
 		}
 
 		private static void AssertCorrectBC6HDecompression(string path, int width, int height, bool isSigned)
