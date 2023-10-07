@@ -1,7 +1,6 @@
 using AssetRipper.TextureDecoder.Rgb;
 using AssetRipper.TextureDecoder.Rgb.Formats;
 using System.Buffers.Binary;
-using System.Runtime.InteropServices;
 
 namespace AssetRipper.TextureDecoder.Dxt
 {

@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
-namespace AssetRipper.TextureDecoder.Rgb;
+﻿namespace AssetRipper.TextureDecoder.Rgb;
 public static partial class NumericConversion
 {
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]

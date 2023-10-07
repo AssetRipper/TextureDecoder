@@ -1,6 +1,5 @@
 using AssetRipper.TextureDecoder.Rgb;
 using AssetRipper.TextureDecoder.Rgb.Formats;
-using System.Runtime.InteropServices;
 
 namespace AssetRipper.TextureDecoder.Yuy2
 {

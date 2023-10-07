@@ -1,5 +1,3 @@
-using System.Runtime.InteropServices;
-
 namespace AssetRipper.TextureDecoder.Etc
 {
 	public static class EtcDecoder

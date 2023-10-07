@@ -1,8 +1,6 @@
 //#define DISABLE_TWINDDLING_ROUTINE
 #define ASSUME_IMAGE_TILING
 
-using System.Runtime.InteropServices;
-
 namespace AssetRipper.TextureDecoder.Pvrtc
 {
 	public static partial class PvrtcDecoder
