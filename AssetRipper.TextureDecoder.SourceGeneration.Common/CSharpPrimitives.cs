@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace AssetRipper.TextureDecoder.SourceGeneration.Common;
 
@@ -13,12 +14,15 @@ public static class CSharpPrimitives
 		{ typeof(ushort), new Data<ushort>() },
 		{ typeof(int), new Data<int>() },
 		{ typeof(uint), new Data<uint>() },
+		{ typeof(nint), new Data<nint>() },
+		{ typeof(nuint), new Data<nuint>() },
 		{ typeof(long), new Data<long>() },
 		{ typeof(ulong), new Data<ulong>() },
 		{ typeof(Int128), new Data<Int128>() },
 		{ typeof(UInt128), new Data<UInt128>() },
 		{ typeof(Half), new Data<Half>() },
 		{ typeof(float), new Data<float>() },
+		{ typeof(NFloat), new Data<NFloat>() },
 		{ typeof(double), new Data<double>() },
 		{ typeof(decimal), new Data<decimal>() },
 	};
@@ -31,14 +35,42 @@ public static class CSharpPrimitives
 
 	public static Data FirstData => List[0];
 
+	public static bool HasPointerSize(Type type, [NotNullWhen(true)] out Type? bit32Type, [NotNullWhen(true)] out Type? bit64Type)
+	{
+		if (type == typeof(nint))
+		{
+			bit32Type = typeof(int);
+			bit64Type = typeof(long);
+			return true;
+		}
+		else if (type == typeof(nuint))
+		{
+			bit32Type = typeof(uint);
+			bit64Type = typeof(ulong);
+			return true;
+		}
+		else if (type == typeof(NFloat))
+		{
+			bit32Type = typeof(float);
+			bit64Type = typeof(double);
+			return true;
+		}
+		else
+		{
+			bit32Type = null;
+			bit64Type = null;
+			return false;
+		}
+	}
+
 	public static bool IsFloatingPoint(Type type)
 	{
-		return type == typeof(Half) || type == typeof(float) || type == typeof(double) || type == typeof(decimal);
+		return type == typeof(Half) || type == typeof(float) || type == typeof(NFloat) || type == typeof(double) || type == typeof(decimal);
 	}
 
 	public static bool IsUnsignedInteger(Type type)
 	{
-		return type == typeof(byte) || type == typeof(ushort) || type == typeof(uint) || type == typeof(ulong) || type == typeof(UInt128);
+		return type == typeof(byte) || type == typeof(ushort) || type == typeof(uint) || type == typeof(nuint) || type == typeof(ulong) || type == typeof(UInt128);
 	}
 
 	public static bool IsSignedInteger(Type type, [NotNullWhen(true)] out Type? unsignedType)
@@ -54,6 +86,10 @@ public static class CSharpPrimitives
 		else if (type == typeof(int))
 		{
 			unsignedType = typeof(uint);
+		}
+		else if (type == typeof(nint))
+		{
+			unsignedType = typeof(nuint);
 		}
 		else if (type == typeof(long))
 		{
@@ -113,6 +149,14 @@ public static class CSharpPrimitives
 		{
 			return "uint";
 		}
+		else if (type == typeof(nint))
+		{
+			return "nint";
+		}
+		else if (type == typeof(nuint))
+		{
+			return "nuint";
+		}
 		else if (type == typeof(long))
 		{
 			return "long";
@@ -157,6 +201,21 @@ public static class CSharpPrimitives
 		public string TypeName => Type.Name;
 		public string LangName => GetLangName(Type);
 		public bool CanBeConstant => CanBeConstant(Type);
+		public bool HasPointerSize([NotNullWhen(true)] out Data? bit32Data, [NotNullWhen(true)] out Data? bit64Data)
+		{
+			if (CSharpPrimitives.HasPointerSize(Type, out Type? bit32Type, out Type? bit64Type))
+			{
+				bit32Data = Dictionary[bit32Type];
+				bit64Data = Dictionary[bit64Type];
+				return true;
+			}
+			else
+			{
+				bit32Data = null;
+				bit64Data = null;
+				return false;
+			}
+		}
 		public bool IsFloatingPoint => IsFloatingPoint(Type);
 		public bool IsUnsignedInteger => IsUnsignedInteger(Type);
 		public bool IsSignedInteger([NotNullWhen(true)] out Data? unsignedData)
@@ -182,6 +241,19 @@ public static class CSharpPrimitives
 	{
 		public override Type Type => typeof(T);
 
-		public override int Size => Unsafe.SizeOf<T>();
+		public override int Size
+		{
+			get
+			{
+				if (CSharpPrimitives.HasPointerSize(Type, out _, out _))
+				{
+					return 6;//arbitrary value between 4 and 8
+				}
+				else
+				{
+					return Unsafe.SizeOf<T>();
+				}
+			}
+		}
 	}
 }

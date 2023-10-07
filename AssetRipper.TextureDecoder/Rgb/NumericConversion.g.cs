@@ -35,6 +35,14 @@ static partial class NumericConversion
 		{
 			return ConvertUInt32<TTo>(Unsafe.As<TFrom, uint>(ref value));
 		}
+		else if (typeof(TFrom) == typeof(nint))
+		{
+			return ConvertIntPtr<TTo>(Unsafe.As<TFrom, nint>(ref value));
+		}
+		else if (typeof(TFrom) == typeof(nuint))
+		{
+			return ConvertUIntPtr<TTo>(Unsafe.As<TFrom, nuint>(ref value));
+		}
 		else if (typeof(TFrom) == typeof(long))
 		{
 			return ConvertInt64<TTo>(Unsafe.As<TFrom, long>(ref value));
@@ -58,6 +66,10 @@ static partial class NumericConversion
 		else if (typeof(TFrom) == typeof(float))
 		{
 			return ConvertSingle<TTo>(Unsafe.As<TFrom, float>(ref value));
+		}
+		else if (typeof(TFrom) == typeof(NFloat))
+		{
+			return ConvertNFloat<TTo>(Unsafe.As<TFrom, NFloat>(ref value));
 		}
 		else if (typeof(TFrom) == typeof(double))
 		{
@@ -120,6 +132,32 @@ static partial class NumericConversion
 				return Unsafe.As<uint, TTo>(ref converted);
 			}
 		}
+		else if (typeof(TTo) == typeof(nint))
+		{
+			if (IntPtr.Size == sizeof(int))
+			{
+				nint converted = (nint)ConvertByte<int>(value);
+				return Unsafe.As<nint, TTo>(ref converted);
+			}
+			else
+			{
+				nint converted = (nint)ConvertByte<long>(value);
+				return Unsafe.As<nint, TTo>(ref converted);
+			}
+		}
+		else if (typeof(TTo) == typeof(nuint))
+		{
+			if (IntPtr.Size == sizeof(int))
+			{
+				nuint converted = (nuint)ConvertByte<uint>(value);
+				return Unsafe.As<nuint, TTo>(ref converted);
+			}
+			else
+			{
+				nuint converted = (nuint)ConvertByte<ulong>(value);
+				return Unsafe.As<nuint, TTo>(ref converted);
+			}
+		}
 		else if (typeof(TTo) == typeof(long))
 		{
 			long converted = ChangeSign(ConvertByte<ulong>(value));
@@ -159,6 +197,19 @@ static partial class NumericConversion
 		{
 			float converted = (float)value / (float)byte.MaxValue;
 			return Unsafe.As<float, TTo>(ref converted);
+		}
+		else if (typeof(TTo) == typeof(NFloat))
+		{
+			if (IntPtr.Size == sizeof(int))
+			{
+				NFloat converted = (NFloat)ConvertByte<float>(value);
+				return Unsafe.As<NFloat, TTo>(ref converted);
+			}
+			else
+			{
+				NFloat converted = (NFloat)ConvertByte<double>(value);
+				return Unsafe.As<NFloat, TTo>(ref converted);
+			}
 		}
 		else if (typeof(TTo) == typeof(double))
 		{
@@ -222,6 +273,32 @@ static partial class NumericConversion
 				return Unsafe.As<uint, TTo>(ref converted);
 			}
 		}
+		else if (typeof(TTo) == typeof(nint))
+		{
+			if (IntPtr.Size == sizeof(int))
+			{
+				nint converted = (nint)ConvertUInt16<int>(value);
+				return Unsafe.As<nint, TTo>(ref converted);
+			}
+			else
+			{
+				nint converted = (nint)ConvertUInt16<long>(value);
+				return Unsafe.As<nint, TTo>(ref converted);
+			}
+		}
+		else if (typeof(TTo) == typeof(nuint))
+		{
+			if (IntPtr.Size == sizeof(int))
+			{
+				nuint converted = (nuint)ConvertUInt16<uint>(value);
+				return Unsafe.As<nuint, TTo>(ref converted);
+			}
+			else
+			{
+				nuint converted = (nuint)ConvertUInt16<ulong>(value);
+				return Unsafe.As<nuint, TTo>(ref converted);
+			}
+		}
 		else if (typeof(TTo) == typeof(long))
 		{
 			long converted = ChangeSign(ConvertUInt16<ulong>(value));
@@ -261,6 +338,19 @@ static partial class NumericConversion
 		{
 			float converted = (float)value / (float)ushort.MaxValue;
 			return Unsafe.As<float, TTo>(ref converted);
+		}
+		else if (typeof(TTo) == typeof(NFloat))
+		{
+			if (IntPtr.Size == sizeof(int))
+			{
+				NFloat converted = (NFloat)ConvertUInt16<float>(value);
+				return Unsafe.As<NFloat, TTo>(ref converted);
+			}
+			else
+			{
+				NFloat converted = (NFloat)ConvertUInt16<double>(value);
+				return Unsafe.As<NFloat, TTo>(ref converted);
+			}
 		}
 		else if (typeof(TTo) == typeof(double))
 		{
@@ -327,6 +417,32 @@ static partial class NumericConversion
 		{
 			return Unsafe.As<uint, TTo>(ref value);
 		}
+		else if (typeof(TTo) == typeof(nint))
+		{
+			if (IntPtr.Size == sizeof(int))
+			{
+				nint converted = (nint)ConvertUInt32<int>(value);
+				return Unsafe.As<nint, TTo>(ref converted);
+			}
+			else
+			{
+				nint converted = (nint)ConvertUInt32<long>(value);
+				return Unsafe.As<nint, TTo>(ref converted);
+			}
+		}
+		else if (typeof(TTo) == typeof(nuint))
+		{
+			if (IntPtr.Size == sizeof(int))
+			{
+				nuint converted = (nuint)ConvertUInt32<uint>(value);
+				return Unsafe.As<nuint, TTo>(ref converted);
+			}
+			else
+			{
+				nuint converted = (nuint)ConvertUInt32<ulong>(value);
+				return Unsafe.As<nuint, TTo>(ref converted);
+			}
+		}
 		else if (typeof(TTo) == typeof(long))
 		{
 			long converted = ChangeSign(ConvertUInt32<ulong>(value));
@@ -367,6 +483,19 @@ static partial class NumericConversion
 			float converted = (float)value / (float)uint.MaxValue;
 			return Unsafe.As<float, TTo>(ref converted);
 		}
+		else if (typeof(TTo) == typeof(NFloat))
+		{
+			if (IntPtr.Size == sizeof(int))
+			{
+				NFloat converted = (NFloat)ConvertUInt32<float>(value);
+				return Unsafe.As<NFloat, TTo>(ref converted);
+			}
+			else
+			{
+				NFloat converted = (NFloat)ConvertUInt32<double>(value);
+				return Unsafe.As<NFloat, TTo>(ref converted);
+			}
+		}
 		else if (typeof(TTo) == typeof(double))
 		{
 			double converted = (double)value / (double)uint.MaxValue;
@@ -380,6 +509,32 @@ static partial class NumericConversion
 		else
 		{
 			return ThrowOrReturnDefault<TTo>();
+		}
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+	private static TTo ConvertIntPtr<TTo>(nint value) where TTo : unmanaged
+	{
+		if (IntPtr.Size == sizeof(int))
+		{
+			return ConvertInt32<TTo>((int)value);
+		}
+		else
+		{
+			return ConvertInt64<TTo>((long)value);
+		}
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+	private static TTo ConvertUIntPtr<TTo>(nuint value) where TTo : unmanaged
+	{
+		if (IntPtr.Size == sizeof(int))
+		{
+			return ConvertUInt32<TTo>((uint)value);
+		}
+		else
+		{
+			return ConvertUInt64<TTo>((ulong)value);
 		}
 	}
 
@@ -438,6 +593,32 @@ static partial class NumericConversion
 				return Unsafe.As<uint, TTo>(ref converted);
 			}
 		}
+		else if (typeof(TTo) == typeof(nint))
+		{
+			if (IntPtr.Size == sizeof(int))
+			{
+				nint converted = (nint)ConvertUInt64<int>(value);
+				return Unsafe.As<nint, TTo>(ref converted);
+			}
+			else
+			{
+				nint converted = (nint)ConvertUInt64<long>(value);
+				return Unsafe.As<nint, TTo>(ref converted);
+			}
+		}
+		else if (typeof(TTo) == typeof(nuint))
+		{
+			if (IntPtr.Size == sizeof(int))
+			{
+				nuint converted = (nuint)ConvertUInt64<uint>(value);
+				return Unsafe.As<nuint, TTo>(ref converted);
+			}
+			else
+			{
+				nuint converted = (nuint)ConvertUInt64<ulong>(value);
+				return Unsafe.As<nuint, TTo>(ref converted);
+			}
+		}
 		else if (typeof(TTo) == typeof(long))
 		{
 			long converted = ChangeSign(ConvertUInt64<ulong>(value));
@@ -472,6 +653,19 @@ static partial class NumericConversion
 		{
 			float converted = (float)value / (float)ulong.MaxValue;
 			return Unsafe.As<float, TTo>(ref converted);
+		}
+		else if (typeof(TTo) == typeof(NFloat))
+		{
+			if (IntPtr.Size == sizeof(int))
+			{
+				NFloat converted = (NFloat)ConvertUInt64<float>(value);
+				return Unsafe.As<NFloat, TTo>(ref converted);
+			}
+			else
+			{
+				NFloat converted = (NFloat)ConvertUInt64<double>(value);
+				return Unsafe.As<NFloat, TTo>(ref converted);
+			}
 		}
 		else if (typeof(TTo) == typeof(double))
 		{
@@ -544,6 +738,32 @@ static partial class NumericConversion
 				return Unsafe.As<uint, TTo>(ref converted);
 			}
 		}
+		else if (typeof(TTo) == typeof(nint))
+		{
+			if (IntPtr.Size == sizeof(int))
+			{
+				nint converted = (nint)ConvertUInt128<int>(value);
+				return Unsafe.As<nint, TTo>(ref converted);
+			}
+			else
+			{
+				nint converted = (nint)ConvertUInt128<long>(value);
+				return Unsafe.As<nint, TTo>(ref converted);
+			}
+		}
+		else if (typeof(TTo) == typeof(nuint))
+		{
+			if (IntPtr.Size == sizeof(int))
+			{
+				nuint converted = (nuint)ConvertUInt128<uint>(value);
+				return Unsafe.As<nuint, TTo>(ref converted);
+			}
+			else
+			{
+				nuint converted = (nuint)ConvertUInt128<ulong>(value);
+				return Unsafe.As<nuint, TTo>(ref converted);
+			}
+		}
 		else if (typeof(TTo) == typeof(long))
 		{
 			long converted = ChangeSign(ConvertUInt128<ulong>(value));
@@ -579,6 +799,19 @@ static partial class NumericConversion
 		{
 			float converted = (float)value / (float)UInt128.MaxValue;
 			return Unsafe.As<float, TTo>(ref converted);
+		}
+		else if (typeof(TTo) == typeof(NFloat))
+		{
+			if (IntPtr.Size == sizeof(int))
+			{
+				NFloat converted = (NFloat)ConvertUInt128<float>(value);
+				return Unsafe.As<NFloat, TTo>(ref converted);
+			}
+			else
+			{
+				NFloat converted = (NFloat)ConvertUInt128<double>(value);
+				return Unsafe.As<NFloat, TTo>(ref converted);
+			}
 		}
 		else if (typeof(TTo) == typeof(double))
 		{
@@ -629,6 +862,32 @@ static partial class NumericConversion
 			// We use float because it has enough precision to convert from Half to any integer type.
 			return ConvertSingle<TTo>((float)value);
 		}
+		else if (typeof(TTo) == typeof(nint))
+		{
+			if (IntPtr.Size == sizeof(int))
+			{
+				nint converted = (nint)ConvertHalf<int>(value);
+				return Unsafe.As<nint, TTo>(ref converted);
+			}
+			else
+			{
+				nint converted = (nint)ConvertHalf<long>(value);
+				return Unsafe.As<nint, TTo>(ref converted);
+			}
+		}
+		else if (typeof(TTo) == typeof(nuint))
+		{
+			if (IntPtr.Size == sizeof(int))
+			{
+				nuint converted = (nuint)ConvertHalf<uint>(value);
+				return Unsafe.As<nuint, TTo>(ref converted);
+			}
+			else
+			{
+				nuint converted = (nuint)ConvertHalf<ulong>(value);
+				return Unsafe.As<nuint, TTo>(ref converted);
+			}
+		}
 		else if (typeof(TTo) == typeof(long))
 		{
 			long converted = ChangeSign(ConvertHalf<ulong>(value));
@@ -657,6 +916,19 @@ static partial class NumericConversion
 		{
 			float converted = (float)value;
 			return Unsafe.As<float, TTo>(ref converted);
+		}
+		else if (typeof(TTo) == typeof(NFloat))
+		{
+			if (IntPtr.Size == sizeof(int))
+			{
+				NFloat converted = (NFloat)ConvertHalf<float>(value);
+				return Unsafe.As<NFloat, TTo>(ref converted);
+			}
+			else
+			{
+				NFloat converted = (NFloat)ConvertHalf<double>(value);
+				return Unsafe.As<NFloat, TTo>(ref converted);
+			}
 		}
 		else if (typeof(TTo) == typeof(double))
 		{
@@ -713,6 +985,32 @@ static partial class NumericConversion
 			uint converted = (float)uint.MaxValue < x ? uint.MaxValue : (x > (float)uint.MinValue ? (uint)x : uint.MinValue);
 			return Unsafe.As<uint, TTo>(ref converted);
 		}
+		else if (typeof(TTo) == typeof(nint))
+		{
+			if (IntPtr.Size == sizeof(int))
+			{
+				nint converted = (nint)ConvertSingle<int>(value);
+				return Unsafe.As<nint, TTo>(ref converted);
+			}
+			else
+			{
+				nint converted = (nint)ConvertSingle<long>(value);
+				return Unsafe.As<nint, TTo>(ref converted);
+			}
+		}
+		else if (typeof(TTo) == typeof(nuint))
+		{
+			if (IntPtr.Size == sizeof(int))
+			{
+				nuint converted = (nuint)ConvertSingle<uint>(value);
+				return Unsafe.As<nuint, TTo>(ref converted);
+			}
+			else
+			{
+				nuint converted = (nuint)ConvertSingle<ulong>(value);
+				return Unsafe.As<nuint, TTo>(ref converted);
+			}
+		}
 		else if (typeof(TTo) == typeof(long))
 		{
 			long converted = ChangeSign(ConvertSingle<ulong>(value));
@@ -746,6 +1044,19 @@ static partial class NumericConversion
 		{
 			return Unsafe.As<float, TTo>(ref value);
 		}
+		else if (typeof(TTo) == typeof(NFloat))
+		{
+			if (IntPtr.Size == sizeof(int))
+			{
+				NFloat converted = (NFloat)ConvertSingle<float>(value);
+				return Unsafe.As<NFloat, TTo>(ref converted);
+			}
+			else
+			{
+				NFloat converted = (NFloat)ConvertSingle<double>(value);
+				return Unsafe.As<NFloat, TTo>(ref converted);
+			}
+		}
 		else if (typeof(TTo) == typeof(double))
 		{
 			double converted = (double)value;
@@ -759,6 +1070,19 @@ static partial class NumericConversion
 		else
 		{
 			return ThrowOrReturnDefault<TTo>();
+		}
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+	private static TTo ConvertNFloat<TTo>(NFloat value) where TTo : unmanaged
+	{
+		if (IntPtr.Size == sizeof(int))
+		{
+			return ConvertSingle<TTo>((float)value);
+		}
+		else
+		{
+			return ConvertDouble<TTo>((double)value);
 		}
 	}
 
@@ -801,6 +1125,32 @@ static partial class NumericConversion
 			uint converted = (double)uint.MaxValue < x ? uint.MaxValue : (x > (double)uint.MinValue ? (uint)x : uint.MinValue);
 			return Unsafe.As<uint, TTo>(ref converted);
 		}
+		else if (typeof(TTo) == typeof(nint))
+		{
+			if (IntPtr.Size == sizeof(int))
+			{
+				nint converted = (nint)ConvertDouble<int>(value);
+				return Unsafe.As<nint, TTo>(ref converted);
+			}
+			else
+			{
+				nint converted = (nint)ConvertDouble<long>(value);
+				return Unsafe.As<nint, TTo>(ref converted);
+			}
+		}
+		else if (typeof(TTo) == typeof(nuint))
+		{
+			if (IntPtr.Size == sizeof(int))
+			{
+				nuint converted = (nuint)ConvertDouble<uint>(value);
+				return Unsafe.As<nuint, TTo>(ref converted);
+			}
+			else
+			{
+				nuint converted = (nuint)ConvertDouble<ulong>(value);
+				return Unsafe.As<nuint, TTo>(ref converted);
+			}
+		}
 		else if (typeof(TTo) == typeof(long))
 		{
 			long converted = ChangeSign(ConvertDouble<ulong>(value));
@@ -834,6 +1184,19 @@ static partial class NumericConversion
 		{
 			float converted = (float)value;
 			return Unsafe.As<float, TTo>(ref converted);
+		}
+		else if (typeof(TTo) == typeof(NFloat))
+		{
+			if (IntPtr.Size == sizeof(int))
+			{
+				NFloat converted = (NFloat)ConvertDouble<float>(value);
+				return Unsafe.As<NFloat, TTo>(ref converted);
+			}
+			else
+			{
+				NFloat converted = (NFloat)ConvertDouble<double>(value);
+				return Unsafe.As<NFloat, TTo>(ref converted);
+			}
 		}
 		else if (typeof(TTo) == typeof(double))
 		{
@@ -889,6 +1252,32 @@ static partial class NumericConversion
 			uint converted = (decimal)uint.MaxValue < x ? uint.MaxValue : (x > (decimal)uint.MinValue ? (uint)x : uint.MinValue);
 			return Unsafe.As<uint, TTo>(ref converted);
 		}
+		else if (typeof(TTo) == typeof(nint))
+		{
+			if (IntPtr.Size == sizeof(int))
+			{
+				nint converted = (nint)ConvertDecimal<int>(value);
+				return Unsafe.As<nint, TTo>(ref converted);
+			}
+			else
+			{
+				nint converted = (nint)ConvertDecimal<long>(value);
+				return Unsafe.As<nint, TTo>(ref converted);
+			}
+		}
+		else if (typeof(TTo) == typeof(nuint))
+		{
+			if (IntPtr.Size == sizeof(int))
+			{
+				nuint converted = (nuint)ConvertDecimal<uint>(value);
+				return Unsafe.As<nuint, TTo>(ref converted);
+			}
+			else
+			{
+				nuint converted = (nuint)ConvertDecimal<ulong>(value);
+				return Unsafe.As<nuint, TTo>(ref converted);
+			}
+		}
 		else if (typeof(TTo) == typeof(long))
 		{
 			long converted = ChangeSign(ConvertDecimal<ulong>(value));
@@ -922,6 +1311,19 @@ static partial class NumericConversion
 		{
 			float converted = (float)value;
 			return Unsafe.As<float, TTo>(ref converted);
+		}
+		else if (typeof(TTo) == typeof(NFloat))
+		{
+			if (IntPtr.Size == sizeof(int))
+			{
+				NFloat converted = (NFloat)ConvertDecimal<float>(value);
+				return Unsafe.As<NFloat, TTo>(ref converted);
+			}
+			else
+			{
+				NFloat converted = (NFloat)ConvertDecimal<double>(value);
+				return Unsafe.As<NFloat, TTo>(ref converted);
+			}
 		}
 		else if (typeof(TTo) == typeof(double))
 		{
@@ -971,6 +1373,16 @@ static partial class NumericConversion
 			uint value = GetMinimumValueSafe<uint>();
 			return Unsafe.As<uint, T>(ref value);
 		}
+		else if (typeof(T) == typeof(nint))
+		{
+			nint value = GetMinimumValueSafe<nint>();
+			return Unsafe.As<nint, T>(ref value);
+		}
+		else if (typeof(T) == typeof(nuint))
+		{
+			nuint value = GetMinimumValueSafe<nuint>();
+			return Unsafe.As<nuint, T>(ref value);
+		}
 		else if (typeof(T) == typeof(long))
 		{
 			long value = GetMinimumValueSafe<long>();
@@ -1000,6 +1412,11 @@ static partial class NumericConversion
 		{
 			float value = GetMinimumValueSafe<float>();
 			return Unsafe.As<float, T>(ref value);
+		}
+		else if (typeof(T) == typeof(NFloat))
+		{
+			NFloat value = GetMinimumValueSafe<NFloat>();
+			return Unsafe.As<NFloat, T>(ref value);
 		}
 		else if (typeof(T) == typeof(double))
 		{
@@ -1050,6 +1467,16 @@ static partial class NumericConversion
 			uint value = GetMaximumValueSafe<uint>();
 			return Unsafe.As<uint, T>(ref value);
 		}
+		else if (typeof(T) == typeof(nint))
+		{
+			nint value = GetMaximumValueSafe<nint>();
+			return Unsafe.As<nint, T>(ref value);
+		}
+		else if (typeof(T) == typeof(nuint))
+		{
+			nuint value = GetMaximumValueSafe<nuint>();
+			return Unsafe.As<nuint, T>(ref value);
+		}
 		else if (typeof(T) == typeof(long))
 		{
 			long value = GetMaximumValueSafe<long>();
@@ -1079,6 +1506,11 @@ static partial class NumericConversion
 		{
 			float value = GetMaximumValueSafe<float>();
 			return Unsafe.As<float, T>(ref value);
+		}
+		else if (typeof(T) == typeof(NFloat))
+		{
+			NFloat value = GetMaximumValueSafe<NFloat>();
+			return Unsafe.As<NFloat, T>(ref value);
 		}
 		else if (typeof(T) == typeof(double))
 		{

@@ -3,6 +3,7 @@ using AssetRipper.TextureDecoder.Rgb;
 using AssetRipper.TextureDecoder.Rgb.Formats;
 using AssetRipper.TextureDecoder.SourceGeneration.Common;
 using System.CodeDom.Compiler;
+using System.Runtime.InteropServices;
 
 namespace AssetRipper.TextureDecoder.TestGenerator
 {
@@ -35,6 +36,7 @@ namespace AssetRipper.TextureDecoder.TestGenerator
 			writer.WriteLine();
 			writer.WriteLine($"using {typeof(RgbConverter).Namespace};");
 			writer.WriteLine($"using {typeof(ColorBGRA32).Namespace};");
+			writer.WriteLine($"using {typeof(NFloat).Namespace};");
 			writer.WriteLine();
 
 			writer.WriteFileScopedNamespace("AssetRipper.TextureDecoder.ConsoleApp");
@@ -79,10 +81,9 @@ namespace AssetRipper.TextureDecoder.TestGenerator
 			{
 				foreach (CSharpPrimitives.Data primitiveData in CSharpPrimitives.List)
 				{
-					int primitiveBitSize = primitiveData.Size * 8;
 					foreach (string genericColorName in TestClassGenerator.GetGenericColorNames())
 					{
-						string prettyName = $"{genericColorName}{primitiveBitSize}{primitiveData.TypeName}";
+						string prettyName = $"{genericColorName}_{primitiveData.TypeName}";
 						yield return (prettyName, $"{genericColorName}<{primitiveData.LangName}>", primitiveData.LangName);
 					}
 				}

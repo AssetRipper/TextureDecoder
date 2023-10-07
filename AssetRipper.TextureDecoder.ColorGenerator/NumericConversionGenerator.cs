@@ -42,8 +42,11 @@ internal static class NumericConversionGenerator
 	{
 		foreach ((CSharpPrimitives.Data unsignedType, CSharpPrimitives.Data signedType) in GetIntegerTypes())
 		{
-			WriteMethod(writer, unsignedType, signedType, unsignedType);
-			WriteMethod(writer, signedType, unsignedType, unsignedType);
+			if (!unsignedType.HasPointerSize(out _, out _))
+			{
+				WriteMethod(writer, unsignedType, signedType, unsignedType);
+				WriteMethod(writer, signedType, unsignedType, unsignedType);
+			}
 		}
 
 		static void WriteMethod(IndentedTextWriter writer, CSharpPrimitives.Data parameterType, CSharpPrimitives.Data returnType, CSharpPrimitives.Data unsignedType)
@@ -105,10 +108,21 @@ internal static class NumericConversionGenerator
 		writer.WriteLine($"private static TTo {methodName}<TTo>({from.LangName} value) where TTo : unmanaged");
 		using (new CurlyBrackets(writer))
 		{
-			if (from.IsSignedInteger(out CSharpPrimitives.Data? unsignedFromData))
+			if (from.HasPointerSize(out CSharpPrimitives.Data? bit32From, out CSharpPrimitives.Data? bit64From))
 			{
-				writer.WriteLine($"{unsignedFromData.LangName} unsigned = {ChangeSign}(value);");
-				writer.WriteLine($"return {ConvertMethodName(unsignedFromData.Type)}<TTo>(unsigned);");
+				using (new If(writer, "IntPtr.Size == sizeof(int)"))
+				{
+					writer.WriteLine($"return {ConvertMethodName(bit32From.Type)}<TTo>(({bit32From.LangName})value);");
+				}
+				using (new Else(writer))
+				{
+					writer.WriteLine($"return {ConvertMethodName(bit64From.Type)}<TTo>(({bit64From.LangName})value);");
+				}
+			}
+			else if (from.IsSignedInteger(out CSharpPrimitives.Data? unsignedFrom))
+			{
+				writer.WriteLine($"{unsignedFrom.LangName} unsigned = {ChangeSign}(value);");
+				writer.WriteLine($"return {ConvertMethodName(unsignedFrom.Type)}<TTo>(unsigned);");
 			}
 			else
 			{
@@ -121,6 +135,19 @@ internal static class NumericConversionGenerator
 						if (from == to)
 						{
 							writer.WriteLine($"return Unsafe.As<{to.LangName}, TTo>(ref value);");
+						}
+						else if (to.HasPointerSize(out CSharpPrimitives.Data? bit32To, out CSharpPrimitives.Data? bit64To))
+						{
+							using (new If(writer, "IntPtr.Size == sizeof(int)"))
+							{
+								writer.WriteLine($"{to.LangName} converted = ({to.LangName}){methodName}<{bit32To.LangName}>(value);");
+								writer.WriteLine($"return Unsafe.As<{to.LangName}, TTo>(ref converted);");
+							}
+							using (new Else(writer))
+							{
+								writer.WriteLine($"{to.LangName} converted = ({to.LangName}){methodName}<{bit64To.LangName}>(value);");
+								writer.WriteLine($"return Unsafe.As<{to.LangName}, TTo>(ref converted);");
+							}
 						}
 						else if (to.IsSignedInteger(out CSharpPrimitives.Data? unsignedTo))
 						{

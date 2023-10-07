@@ -231,6 +231,30 @@ public partial class ColorRGB16Tests
 	}
 
 	[Test]
+	public void ConversionIsLosslessToColorRGBA_nint()
+	{
+		LosslessConversion.Assert<ColorRGB16, byte, ColorRGBA<nint>, nint>();
+	}
+
+	[Test]
+	public void ConversionIsLosslessToColorRGB_nint()
+	{
+		LosslessConversion.Assert<ColorRGB16, byte, ColorRGB<nint>, nint>();
+	}
+
+	[Test]
+	public void ConversionIsLosslessToColorRGBA_nuint()
+	{
+		LosslessConversion.Assert<ColorRGB16, byte, ColorRGBA<nuint>, nuint>();
+	}
+
+	[Test]
+	public void ConversionIsLosslessToColorRGB_nuint()
+	{
+		LosslessConversion.Assert<ColorRGB16, byte, ColorRGB<nuint>, nuint>();
+	}
+
+	[Test]
 	public void ConversionIsLosslessToColorRGBA_long()
 	{
 		LosslessConversion.Assert<ColorRGB16, byte, ColorRGBA<long>, long>();

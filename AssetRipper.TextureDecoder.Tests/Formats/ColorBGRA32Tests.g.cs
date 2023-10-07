@@ -195,6 +195,18 @@ public partial class ColorBGRA32Tests
 	}
 
 	[Test]
+	public void ConversionIsLosslessToColorRGBA_nint()
+	{
+		LosslessConversion.Assert<ColorBGRA32, byte, ColorRGBA<nint>, nint>();
+	}
+
+	[Test]
+	public void ConversionIsLosslessToColorRGBA_nuint()
+	{
+		LosslessConversion.Assert<ColorBGRA32, byte, ColorRGBA<nuint>, nuint>();
+	}
+
+	[Test]
 	public void ConversionIsLosslessToColorRGBA_long()
 	{
 		LosslessConversion.Assert<ColorBGRA32, byte, ColorRGBA<long>, long>();

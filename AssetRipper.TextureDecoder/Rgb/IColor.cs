@@ -16,12 +16,15 @@
 	/// <item><see cref="ushort"/></item>
 	/// <item><see cref="int"/></item>
 	/// <item><see cref="uint"/></item>
+	/// <item><see cref="nint"/></item>
+	/// <item><see cref="nuint"/></item>
 	/// <item><see cref="long"/></item>
 	/// <item><see cref="ulong"/></item>
 	/// <item><see cref="Int128"/></item>
 	/// <item><see cref="UInt128"/></item>
 	/// <item><see cref="Half"/></item>
 	/// <item><see cref="float"/></item>
+	/// <item><see cref="NFloat"/></item>
 	/// <item><see cref="double"/></item>
 	/// <item><see cref="decimal"/></item>
 	/// </list>
