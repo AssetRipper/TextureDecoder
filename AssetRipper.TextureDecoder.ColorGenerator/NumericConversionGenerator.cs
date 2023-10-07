@@ -121,8 +121,7 @@ internal static class NumericConversionGenerator
 			}
 			else if (from.IsSignedInteger(out CSharpPrimitives.Data? unsignedFrom))
 			{
-				writer.WriteLine($"{unsignedFrom.LangName} unsigned = {ChangeSign}(value);");
-				writer.WriteLine($"return {ConvertMethodName(unsignedFrom.Type)}<TTo>(unsigned);");
+				writer.WriteLine($"return {ConvertMethodName(unsignedFrom.Type)}<TTo>({ChangeSign}(value));");
 			}
 			else
 			{

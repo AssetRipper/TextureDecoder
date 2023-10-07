@@ -88,8 +88,7 @@ static partial class NumericConversion
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 	private static TTo ConvertSByte<TTo>(sbyte value) where TTo : unmanaged
 	{
-		byte unsigned = ChangeSign(value);
-		return ConvertByte<TTo>(unsigned);
+		return ConvertByte<TTo>(ChangeSign(value));
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
@@ -230,8 +229,7 @@ static partial class NumericConversion
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 	private static TTo ConvertInt16<TTo>(short value) where TTo : unmanaged
 	{
-		ushort unsigned = ChangeSign(value);
-		return ConvertUInt16<TTo>(unsigned);
+		return ConvertUInt16<TTo>(ChangeSign(value));
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
@@ -371,8 +369,7 @@ static partial class NumericConversion
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 	private static TTo ConvertInt32<TTo>(int value) where TTo : unmanaged
 	{
-		uint unsigned = ChangeSign(value);
-		return ConvertUInt32<TTo>(unsigned);
+		return ConvertUInt32<TTo>(ChangeSign(value));
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
@@ -541,8 +538,7 @@ static partial class NumericConversion
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 	private static TTo ConvertInt64<TTo>(long value) where TTo : unmanaged
 	{
-		ulong unsigned = ChangeSign(value);
-		return ConvertUInt64<TTo>(unsigned);
+		return ConvertUInt64<TTo>(ChangeSign(value));
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
@@ -686,8 +682,7 @@ static partial class NumericConversion
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 	private static TTo ConvertInt128<TTo>(Int128 value) where TTo : unmanaged
 	{
-		UInt128 unsigned = ChangeSign(value);
-		return ConvertUInt128<TTo>(unsigned);
+		return ConvertUInt128<TTo>(ChangeSign(value));
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
