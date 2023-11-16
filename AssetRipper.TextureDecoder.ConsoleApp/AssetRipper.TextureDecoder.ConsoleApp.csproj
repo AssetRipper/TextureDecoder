@@ -1,9 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
-		<PublishSingleFile>true</PublishSingleFile>
-		<PublishTrimmed>true</PublishTrimmed>
+		<PublishAot>true</PublishAot>
 	</PropertyGroup>
 
 	<ItemGroup>
