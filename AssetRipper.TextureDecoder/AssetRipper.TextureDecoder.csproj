@@ -1,18 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
-		<LangVersion>Latest</LangVersion>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>disable</ImplicitUsings>
 		<IsTrimmable>true</IsTrimmable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<RootNamespace>AssetRipper.TextureDecoder</RootNamespace>
-		<Authors>ds5678</Authors>
-		<Company>AssetRipper</Company>
-		<Version>2.0.0</Version>
-		<AssemblyVersion>$(Version)</AssemblyVersion>
+		
 		<PackageId>AssetRipper.TextureDecoder</PackageId>
 		<PackageTags>C# Texture</PackageTags>
 		<RepositoryUrl>https://github.com/AssetRipper/TextureDecoder</RepositoryUrl>
@@ -30,10 +22,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="PolySharp" Version="1.13.2">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>

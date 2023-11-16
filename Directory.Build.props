@@ -1,0 +1,27 @@
+<Project>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<LangVersion>Latest</LangVersion>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<IsTrimmable>true</IsTrimmable>
+		<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+		<CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+
+		<Version>2.0.0</Version>
+		<AssemblyVersion>$(Version)</AssemblyVersion>
+		<Copyright>Copyright © ds5678</Copyright>
+		<Authors>ds5678</Authors>
+		<Company>AssetRipper</Company>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Using Include="System" />
+		<Using Include="System.Collections.Generic" />
+		<Using Include="System.Diagnostics.CodeAnalysis" />
+		<Using Include="System.IO" />
+		<Using Include="System.Linq" />
+		<Using Include="System.Threading" />
+		<Using Include="System.Threading.Tasks" />
+	</ItemGroup>
+</Project>
