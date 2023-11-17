@@ -21,7 +21,7 @@ namespace AssetRipper.TextureDecoder.TestGenerator
 
 		public string ChannelTypeName => CSharpPrimitives.Dictionary[ChannelType].LangName;
 
-		public static GenerationData Create<T>(int colorSize) where T : IColorBase
+		public static GenerationData Create<T>(int colorSize) where T : IColor
 		{
 			return new GenerationData()
 			{

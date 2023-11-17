@@ -4,12 +4,12 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats
 {
 	public partial struct ColorBGRA32 : IColor<byte>
 	{
-		static bool IColorBase.HasRedChannel => true;
-		static bool IColorBase.HasGreenChannel => true;
-		static bool IColorBase.HasBlueChannel => true;
-		static bool IColorBase.HasAlphaChannel => true;
-		static bool IColorBase.ChannelsAreFullyUtilized => true;
-		static Type IColorBase.ChannelType => typeof(byte);
+		static bool IColor.HasRedChannel => true;
+		static bool IColor.HasGreenChannel => true;
+		static bool IColor.HasBlueChannel => true;
+		static bool IColor.HasAlphaChannel => true;
+		static bool IColor.ChannelsAreFullyUtilized => true;
+		static Type IColor.ChannelType => typeof(byte);
 
 		public override string ToString()
 		{

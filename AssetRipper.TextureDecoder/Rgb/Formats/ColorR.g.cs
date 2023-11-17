@@ -42,12 +42,12 @@ public partial struct ColorR<T> : IColor<T> where T : unmanaged, INumberBase<T>,
 		R = r;
 	}
 
-	static bool IColorBase.HasRedChannel => true;
-	static bool IColorBase.HasGreenChannel => false;
-	static bool IColorBase.HasBlueChannel => false;
-	static bool IColorBase.HasAlphaChannel => false;
-	static bool IColorBase.ChannelsAreFullyUtilized => true;
-	static Type IColorBase.ChannelType => typeof(T);
+	static bool IColor.HasRedChannel => true;
+	static bool IColor.HasGreenChannel => false;
+	static bool IColor.HasBlueChannel => false;
+	static bool IColor.HasAlphaChannel => false;
+	static bool IColor.ChannelsAreFullyUtilized => true;
+	static Type IColor.ChannelType => typeof(T);
 
 	public override string ToString()
 	{

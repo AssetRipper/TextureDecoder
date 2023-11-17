@@ -7,7 +7,7 @@
 /// When used as a generic type constraint, the methods and properties get devirtualized by the JIT compiler.
 /// This prevents boxing when the implementing type is a <see langword="struct"/>.
 /// </remarks>
-public interface IColorBase
+public interface IColor
 {
 	/// <summary>
 	/// Does the format have a red channel?

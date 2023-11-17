@@ -76,7 +76,7 @@ internal static partial class Program
 			writer.WriteLine($"public partial struct {name} : IColor<{typeName}>");
 			using (new CurlyBrackets(writer))
 			{
-				WriteColorBaseStaticProperties(writer, hasRed, hasGreen, hasBlue, hasAlpha, fullyUtilized, typeName);
+				WriteNonGenericStaticProperties(writer, hasRed, hasGreen, hasBlue, hasAlpha, fullyUtilized, typeName);
 				writer.WriteLineNoTabs();
 				WriteToString(writer, hasRed, hasGreen, hasBlue, hasAlpha);
 			}
@@ -127,14 +127,14 @@ internal static partial class Program
 		}
 	}
 
-	private static void WriteColorBaseStaticProperties(IndentedTextWriter writer, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha, bool fullyUtilized, string typeName)
+	private static void WriteNonGenericStaticProperties(IndentedTextWriter writer, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha, bool fullyUtilized, string typeName)
 	{
-		writer.WriteLine($"static bool IColorBase.HasRedChannel => {hasRed.ToLowerString()};");
-		writer.WriteLine($"static bool IColorBase.HasGreenChannel => {hasGreen.ToLowerString()};");
-		writer.WriteLine($"static bool IColorBase.HasBlueChannel => {hasBlue.ToLowerString()};");
-		writer.WriteLine($"static bool IColorBase.HasAlphaChannel => {hasAlpha.ToLowerString()};");
-		writer.WriteLine($"static bool IColorBase.ChannelsAreFullyUtilized => {fullyUtilized.ToLowerString()};");
-		writer.WriteLine($"static Type IColorBase.ChannelType => typeof({typeName});");
+		writer.WriteLine($"static bool IColor.HasRedChannel => {hasRed.ToLowerString()};");
+		writer.WriteLine($"static bool IColor.HasGreenChannel => {hasGreen.ToLowerString()};");
+		writer.WriteLine($"static bool IColor.HasBlueChannel => {hasBlue.ToLowerString()};");
+		writer.WriteLine($"static bool IColor.HasAlphaChannel => {hasAlpha.ToLowerString()};");
+		writer.WriteLine($"static bool IColor.ChannelsAreFullyUtilized => {fullyUtilized.ToLowerString()};");
+		writer.WriteLine($"static Type IColor.ChannelType => typeof({typeName});");
 	}
 
 	private static void WriteGenericColor(IndentedTextWriter writer, string name, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha)
@@ -170,7 +170,7 @@ internal static partial class Program
 			writer.WriteLineNoTabs();
 			WriteSetChannels(writer, typeName, hasRed, hasGreen, hasBlue, hasAlpha);
 			writer.WriteLineNoTabs();
-			WriteColorBaseStaticProperties(writer, hasRed, hasGreen, hasBlue, hasAlpha, true, typeName);
+			WriteNonGenericStaticProperties(writer, hasRed, hasGreen, hasBlue, hasAlpha, true, typeName);
 			writer.WriteLineNoTabs();
 			WriteToString(writer, hasRed, hasGreen, hasBlue, hasAlpha);
 		}

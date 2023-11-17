@@ -36,12 +36,12 @@ public partial struct ColorRGBA<T> : IColor<T> where T : unmanaged
 		A = a;
 	}
 
-	static bool IColorBase.HasRedChannel => true;
-	static bool IColorBase.HasGreenChannel => true;
-	static bool IColorBase.HasBlueChannel => true;
-	static bool IColorBase.HasAlphaChannel => true;
-	static bool IColorBase.ChannelsAreFullyUtilized => true;
-	static Type IColorBase.ChannelType => typeof(T);
+	static bool IColor.HasRedChannel => true;
+	static bool IColor.HasGreenChannel => true;
+	static bool IColor.HasBlueChannel => true;
+	static bool IColor.HasAlphaChannel => true;
+	static bool IColor.ChannelsAreFullyUtilized => true;
+	static Type IColor.ChannelType => typeof(T);
 
 	public override string ToString()
 	{
