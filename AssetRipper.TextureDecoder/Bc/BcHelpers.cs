@@ -564,8 +564,8 @@ internal static class BcHelpers
 			low = BinaryPrimitives.ReadUInt64LittleEndian(compressedBlock),
 			high = BinaryPrimitives.ReadUInt64LittleEndian(compressedBlock.Slice(sizeof(ulong)))
 		};
-		int[][] endpoints = CreateRectangularArray<int>(6, 4);
-		int[][] indices = CreateRectangularArray<int>(4, 4);
+		Span2D<int> endpoints = new(stackalloc int[6 * 4], 6, 4);
+		Span2D<int> indices = new(stackalloc int[4 * 4], 4, 4);
 
 		int decompressedOffset = 0;
 
@@ -618,7 +618,7 @@ internal static class BcHelpers
 		{
 			for (int j = 0; j < numEndpoints; ++j)
 			{
-				endpoints[j][i] = bstream.ReadBits(Bc7Tables.ActualBitsCount[0][mode]);
+				endpoints[j, i] = bstream.ReadBits(Bc7Tables.ActualBitsCount[0][mode]);
 			}
 		}
 		// Alpha (if any) 
@@ -626,7 +626,7 @@ internal static class BcHelpers
 		{
 			for (int j = 0; j < numEndpoints; ++j)
 			{
-				endpoints[j][3] = bstream.ReadBits(Bc7Tables.ActualBitsCount[1][mode]);
+				endpoints[j, 3] = bstream.ReadBits(Bc7Tables.ActualBitsCount[1][mode]);
 			}
 		}
 
@@ -639,7 +639,7 @@ internal static class BcHelpers
 				// component-wise left-shift 
 				for (int j = 0; j < 4; ++j)
 				{
-					endpoints[i][j] <<= 1;
+					endpoints[i, j] <<= 1;
 				}
 			}
 
@@ -652,10 +652,10 @@ internal static class BcHelpers
 				// rgb component-wise insert pbits 
 				for (int k = 0; k < 3; ++k)
 				{
-					endpoints[0][k] |= i;
-					endpoints[1][k] |= i;
-					endpoints[2][k] |= j;
-					endpoints[3][k] |= j;
+					endpoints[0, k] |= i;
+					endpoints[1, k] |= i;
+					endpoints[2, k] |= j;
+					endpoints[3, k] |= j;
 				}
 			}
 			else if ((Bc7Tables.bcdec_bc7_sModeHasPBits & (1 << mode)) != 0)
@@ -666,7 +666,7 @@ internal static class BcHelpers
 					int j = bstream.ReadBit();
 					for (int k = 0; k < 4; ++k)
 					{
-						endpoints[i][k] |= j;
+						endpoints[i, k] |= j;
 					}
 				}
 			}
@@ -680,18 +680,18 @@ internal static class BcHelpers
 			for (int k = 0; k < 3; ++k)
 			{
 				// left shift endpoint components so that their MSB lies in bit 7 
-				endpoints[i][k] = endpoints[i][k] << (8 - j);
+				endpoints[i, k] = endpoints[i, k] << (8 - j);
 				// Replicate each component's MSB into the LSBs revealed by the left-shift operation above 
-				endpoints[i][k] = endpoints[i][k] | (endpoints[i][k] >> j);
+				endpoints[i, k] = endpoints[i, k] | (endpoints[i, k] >> j);
 			}
 
 			// get alpha component precision including pbit 
 			j = Bc7Tables.ActualBitsCount[1][mode] + ((Bc7Tables.bcdec_bc7_sModeHasPBits >> mode) & 1);
 
 			// left shift endpoint components so that their MSB lies in bit 7 
-			endpoints[i][3] = endpoints[i][3] << (8 - j);
+			endpoints[i, 3] = endpoints[i, 3] << (8 - j);
 			// Replicate each component's MSB into the LSBs revealed by the left-shift operation above 
-			endpoints[i][3] = endpoints[i][3] | (endpoints[i][3] >> j);
+			endpoints[i, 3] = endpoints[i, 3] | (endpoints[i, 3] >> j);
 		}
 
 		// If this mode does not explicitly define the alpha component 
@@ -700,7 +700,7 @@ internal static class BcHelpers
 		{
 			for (int j = 0; j < numEndpoints; ++j)
 			{
-				endpoints[j][3] = 0xFF;
+				endpoints[j, 3] = 0xFF;
 			}
 		}
 
@@ -726,7 +726,7 @@ internal static class BcHelpers
 					indexBits--;
 				}
 
-				indices[i][j] = bstream.ReadBits(indexBits);
+				indices[i, j] = bstream.ReadBits(indexBits);
 			}
 		}
 
@@ -740,7 +740,7 @@ internal static class BcHelpers
 					: Bc7Tables.PartitionSets[numPartitions - 2][partition][i][j];
 				partitionSet &= 0x03;
 
-				int index = indices[i][j];
+				int index = indices[i, j];
 
 				int r;
 				int g;
@@ -749,10 +749,10 @@ internal static class BcHelpers
 
 				if (indexBits2 == 0)
 				{
-					r = Interpolate(endpoints[partitionSet * 2][0], endpoints[(partitionSet * 2) + 1][0], weights, index);
-					g = Interpolate(endpoints[partitionSet * 2][1], endpoints[(partitionSet * 2) + 1][1], weights, index);
-					b = Interpolate(endpoints[partitionSet * 2][2], endpoints[(partitionSet * 2) + 1][2], weights, index);
-					a = Interpolate(endpoints[partitionSet * 2][3], endpoints[(partitionSet * 2) + 1][3], weights, index);
+					r = Interpolate(endpoints[partitionSet * 2, 0], endpoints[(partitionSet * 2) + 1, 0], weights, index);
+					g = Interpolate(endpoints[partitionSet * 2, 1], endpoints[(partitionSet * 2) + 1, 1], weights, index);
+					b = Interpolate(endpoints[partitionSet * 2, 2], endpoints[(partitionSet * 2) + 1, 2], weights, index);
+					a = Interpolate(endpoints[partitionSet * 2, 3], endpoints[(partitionSet * 2) + 1, 3], weights, index);
 				}
 				else
 				{
@@ -764,17 +764,17 @@ internal static class BcHelpers
 					// and from the primary index bits otherwise.
 					if (indexSelectionBit == 0)
 					{
-						r = Interpolate(endpoints[partitionSet * 2][0], endpoints[(partitionSet * 2) + 1][0], weights, index);
-						g = Interpolate(endpoints[partitionSet * 2][1], endpoints[(partitionSet * 2) + 1][1], weights, index);
-						b = Interpolate(endpoints[partitionSet * 2][2], endpoints[(partitionSet * 2) + 1][2], weights, index);
-						a = Interpolate(endpoints[partitionSet * 2][3], endpoints[(partitionSet * 2) + 1][3], weights2, index2);
+						r = Interpolate(endpoints[partitionSet * 2, 0], endpoints[(partitionSet * 2) + 1, 0], weights, index);
+						g = Interpolate(endpoints[partitionSet * 2, 1], endpoints[(partitionSet * 2) + 1, 1], weights, index);
+						b = Interpolate(endpoints[partitionSet * 2, 2], endpoints[(partitionSet * 2) + 1, 2], weights, index);
+						a = Interpolate(endpoints[partitionSet * 2, 3], endpoints[(partitionSet * 2) + 1, 3], weights2, index2);
 					}
 					else
 					{
-						r = Interpolate(endpoints[partitionSet * 2][0], endpoints[(partitionSet * 2) + 1][0], weights2, index2);
-						g = Interpolate(endpoints[partitionSet * 2][1], endpoints[(partitionSet * 2) + 1][1], weights2, index2);
-						b = Interpolate(endpoints[partitionSet * 2][2], endpoints[(partitionSet * 2) + 1][2], weights2, index2);
-						a = Interpolate(endpoints[partitionSet * 2][3], endpoints[(partitionSet * 2) + 1][3], weights, index);
+						r = Interpolate(endpoints[partitionSet * 2, 0], endpoints[(partitionSet * 2) + 1, 0], weights2, index2);
+						g = Interpolate(endpoints[partitionSet * 2, 1], endpoints[(partitionSet * 2) + 1, 1], weights2, index2);
+						b = Interpolate(endpoints[partitionSet * 2, 2], endpoints[(partitionSet * 2) + 1, 2], weights2, index2);
+						a = Interpolate(endpoints[partitionSet * 2, 3], endpoints[(partitionSet * 2) + 1, 3], weights, index);
 					}
 				}
 
@@ -1055,16 +1055,5 @@ internal static class BcHelpers
 	public static void SwapValues(ref int a, ref int b)
 	{
 		(a, b) = (b, a);
-	}
-
-	public static T[][] CreateRectangularArray<T>(int size1, int size2)
-	{
-		T[][] newArray = new T[size1][];
-		for (int array1 = 0; array1 < size1; array1++)
-		{
-			newArray[array1] = new T[size2];
-		}
-
-		return newArray;
 	}
 }
