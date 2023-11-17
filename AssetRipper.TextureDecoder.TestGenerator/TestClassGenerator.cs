@@ -11,7 +11,7 @@ internal static class TestClassGenerator
 	private const string GenericOutputNamespace = OutputNamespace + ".Generic";
 	private const string GenericOutputFolder = OutputFolder + "Generic/";
 
-	private static readonly char[] channels = new char[] { 'R', 'G', 'B', 'A' };
+	private static readonly char[] channels = ['R', 'G', 'B', 'A'];
 
 	internal static void GenerateTestClasses()
 	{

@@ -487,7 +487,7 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 		private const int BlockX2bpp = 8;
 		private const int BlockX4bpp = 4;
 
-		private static readonly int[] m_repVals0 = new int[] { 0, 3, 5, 8 };
-		private static readonly int[] m_repVals1 = new int[] { 0, 4, 4, 8 };
+		private static readonly int[] m_repVals0 = [0, 3, 5, 8];
+		private static readonly int[] m_repVals1 = [0, 4, 4, 8];
 	}
 }
