@@ -1,5 +1,7 @@
 ﻿using AssetRipper.TextureDecoder.Bc;
 using AssetRipper.TextureDecoder.Dxt;
+using AssetRipper.TextureDecoder.Rgb.Formats;
+using System.Runtime.CompilerServices;
 
 namespace AssetRipper.TextureDecoder.Tests
 {
@@ -93,6 +95,19 @@ namespace AssetRipper.TextureDecoder.Tests
 		public void DecompressBC7Test(string fileName)
 		{
 			AssertCorrectBC7Decompression(TestFileFolders.BcTestFiles + fileName, 512, 512);
+		}
+
+		[Test]
+		[Ignore("Not implemented")]
+		public void BC7PartialBlockTest([Range(1, 4)] int width, [Range(1, 4)] int height)
+		{
+			Assert.Multiple(() =>
+			{
+				ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.BcTestFiles + "test.bc7_best").AsSpan()[..Bc7.BlockSize];
+				int bytesRead = Bc7.Decompress(data, width, height, out byte[] decodedData);
+				Assert.That(bytesRead, Is.EqualTo(data.Length));
+				Assert.That(decodedData, Has.Length.EqualTo(width * height * Unsafe.SizeOf<ColorBGRA32>()));
+			});
 		}
 
 		private static void AssertCorrectBC6HDecompression(string path, int width, int height, bool isSigned)

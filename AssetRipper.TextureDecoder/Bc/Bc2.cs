@@ -5,7 +5,10 @@ namespace AssetRipper.TextureDecoder.Bc;
 
 public static class Bc2
 {
-	internal const int BlockSize = 16;
+	/// <summary>
+	/// The size of an encoded block, in bytes.
+	/// </summary>
+	public const int BlockSize = 16;
 
 	public static int Decompress(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 	{
