@@ -137,11 +137,70 @@ internal static partial class Program
 		writer.WriteLine($"static Type IColor.ChannelType => typeof({typeName});");
 	}
 
+	private static void WriteBlackWhiteStaticProperties(IndentedTextWriter writer, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha, string colorTypeName, string channelTypeName)
+	{
+		string minValue = $"NumericConversion.GetMinimumValueSafe<{channelTypeName}>()";
+		string maxValue = $"NumericConversion.GetMaximumValueSafe<{channelTypeName}>()";
+
+		//Black
+		{
+			writer.Write($"public static {colorTypeName}<{channelTypeName}> Black => new(");
+			int rgbCount = CountRGB(hasRed, hasGreen, hasBlue);
+			for (int i = 0; i < rgbCount; i++)
+			{
+				if (i != 0)
+				{
+					writer.Write(", ");
+				}
+				writer.Write(minValue);
+			}
+			if (hasAlpha)
+			{
+				if (rgbCount != 0)
+				{
+					writer.Write(", ");
+				}
+				writer.Write(maxValue);
+			}
+			writer.WriteLine(");");
+		}
+
+		//White
+		if (hasRed || hasGreen || hasBlue)
+		{
+			writer.Write($"public static {colorTypeName}<{channelTypeName}> White => new(");
+			int rgbaCount = CountRGBA(hasRed, hasGreen, hasBlue, hasAlpha);
+			for (int i = 0; i < rgbaCount; i++)
+			{
+				if (i != 0)
+				{
+					writer.Write(", ");
+				}
+				writer.Write(maxValue);
+			}
+			writer.WriteLine(");");
+		}
+		else
+		{
+			writer.WriteLine($"static {colorTypeName}<{channelTypeName}> IColor<{colorTypeName}<{channelTypeName}>, {channelTypeName}>.White => throw new NotSupportedException();");
+		}
+
+		static int CountRGB(bool hasRed, bool hasGreen, bool hasBlue)
+		{
+			return (hasRed ? 1 : 0) + (hasGreen ? 1 : 0) + (hasBlue ? 1 : 0);
+		}
+
+		static int CountRGBA(bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha)
+		{
+			return CountRGB(hasRed, hasGreen, hasBlue) + (hasAlpha ? 1 : 0);
+		}
+	}
+
 	private static void WriteGenericColor(IndentedTextWriter writer, string name, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha)
 	{
 		const string typeName = "T";
-		const string minValue = $"NumericConversion.GetMinimumValueSafe<T>()";
-		const string maxValue = $"NumericConversion.GetMaximumValueSafe<T>()";
+		const string minValue = "NumericConversion.GetMinimumValueSafe<T>()";
+		const string maxValue = "NumericConversion.GetMaximumValueSafe<T>()";
 
 		writer.WriteGeneratedCodeWarning();
 		writer.WriteLineNoTabs();
@@ -149,10 +208,7 @@ internal static partial class Program
 		writer.WriteFileScopedNamespace(OutputNamespace);
 		writer.WriteLineNoTabs();
 
-		string constraints = hasRed && hasGreen && hasBlue && hasAlpha
-			? "unmanaged"
-			: "unmanaged, INumberBase<T>, IMinMaxValue<T>";
-		writer.WriteLine($"public partial struct {name}<T> : IColor<{typeName}> where T : {constraints}");
+		writer.WriteLine($"public partial struct {name}<T> : IColor<{name}<T>, T> where T : unmanaged, INumberBase<T>, IMinMaxValue<T>");
 		using (new CurlyBrackets(writer))
 		{
 			WriteProperty(writer, hasRed, typeName, 'R', minValue);
@@ -171,6 +227,8 @@ internal static partial class Program
 			WriteSetChannels(writer, typeName, hasRed, hasGreen, hasBlue, hasAlpha);
 			writer.WriteLineNoTabs();
 			WriteNonGenericStaticProperties(writer, hasRed, hasGreen, hasBlue, hasAlpha, true, typeName);
+			writer.WriteLineNoTabs();
+			WriteBlackWhiteStaticProperties(writer, hasRed, hasGreen, hasBlue, hasAlpha, name, typeName);
 			writer.WriteLineNoTabs();
 			WriteToString(writer, hasRed, hasGreen, hasBlue, hasAlpha);
 		}

@@ -2,7 +2,7 @@
 
 namespace AssetRipper.TextureDecoder.Rgb.Formats;
 
-public partial struct ColorRGB<T> : IColor<T> where T : unmanaged, INumberBase<T>, IMinMaxValue<T>
+public partial struct ColorRGB<T> : IColor<ColorRGB<T>, T> where T : unmanaged, INumberBase<T>, IMinMaxValue<T>
 {
 	public T R { get; set; }
 
@@ -44,6 +44,9 @@ public partial struct ColorRGB<T> : IColor<T> where T : unmanaged, INumberBase<T
 	static bool IColor.HasAlphaChannel => false;
 	static bool IColor.ChannelsAreFullyUtilized => true;
 	static Type IColor.ChannelType => typeof(T);
+
+	public static ColorRGB<T> Black => new(NumericConversion.GetMinimumValueSafe<T>(), NumericConversion.GetMinimumValueSafe<T>(), NumericConversion.GetMinimumValueSafe<T>());
+	public static ColorRGB<T> White => new(NumericConversion.GetMaximumValueSafe<T>(), NumericConversion.GetMaximumValueSafe<T>(), NumericConversion.GetMaximumValueSafe<T>());
 
 	public override string ToString()
 	{
