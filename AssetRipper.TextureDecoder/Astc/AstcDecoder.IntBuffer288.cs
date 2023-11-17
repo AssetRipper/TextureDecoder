@@ -2,9 +2,9 @@
 
 public static partial class AstcDecoder
 {
-	private struct IntSeqData
+	[InlineArray(288)]
+	private struct IntBuffer288
 	{
-		public int bits;
-		public int nonbits;
+		private int _element0;
 	}
 }

@@ -52,7 +52,7 @@ namespace AssetRipper.TextureDecoder.Astc
 			}
 		}
 
-		private unsafe static void DecodeBlock(ReadOnlySpan<byte> input, int blockWidth, int blockHeight, Span<uint> output)
+		private static void DecodeBlock(ReadOnlySpan<byte> input, int blockWidth, int blockHeight, Span<uint> output)
 		{
 			if (input[0] == 0xfc && (input[1] & 1) == 1)
 			{
@@ -78,7 +78,7 @@ namespace AssetRipper.TextureDecoder.Astc
 			}
 		}
 
-		private unsafe static void DecodeBlockParameters(ReadOnlySpan<byte> input, ref BlockData pBlock)
+		private static void DecodeBlockParameters(ReadOnlySpan<byte> input, ref BlockData pBlock)
 		{
 			pBlock.dual_plane = (input[1] & 4) >> 2;
 			pBlock.weight_range = (input[0] >> 4 & 1) | (input[1] << 2 & 8);
@@ -231,7 +231,7 @@ namespace AssetRipper.TextureDecoder.Astc
 			}
 		}
 
-		private unsafe static void DecodeEndpoints(ReadOnlySpan<byte> input, ref BlockData pBlock)
+		private static void DecodeEndpoints(ReadOnlySpan<byte> input, ref BlockData pBlock)
 		{
 			Span<IntSeqData> epSeq = stackalloc IntSeqData[32];
 			DecodeIntseq(input, pBlock.part_num == 1 ? 17 : 29, CemTableA[pBlock.cem_range], CemTableB[pBlock.cem_range], pBlock.endpoint_value_num, false, epSeq);
@@ -352,61 +352,40 @@ namespace AssetRipper.TextureDecoder.Astc
 			}
 
 			Span<int> v = ev;
-			for (int cem = 0, cemOff = 0; cem < pBlock.part_num; v = v.Slice((pBlock.cem[cem] / 4 + 1) * 2), cem++, cemOff += 8)
+			for (int cem = 0; cem < pBlock.part_num; v = v.Slice((pBlock.cem[cem] / 4 + 1) * 2), cem++)
 			{
 				switch (pBlock.cem[cem])
 				{
 					case 0:
-						fixed (int* endpoint = &pBlock.endpoints[cemOff])
-						{
-							SetEndpoint(new Span<int>(endpoint, 8), v[0], v[0], v[0], 255, v[1], v[1], v[1], 255);
-						}
+						SetEndpoint(pBlock.endpoints[cem], v[0], v[0], v[0], 255, v[1], v[1], v[1], 255);
 						break;
 					case 1:
 						{
 							int l0 = (v[0] >> 2) | (v[1] & 0xc0);
 							int l1 = Clamp(l0 + (v[1] & 0x3f));
-							fixed (int* endpoint = &pBlock.endpoints[cemOff])
-							{
-								SetEndpoint(new Span<int>(endpoint, 8), l0, l0, l0, 255, l1, l1, l1, 255);
-							}
+							SetEndpoint(pBlock.endpoints[cem], l0, l0, l0, 255, l1, l1, l1, 255);
 						}
 						break;
 					case 4:
-						fixed (int* endpoint = &pBlock.endpoints[cemOff])
-						{
-							SetEndpoint(new Span<int>(endpoint, 8), v[0], v[0], v[0], v[2], v[1], v[1], v[1], v[3]);
-						}
+						SetEndpoint(pBlock.endpoints[cem], v[0], v[0], v[0], v[2], v[1], v[1], v[1], v[3]);
 						break;
 					case 5:
 						BitTransferSigned(ref v[1], ref v[0]);
 						BitTransferSigned(ref v[3], ref v[2]);
 						v[1] += v[0];
-						fixed (int* endpoint = &pBlock.endpoints[cemOff])
-						{
-							SetEndpointClamp(new Span<int>(endpoint, 8), v[0], v[0], v[0], v[2], v[1], v[1], v[1], v[2] + v[3]);
-						}
+						SetEndpointClamp(pBlock.endpoints[cem], v[0], v[0], v[0], v[2], v[1], v[1], v[1], v[2] + v[3]);
 						break;
 					case 6:
-						fixed (int* endpoint = &pBlock.endpoints[cemOff])
-						{
-							SetEndpoint(new Span<int>(endpoint, 8), v[0] * v[3] >> 8, v[1] * v[3] >> 8, v[2] * v[3] >> 8, 255, v[0], v[1], v[2], 255);
-						}
+						SetEndpoint(pBlock.endpoints[cem], v[0] * v[3] >> 8, v[1] * v[3] >> 8, v[2] * v[3] >> 8, 255, v[0], v[1], v[2], 255);
 						break;
 					case 8:
 						if (v[0] + v[2] + v[4] <= v[1] + v[3] + v[5])
 						{
-							fixed (int* endpoint = &pBlock.endpoints[cemOff])
-							{
-								SetEndpoint(new Span<int>(endpoint, 8), v[0], v[2], v[4], 255, v[1], v[3], v[5], 255);
-							}
+							SetEndpoint(pBlock.endpoints[cem], v[0], v[2], v[4], 255, v[1], v[3], v[5], 255);
 						}
 						else
 						{
-							fixed (int* endpoint = &pBlock.endpoints[cemOff])
-							{
-								SetEndpointBlue(new Span<int>(endpoint, 8), v[1], v[3], v[5], 255, v[0], v[2], v[4], 255);
-							}
+							SetEndpointBlue(pBlock.endpoints[cem], v[1], v[3], v[5], 255, v[0], v[2], v[4], 255);
 						}
 
 						break;
@@ -416,40 +395,25 @@ namespace AssetRipper.TextureDecoder.Astc
 						BitTransferSigned(ref v[5], ref v[4]);
 						if (v[1] + v[3] + v[5] >= 0)
 						{
-							fixed (int* endpoint = &pBlock.endpoints[cemOff])
-							{
-								SetEndpointClamp(new Span<int>(endpoint, 8), v[0], v[2], v[4], 255, v[0] + v[1], v[2] + v[3], v[4] + v[5], 255);
-							}
+							SetEndpointClamp(pBlock.endpoints[cem], v[0], v[2], v[4], 255, v[0] + v[1], v[2] + v[3], v[4] + v[5], 255);
 						}
 						else
 						{
-							fixed (int* endpoint = &pBlock.endpoints[cemOff])
-							{
-								SetEndpointBlueClamp(new Span<int>(endpoint, 8), v[0] + v[1], v[2] + v[3], v[4] + v[5], 255, v[0], v[2], v[4], 255);
-							}
+							SetEndpointBlueClamp(pBlock.endpoints[cem], v[0] + v[1], v[2] + v[3], v[4] + v[5], 255, v[0], v[2], v[4], 255);
 						}
 
 						break;
 					case 10:
-						fixed (int* endpoint = &pBlock.endpoints[cemOff])
-						{
-							SetEndpoint(new Span<int>(endpoint, 8), v[0] * v[3] >> 8, v[1] * v[3] >> 8, v[2] * v[3] >> 8, v[4], v[0], v[1], v[2], v[5]);
-						}
+						SetEndpoint(pBlock.endpoints[cem], v[0] * v[3] >> 8, v[1] * v[3] >> 8, v[2] * v[3] >> 8, v[4], v[0], v[1], v[2], v[5]);
 						break;
 					case 12:
 						if (v[0] + v[2] + v[4] <= v[1] + v[3] + v[5])
 						{
-							fixed (int* endpoint = &pBlock.endpoints[cemOff])
-							{
-								SetEndpoint(new Span<int>(endpoint, 8), v[0], v[2], v[4], v[6], v[1], v[3], v[5], v[7]);
-							}
+							SetEndpoint(pBlock.endpoints[cem], v[0], v[2], v[4], v[6], v[1], v[3], v[5], v[7]);
 						}
 						else
 						{
-							fixed (int* endpoint = &pBlock.endpoints[cemOff])
-							{
-								SetEndpointBlue(new Span<int>(endpoint, 8), v[1], v[3], v[5], v[7], v[0], v[2], v[4], v[6]);
-							}
+							SetEndpointBlue(pBlock.endpoints[cem], v[1], v[3], v[5], v[7], v[0], v[2], v[4], v[6]);
 						}
 
 						break;
@@ -460,17 +424,11 @@ namespace AssetRipper.TextureDecoder.Astc
 						BitTransferSigned(ref v[7], ref v[6]);
 						if (v[1] + v[3] + v[5] >= 0)
 						{
-							fixed (int* endpoint = &pBlock.endpoints[cemOff])
-							{
-								SetEndpointClamp(new Span<int>(endpoint, 8), v[0], v[2], v[4], v[6], v[0] + v[1], v[2] + v[3], v[4] + v[5], v[6] + v[7]);
-							}
+							SetEndpointClamp(pBlock.endpoints[cem], v[0], v[2], v[4], v[6], v[0] + v[1], v[2] + v[3], v[4] + v[5], v[6] + v[7]);
 						}
 						else
 						{
-							fixed (int* endpoint = &pBlock.endpoints[cemOff])
-							{
-								SetEndpointBlueClamp(new Span<int>(endpoint, 8), v[0] + v[1], v[2] + v[3], v[4] + v[5], v[6] + v[7], v[0], v[2], v[4], v[6]);
-							}
+							SetEndpointBlueClamp(pBlock.endpoints[cem], v[0] + v[1], v[2] + v[3], v[4] + v[5], v[6] + v[7], v[0], v[2], v[4], v[6]);
 						}
 
 						break;
@@ -478,7 +436,7 @@ namespace AssetRipper.TextureDecoder.Astc
 			}
 		}
 
-		private unsafe static void DecodeWeights(ReadOnlySpan<byte> input, ref BlockData block)
+		private static void DecodeWeights(ReadOnlySpan<byte> input, ref BlockData block)
 		{
 			Span<IntSeqData> wSeq = stackalloc IntSeqData[128];
 			DecodeIntseq(input, 128, WeightPrecTableA[block.weight_range], WeightPrecTableB[block.weight_range], block.weight_num, true, wSeq);
@@ -634,7 +592,7 @@ namespace AssetRipper.TextureDecoder.Astc
 			}
 		}
 
-		private unsafe static void SelectPartition(ReadOnlySpan<byte> input, ref BlockData block)
+		private static void SelectPartition(ReadOnlySpan<byte> input, ref BlockData block)
 		{
 			bool small_block = block.bw * block.bh < 31;
 			int seed = (BinaryPrimitives.ReadInt32LittleEndian(input) >> 13 & 0x3ff) | (block.part_num - 1) << 10;
@@ -716,7 +674,7 @@ namespace AssetRipper.TextureDecoder.Astc
 			}
 		}
 
-		private unsafe static void ApplicateColor(BlockData block, Span<uint> output)
+		private static void ApplicateColor(BlockData block, Span<uint> output)
 		{
 			if (block.dual_plane != 0)
 			{
@@ -727,10 +685,10 @@ namespace AssetRipper.TextureDecoder.Astc
 					for (int i = 0; i < block.bw * block.bh; i++)
 					{
 						int p = block.partition[i];
-						byte r = SelectColor(block.endpoints[p * 8 + 0], block.endpoints[p * 8 + 4], block.weights[i * 2 + ps[0]]);
-						byte g = SelectColor(block.endpoints[p * 8 + 1], block.endpoints[p * 8 + 5], block.weights[i * 2 + ps[1]]);
-						byte b = SelectColor(block.endpoints[p * 8 + 2], block.endpoints[p * 8 + 6], block.weights[i * 2 + ps[2]]);
-						byte a = SelectColor(block.endpoints[p * 8 + 3], block.endpoints[p * 8 + 7], block.weights[i * 2 + ps[3]]);
+						byte r = SelectColor(block.endpoints[p][0], block.endpoints[p][4], block.weights[i * 2 + ps[0]]);
+						byte g = SelectColor(block.endpoints[p][1], block.endpoints[p][5], block.weights[i * 2 + ps[1]]);
+						byte b = SelectColor(block.endpoints[p][2], block.endpoints[p][6], block.weights[i * 2 + ps[2]]);
+						byte a = SelectColor(block.endpoints[p][3], block.endpoints[p][7], block.weights[i * 2 + ps[3]]);
 						output[i] = Color(r, g, b, a);
 					}
 				}
@@ -738,10 +696,10 @@ namespace AssetRipper.TextureDecoder.Astc
 				{
 					for (int i = 0; i < block.bw * block.bh; i++)
 					{
-						byte r = SelectColor(block.endpoints[0], block.endpoints[4], block.weights[i * 2 + ps[0]]);
-						byte g = SelectColor(block.endpoints[1], block.endpoints[5], block.weights[i * 2 + ps[1]]);
-						byte b = SelectColor(block.endpoints[2], block.endpoints[6], block.weights[i * 2 + ps[2]]);
-						byte a = SelectColor(block.endpoints[3], block.endpoints[7], block.weights[i * 2 + ps[3]]);
+						byte r = SelectColor(block.endpoints[0][0], block.endpoints[0][4], block.weights[i * 2 + ps[0]]);
+						byte g = SelectColor(block.endpoints[0][1], block.endpoints[0][5], block.weights[i * 2 + ps[1]]);
+						byte b = SelectColor(block.endpoints[0][2], block.endpoints[0][6], block.weights[i * 2 + ps[2]]);
+						byte a = SelectColor(block.endpoints[0][3], block.endpoints[0][7], block.weights[i * 2 + ps[3]]);
 						output[i] = Color(r, g, b, a);
 					}
 				}
@@ -751,10 +709,10 @@ namespace AssetRipper.TextureDecoder.Astc
 				for (int i = 0; i < block.bw * block.bh; i++)
 				{
 					int p = block.partition[i];
-					byte r = SelectColor(block.endpoints[p * 8 + 0], block.endpoints[p * 8 + 4], block.weights[i * 2]);
-					byte g = SelectColor(block.endpoints[p * 8 + 1], block.endpoints[p * 8 + 5], block.weights[i * 2]);
-					byte b = SelectColor(block.endpoints[p * 8 + 2], block.endpoints[p * 8 + 6], block.weights[i * 2]);
-					byte a = SelectColor(block.endpoints[p * 8 + 3], block.endpoints[p * 8 + 7], block.weights[i * 2]);
+					byte r = SelectColor(block.endpoints[p][0], block.endpoints[p][4], block.weights[i * 2]);
+					byte g = SelectColor(block.endpoints[p][1], block.endpoints[p][5], block.weights[i * 2]);
+					byte b = SelectColor(block.endpoints[p][2], block.endpoints[p][6], block.weights[i * 2]);
+					byte a = SelectColor(block.endpoints[p][3], block.endpoints[p][7], block.weights[i * 2]);
 					output[i] = Color(r, g, b, a);
 				}
 			}
@@ -762,10 +720,10 @@ namespace AssetRipper.TextureDecoder.Astc
 			{
 				for (int i = 0; i < block.bw * block.bh; i++)
 				{
-					byte r = SelectColor(block.endpoints[0], block.endpoints[4], block.weights[i * 2]);
-					byte g = SelectColor(block.endpoints[1], block.endpoints[5], block.weights[i * 2]);
-					byte b = SelectColor(block.endpoints[2], block.endpoints[6], block.weights[i * 2]);
-					byte a = SelectColor(block.endpoints[3], block.endpoints[7], block.weights[i * 2]);
+					byte r = SelectColor(block.endpoints[0][0], block.endpoints[0][4], block.weights[i * 2]);
+					byte g = SelectColor(block.endpoints[0][1], block.endpoints[0][5], block.weights[i * 2]);
+					byte b = SelectColor(block.endpoints[0][2], block.endpoints[0][6], block.weights[i * 2]);
+					byte a = SelectColor(block.endpoints[0][3], block.endpoints[0][7], block.weights[i * 2]);
 					output[i] = Color(r, g, b, a);
 				}
 			}
