@@ -83,16 +83,16 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 					if (changed)
 					{
 						AmtcBlock block00 = blocks[(int)blocki00];
-						Unpack5554Colour(block00, m_colors.GetIntSpanForColor(0));
+						Unpack5554Colour(block00, m_colors[0]);
 						UnpackModulations(block00, do2bitMode, modulationVals, modulationModes, 0, 0);
 						AmtcBlock block01 = blocks[(int)blocki01];
-						Unpack5554Colour(block01, m_colors.GetIntSpanForColor(1));
+						Unpack5554Colour(block01, m_colors[1]);
 						UnpackModulations(block01, do2bitMode, modulationVals, modulationModes, xBlockSize, 0);
 						AmtcBlock block10 = blocks[(int)blocki10];
-						Unpack5554Colour(block10, m_colors.GetIntSpanForColor(2));
+						Unpack5554Colour(block10, m_colors[2]);
 						UnpackModulations(block10, do2bitMode, modulationVals, modulationModes, 0, BlockYSize);
 						AmtcBlock block11 = blocks[(int)blocki11];
-						Unpack5554Colour(block11, m_colors.GetIntSpanForColor(3));
+						Unpack5554Colour(block11, m_colors[3]);
 						UnpackModulations(block11, do2bitMode, modulationVals, modulationModes, xBlockSize, BlockYSize);
 
 						pblocki00 = blocki00;
@@ -104,8 +104,8 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 					}
 
 					// decompress the pixel.  First compute the interpolated A and B signals
-					InterpolateColours(m_colors.GetIntSpanForColor(0), m_colors.GetIntSpanForColor(1), m_colors.GetIntSpanForColor(2), m_colors.GetIntSpanForColor(3), 0, do2bitMode, x, y, aSig);
-					InterpolateColours(m_colors.GetIntSpanForColor(0), m_colors.GetIntSpanForColor(1), m_colors.GetIntSpanForColor(2), m_colors.GetIntSpanForColor(3), 1, do2bitMode, x, y, bSig);
+					InterpolateColours(m_colors[0], m_colors[1], m_colors[2], m_colors[3], 0, do2bitMode, x, y, aSig);
+					InterpolateColours(m_colors[0], m_colors[1], m_colors[2], m_colors[3], 1, do2bitMode, x, y, bSig);
 					GetModulationValue(x, y, do2bitMode, modulationVals, modulationModes, out int mod, out bool doPT);
 
 					// compute the modulated color. Swap red and blue channel
@@ -141,11 +141,11 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 			{
 				throw new Exception();
 			}
-			if (!IsPowerOf2((uint)ySize))
+			if (!BitOperations.IsPow2(ySize))
 			{
 				throw new Exception();
 			}
-			if (!IsPowerOf2((uint)xSize))
+			if (!BitOperations.IsPow2(xSize))
 			{
 				throw new Exception();
 			}
@@ -396,12 +396,14 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 		/// </summary>
 		private static void Unpack5554Colour(AmtcBlock block, Span<int> abColors)
 		{
-			Span<uint> rawBits = stackalloc uint[2];
-			// extract A and B
-			// 15 bits (shifted up by one)
-			rawBits[0] = block.PackedData1 & (0xFFFE);
-			// 16 bits
-			rawBits[1] = block.PackedData1 >> 16;
+			ReadOnlySpan<uint> rawBits =
+			[
+				// extract A and B
+				// 15 bits (shifted up by one)
+				block.PackedData1 & (0xFFFE),
+				// 16 bits
+				block.PackedData1 >> 16,
+			];
 
 			// step through both colours
 			for (int i = 0; i < 2; i++)
@@ -451,29 +453,6 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 					abColors[i * 4 + 3] = (int)((rawBits[i] >> 11) & 0xE);
 				}
 			}
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-		private static Span<int> GetIntSpanForColor(this Span<Colours5554> colorSpan, int index)
-		{
-			return MemoryMarshal.Cast<Colours5554, int>(colorSpan.Slice(index, 1));
-		}
-
-		/// <summary>
-		/// Check that a number is an integer power of two, i.e.  1, 2, 4, 8, ... etc. Returns false for zero
-		/// </summary>
-		/// <param name="input">A number</param>
-		/// <returns>True if the number is an integer power of two, else false</returns>
-		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-		private static bool IsPowerOf2(uint input)
-		{
-			if (input == 0)
-			{
-				return false;
-			}
-
-			uint minus1 = input - 1;
-			return ((input | minus1) == (input ^ minus1));
 		}
 
 		/// <summary>
