@@ -621,11 +621,11 @@ namespace AssetRipper.TextureDecoder.Astc
 			}
 
 
-			ReadOnlySpan<int> sh = stackalloc int[2]
-			{
+			ReadOnlySpan<int> sh =
+			[
 				(seed & 2) != 0 ? 4 : 5,
 				block.part_num == 3 ? 6 : 5
-			};
+			];
 
 			if ((seed & 1) != 0)
 			{
@@ -678,7 +678,7 @@ namespace AssetRipper.TextureDecoder.Astc
 		{
 			if (block.dual_plane != 0)
 			{
-				Span<int> ps = stackalloc int[] { 0, 0, 0, 0 };
+				Span<int> ps = [0, 0, 0, 0];
 				ps[block.plane_selector] = 1;
 				if (block.part_num > 1)
 				{

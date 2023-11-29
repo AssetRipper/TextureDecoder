@@ -410,11 +410,11 @@ namespace AssetRipper.TextureDecoder.Etc
 		private static void DecodeEtc1Block(ReadOnlySpan<byte> input, Span<uint> output)
 		{
 			byte i3 = input[3];
-			ReadOnlySpan<int> code = stackalloc int[2]
-			{
+			ReadOnlySpan<int> code =
+			[
 				(i3 >> 5) * 4,
 				(i3 >> 2 & 7) * 4
-			};
+			];
 			Span<byte> c = stackalloc byte[6];
 			int ti = (i3 & 1) * 16;
 			if ((i3 & 2) != 0)
@@ -486,13 +486,13 @@ namespace AssetRipper.TextureDecoder.Etc
 					}
 					int ti = input[3] >> 1 & 6 | input[3] & 1;
 					byte d = Etc2DistanceTable[ti];
-					ReadOnlySpan<uint> color_set = stackalloc uint[]
-					{
+					ReadOnlySpan<uint> color_set =
+					[
 						ApplicateColorRaw(c, 0),
 						ApplicateColor(c, 1, d),
 						ApplicateColorRaw(c, 1),
 						ApplicateColor(c, 1, -d)
-					};
+					];
 
 					for (int i = 0; i < 16; i++, j >>= 1, k >>= 1)
 					{
@@ -527,13 +527,13 @@ namespace AssetRipper.TextureDecoder.Etc
 							++di;
 						}
 						byte d = Etc2DistanceTable[di];
-						ReadOnlySpan<uint> color_set = stackalloc uint[]
-						{
+						ReadOnlySpan<uint> color_set =
+						[
 							ApplicateColor(c, 0, d),
 							ApplicateColor(c, 0, -d),
 							ApplicateColor(c, 1, d),
 							ApplicateColor(c, 1, -d)
-						};
+						];
 						for (int i = 0; i < 16; i++, j >>= 1, k >>= 1)
 						{
 							int index = k << 1 & 2 | j & 1;
@@ -577,9 +577,11 @@ namespace AssetRipper.TextureDecoder.Etc
 						else
 						{
 							// differential
-							Span<int> code = stackalloc int[2];
-							code[0] = (input[3] >> 5) * 4;
-							code[1] = (input[3] >> 2 & 7) * 4;
+							ReadOnlySpan<int> code =
+							[
+								(input[3] >> 5) * 4,
+								(input[3] >> 2 & 7) * 4
+							];
 							int ti = (input[3] & 1) * 16;
 							unchecked
 							{
@@ -610,11 +612,11 @@ namespace AssetRipper.TextureDecoder.Etc
 			else
 			{
 				// individual
-				ReadOnlySpan<int> code = stackalloc int[2]
-				{
+				ReadOnlySpan<int> code =
+				[
 					(input[3] >> 5) * 4,
 					(input[3] >> 2 & 7) * 4
-				};
+				];
 				int ti = (input[3] & 1) * 16;
 				unchecked
 				{
@@ -673,13 +675,13 @@ namespace AssetRipper.TextureDecoder.Etc
 				}
 				int ti = input[3] >> 1 & 6 | input[3] & 1;
 				byte d = Etc2DistanceTable[ti];
-				ReadOnlySpan<uint> color_set = stackalloc uint[4]
-				{
+				ReadOnlySpan<uint> color_set =
+				[
 					ApplicateColorRaw(c, 0),
 					ApplicateColor(c, 1, d),
 					ApplicateColorRaw(c, 1),
 					ApplicateColor(c, 1, -d)
-				};
+				];
 
 				for (int i = 0; i < 16; i++, j >>= 1, k >>= 1)
 				{
@@ -715,13 +717,13 @@ namespace AssetRipper.TextureDecoder.Etc
 						++di;
 					}
 					byte d = Etc2DistanceTable[di];
-					ReadOnlySpan<uint> color_set = stackalloc uint[4]
-					{
+					ReadOnlySpan<uint> color_set =
+					[
 						ApplicateColor(c, 0, d),
 						ApplicateColor(c, 0, -d),
 						ApplicateColor(c, 1, d),
 						ApplicateColor(c, 1, -d)
-					};
+					];
 					for (int i = 0; i < 16; i++, j >>= 1, k >>= 1)
 					{
 						int index = k << 1 & 2 | j & 1;
@@ -766,11 +768,11 @@ namespace AssetRipper.TextureDecoder.Etc
 					else
 					{
 						// differential (Etc1Block + mask + specific mod table)
-						ReadOnlySpan<int> code = stackalloc int[2]
-						{
+						ReadOnlySpan<int> code =
+						[
 							(input[3] >> 5) * 4,
 							(input[3] >> 2 & 7) * 4
-						};
+						];
 						int ti = (input[3] & 1) * 16;
 						unchecked
 						{
