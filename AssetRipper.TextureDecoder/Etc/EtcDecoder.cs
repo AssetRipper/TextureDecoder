@@ -8,7 +8,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			return DecompressETC(input, width, height, output);
 		}
 
-		public unsafe static int DecompressETC(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		public static int DecompressETC(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int requiredLength = ((width + 3) / 4) * ((height + 3) / 4) * 8;
 			if (input.Length < requiredLength)
@@ -16,14 +16,6 @@ namespace AssetRipper.TextureDecoder.Etc
 				throw new ArgumentException($"{nameof(input)} has length {input.Length} which is less than the required length {requiredLength}", nameof(input));
 			}
 
-			fixed (byte* outputPtr = output)
-			{
-				return DecompressETC(input, width, height, outputPtr);
-			}
-		}
-
-		private unsafe static int DecompressETC(ReadOnlySpan<byte> input, int width, int height, byte* output)
-		{
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
 			int clen_last = (width + 3) % 4 + 1;
@@ -35,16 +27,15 @@ namespace AssetRipper.TextureDecoder.Etc
 				{
 					DecodeEtc1Block(input.Slice(inputOffset, 8), buf);
 					int clen = s < bcw - 1 ? 4 : clen_last;
-					uint* outputPtr = (uint*)(output + (t * 16 * width + s * 16));
-					
+					int outputOffset = t * 16 * width + s * 16;
+					Span<uint> outputPtr = MemoryMarshal.Cast<byte, uint>(output.Slice(outputOffset));
+
 					for (int i = 0, y = t * 4; i < 4 && y < height; i++, y++)
 					{
 						for (int j = 0; j < clen; j++)
 						{
-							outputPtr[j] = buf[j + 4 * i];
+							outputPtr[j + i * width] = buf[j + 4 * i];
 						}
-
-						outputPtr += width;
 					}
 				}
 			}
@@ -57,7 +48,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			return DecompressETC2(input, width, height, output);
 		}
 
-		public unsafe static int DecompressETC2(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		public static int DecompressETC2(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int requiredLength = ((width + 3) / 4) * ((height + 3) / 4) * 8;
 			if (input.Length < requiredLength)
@@ -65,14 +56,6 @@ namespace AssetRipper.TextureDecoder.Etc
 				throw new ArgumentException($"{nameof(input)} has length {input.Length} which is less than the required length {requiredLength}", nameof(input));
 			}
 
-			fixed (byte* outputPtr = output)
-			{
-				return DecompressETC2(input, width, height, outputPtr);
-			}
-		}
-
-		private unsafe static int DecompressETC2(ReadOnlySpan<byte> input, int width, int height, byte* output)
-		{
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
 			int clen_last = (width + 3) % 4 + 1;
@@ -84,16 +67,15 @@ namespace AssetRipper.TextureDecoder.Etc
 				{
 					DecodeEtc2Block(input.Slice(inputOffset, 8), buf);
 					int clen = s < bcw - 1 ? 4 : clen_last;
-					uint* outputPtr = (uint*)(output + (t * 16 * width + s * 16));
-					
+					int outputOffset = t * 16 * width + s * 16;
+					Span<uint> outputPtr = MemoryMarshal.Cast<byte, uint>(output.Slice(outputOffset));
+
 					for (int i = 0, y = t * 4; i < 4 && y < height; i++, y++)
 					{
 						for (int j = 0; j < clen; j++)
 						{
-							outputPtr[j] = buf[j + 4 * i];
+							outputPtr[j + i * width] = buf[j + 4 * i];
 						}
-
-						outputPtr += width;
 					}
 				}
 			}
@@ -106,7 +88,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			return DecompressETC2A1(input, width, height, output);
 		}
 
-		public unsafe static int DecompressETC2A1(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		public static int DecompressETC2A1(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int requiredLength = ((width + 3) / 4) * ((height + 3) / 4) * 8;
 			if (input.Length < requiredLength)
@@ -114,14 +96,6 @@ namespace AssetRipper.TextureDecoder.Etc
 				throw new ArgumentException($"{nameof(input)} has length {input.Length} which is less than the required length {requiredLength}", nameof(input));
 			}
 
-			fixed (byte* outputPtr = output)
-			{
-				return DecompressETC2A1(input, width, height, outputPtr);
-			}
-		}
-
-		private unsafe static int DecompressETC2A1(ReadOnlySpan<byte> input, int width, int height, byte* output)
-		{
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
 			int clen_last = (width + 3) % 4 + 1;
@@ -133,16 +107,15 @@ namespace AssetRipper.TextureDecoder.Etc
 				{
 					DecodeEtc2a1Block(input.Slice(inputOffset, 8), buf);
 					int clen = s < bcw - 1 ? 4 : clen_last;
-					uint* outputPtr = (uint*)(output + (t * 16 * width + s * 16));
-					
+					int outputOffset = t * 16 * width + s * 16;
+					Span<uint> outputPtr = MemoryMarshal.Cast<byte, uint>(output.Slice(outputOffset));
+
 					for (int i = 0, y = t * 4; i < 4 && y < height; i++, y++)
 					{
 						for (int j = 0; j < clen; j++)
 						{
-							outputPtr[j] = buf[j + 4 * i];
+							outputPtr[j + i * width] = buf[j + 4 * i];
 						}
-
-						outputPtr += width;
 					}
 				}
 			}
@@ -155,7 +128,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			return DecompressETC2A8(input, width, height, output);
 		}
 
-		public unsafe static int DecompressETC2A8(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		public static int DecompressETC2A8(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int requiredLength = ((width + 3) / 4) * ((height + 3) / 4) * 16;
 			if (input.Length < requiredLength)
@@ -163,14 +136,6 @@ namespace AssetRipper.TextureDecoder.Etc
 				throw new ArgumentException($"{nameof(input)} has length {input.Length} which is less than the required length {requiredLength}", nameof(input));
 			}
 
-			fixed (byte* outputPtr = output)
-			{
-				return DecompressETC2A8(input, width, height, outputPtr);
-			}
-		}
-
-		private unsafe static int DecompressETC2A8(ReadOnlySpan<byte> input, int width, int height, byte* output)
-		{
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
 			int clen_last = (width + 3) % 4 + 1;
@@ -183,16 +148,15 @@ namespace AssetRipper.TextureDecoder.Etc
 					DecodeEtc2Block(input.Slice(inputOffset + 8, 8), buf);
 					DecodeEtc2a8Block(input.Slice(inputOffset + 0, 8), buf);
 					int clen = s < bcw - 1 ? 4 : clen_last;
-					uint* outputPtr = (uint*)(output + (t * 16 * width + s * 16));
-					
+					int outputOffset = t * 16 * width + s * 16;
+					Span<uint> outputPtr = MemoryMarshal.Cast<byte, uint>(output.Slice(outputOffset));
+
 					for (int i = 0, y = t * 4; i < 4 && y < height; i++, y++)
 					{
 						for (int j = 0; j < clen; j++)
 						{
-							outputPtr[j] = buf[j + 4 * i];
+							outputPtr[j + i * width] = buf[j + 4 * i];
 						}
-
-						outputPtr += width;
 					}
 				}
 			}
@@ -205,7 +169,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			return DecompressEACRUnsigned(input, width, height, output);
 		}
 
-		public unsafe static int DecompressEACRUnsigned(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		public static int DecompressEACRUnsigned(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int requiredLength = ((width + 3) / 4) * ((height + 3) / 4) * 8;
 			if (input.Length < requiredLength)
@@ -213,14 +177,6 @@ namespace AssetRipper.TextureDecoder.Etc
 				throw new ArgumentException($"{nameof(input)} has length {input.Length} which is less than the required length {requiredLength}", nameof(input));
 			}
 
-			fixed (byte* outputPtr = output)
-			{
-				return DecompressEACRUnsigned(input, width, height, outputPtr);
-			}
-		}
-
-		private unsafe static int DecompressEACRUnsigned(ReadOnlySpan<byte> input, int width, int height, byte* output)
-		{
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
 			int clen_last = (width + 3) % 4 + 1;
@@ -236,16 +192,15 @@ namespace AssetRipper.TextureDecoder.Etc
 				{
 					DecodeEacUnsignedBlock(input.Slice(inputOffset, 8), buf, 2);
 					int clen = s < bcw - 1 ? 4 : clen_last;
-					uint* outputPtr = (uint*)(output + (t * 16 * width + s * 16));
-					
+					int outputOffset = t * 16 * width + s * 16;
+					Span<uint> outputPtr = MemoryMarshal.Cast<byte, uint>(output.Slice(outputOffset));
+
 					for (int i = 0, y = t * 4; i < 4 && y < height; i++, y++)
 					{
 						for (int j = 0; j < clen; j++)
 						{
-							outputPtr[j] = buf[j + 4 * i];
+							outputPtr[j + i * width] = buf[j + 4 * i];
 						}
-
-						outputPtr += width;
 					}
 				}
 			}
@@ -258,7 +213,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			return DecompressEACRSigned(input, width, height, output);
 		}
 
-		public unsafe static int DecompressEACRSigned(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		public static int DecompressEACRSigned(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int requiredLength = ((width + 3) / 4) * ((height + 3) / 4) * 8;
 			if (input.Length < requiredLength)
@@ -266,14 +221,6 @@ namespace AssetRipper.TextureDecoder.Etc
 				throw new ArgumentException($"{nameof(input)} has length {input.Length} which is less than the required length {requiredLength}", nameof(input));
 			}
 
-			fixed (byte* outputPtr = output)
-			{
-				return DecompressEACRSigned(input, width, height, outputPtr);
-			}
-		}
-		
-		private unsafe static int DecompressEACRSigned(ReadOnlySpan<byte> input, int width, int height, byte* output)
-		{
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
 			int clen_last = (width + 3) % 4 + 1;
@@ -289,16 +236,15 @@ namespace AssetRipper.TextureDecoder.Etc
 				{
 					DecodeEacSignedBlock(input.Slice(inputOffset, 8), buf, 2);
 					int clen = s < bcw - 1 ? 4 : clen_last;
-					uint* outputPtr = (uint*)(output + (t * 16 * width + s * 16));
-					
+					int outputOffset = t * 16 * width + s * 16;
+					Span<uint> outputPtr = MemoryMarshal.Cast<byte, uint>(output.Slice(outputOffset));
+
 					for (int i = 0, y = t * 4; i < 4 && y < height; i++, y++)
 					{
 						for (int j = 0; j < clen; j++)
 						{
-							outputPtr[j] = buf[j + 4 * i];
+							outputPtr[j + i * width] = buf[j + 4 * i];
 						}
-
-						outputPtr += width;
 					}
 				}
 			}
@@ -311,7 +257,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			return DecompressEACRGUnsigned(input, width, height, output);
 		}
 
-		public unsafe static int DecompressEACRGUnsigned(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		public static int DecompressEACRGUnsigned(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
@@ -356,7 +302,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			return DecompressEACRGSigned(input, width, height, output);
 		}
 
-		public unsafe static int DecompressEACRGSigned(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		public static int DecompressEACRGSigned(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
 			int requiredLength = ((width + 3) / 4) * ((height + 3) / 4) * 16;
 			if (input.Length < requiredLength)
@@ -364,14 +310,6 @@ namespace AssetRipper.TextureDecoder.Etc
 				throw new ArgumentException($"{nameof(input)} has length {input.Length} which is less than the required length {requiredLength}", nameof(input));
 			}
 
-			fixed (byte* outputPtr = output)
-			{
-				return DecompressEACRGSigned(input, width, height, outputPtr);
-			}
-		}
-
-		private unsafe static int DecompressEACRGSigned(ReadOnlySpan<byte> input, int width, int height, byte* output)
-		{
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
 			int clen_last = (width + 3) % 4 + 1;
@@ -388,16 +326,15 @@ namespace AssetRipper.TextureDecoder.Etc
 					DecodeEacSignedBlock(input.Slice(inputOffset + 0, 8), buf, 2);
 					DecodeEacSignedBlock(input.Slice(inputOffset + 8, 8), buf, 1);
 					int clen = s < bcw - 1 ? 4 : clen_last;
-					uint* outputPtr = (uint*)(output + (t * 16 * width + s * 16));
-					
+					int outputOffset = t * 16 * width + s * 16;
+					Span<uint> outputPtr = MemoryMarshal.Cast<byte, uint>(output.Slice(outputOffset));
+
 					for (int i = 0, y = t * 4; i < 4 && y < height; i++, y++)
 					{
 						for (int j = 0; j < clen; j++)
 						{
-							outputPtr[j] = buf[j + 4 * i];
+							outputPtr[j + i * width] = buf[j + 4 * i];
 						}
-
-						outputPtr += width;
 					}
 				}
 			}

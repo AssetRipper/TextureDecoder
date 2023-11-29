@@ -2,7 +2,6 @@
 
 	<PropertyGroup>
 		<IsTrimmable>true</IsTrimmable>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		
 		<PackageId>AssetRipper.TextureDecoder</PackageId>
