@@ -74,4 +74,11 @@ public sealed class AstcTests
 		}
 		ByteArrayDeviation.AssertMinimalDeviation(decompressedData, AndroidTextures.Logo_00.Data, maxMeanDeviation, maxStandardDeviation);
 	}
+
+	[Ignore("Bug not yet fixed")]
+	[TestCase(new byte[16] { 83, 1, 147, 104, 198, 173, 55, 116, 182, 66, 105, 11, 102, 43, 148, 125 }, 8, 8, TestName = "GetBits Should not throw in DecodeIntseq")]
+	public void DecodesBlockWithoutThrowing(byte[] block, int blockWidth, int blockHeight)
+	{
+		Assert.DoesNotThrow(() => AstcDecoder.DecodeASTC(block, blockWidth, blockHeight, blockWidth, blockHeight, out _));
+	}
 }
