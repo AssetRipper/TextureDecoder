@@ -883,7 +883,19 @@ namespace AssetRipper.TextureDecoder.Astc
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static int GetBits(ReadOnlySpan<byte> input, int bit, int len)
 		{
-			return (BinaryPrimitives.ReadInt32LittleEndian(input[(bit / 8)..]) >> (bit % 8)) & ((1 << len) - 1);
+			ReadOnlySpan<byte> slice = input[(bit / 8)..];
+			int bitBuffer;
+			if (slice.Length >= sizeof(int))
+			{
+				bitBuffer = BinaryPrimitives.ReadInt32LittleEndian(slice);
+			}
+			else
+			{
+				Span<byte> temp = stackalloc byte[sizeof(int)];
+				slice.CopyTo(temp);
+				bitBuffer = BinaryPrimitives.ReadInt32LittleEndian(temp);
+			}
+			return (bitBuffer >> (bit % 8)) & ((1 << len) - 1);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
