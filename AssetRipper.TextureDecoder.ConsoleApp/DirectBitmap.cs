@@ -1,4 +1,5 @@
 using AssetRipper.TextureDecoder.Rgb;
+using AssetRipper.TextureDecoder.Rgb.Channels;
 using AssetRipper.TextureDecoder.Rgb.Formats;
 using StbImageWriteSharp;
 using System.Runtime.CompilerServices;
@@ -96,24 +97,34 @@ public readonly struct DirectBitmap<TColor, TColorArg>
 
 	private void GetDataAndComponentsForSaving(out byte[] data, out ColorComponents components)
 	{
-		if (typeof(TColor) == typeof(ColorRGBA<byte>))
+		if (typeof(TColor) == typeof(Color<byte, R, G, B, A>) || typeof(TColor) == typeof(ColorRGBA<byte>))
 		{
 			data = Data;
 			components = ColorComponents.RedGreenBlueAlpha;
 		}
-		else if (typeof(TColor) == typeof(ColorRGB<byte>))
+		else if (typeof(TColor) == typeof(Color<byte, R, G, B>) || typeof(TColor) == typeof(ColorRGB<byte>))
 		{
 			data = Data;
 			components = ColorComponents.RedGreenBlue;
 		}
+		else if (typeof(TColor) == typeof(Color<byte, Gray, A>))
+		{
+			data = Data;
+			components = ColorComponents.GreyAlpha;
+		}
+		else if (typeof(TColor) == typeof(Color<byte, Gray>))
+		{
+			data = Data;
+			components = ColorComponents.Grey;
+		}
 		else if (TColor.HasAlphaChannel)
 		{
-			RgbConverter.Convert<TColor, TColorArg, ColorRGBA<byte>, byte>(Bits, Width, Height, out data);
+			RgbConverter.Convert<TColor, TColorArg, Color<byte, R, G, B, A>, byte>(Bits, Width, Height, out data);
 			components = ColorComponents.RedGreenBlueAlpha;
 		}
 		else
 		{
-			RgbConverter.Convert<TColor, TColorArg, ColorRGB<byte>, byte>(Bits, Width, Height, out data);
+			RgbConverter.Convert<TColor, TColorArg, Color<byte, R, G, B>, byte>(Bits, Width, Height, out data);
 			components = ColorComponents.RedGreenBlue;
 		}
 	}

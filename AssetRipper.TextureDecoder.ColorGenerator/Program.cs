@@ -7,9 +7,10 @@ namespace AssetRipper.TextureDecoder.ColorGenerator;
 
 internal static partial class Program
 {
-	private const string AttributeNamespace = "AssetRipper.TextureDecoder.Attributes";
-	private const string OutputNamespace = "AssetRipper.TextureDecoder.Rgb.Formats";
-	private const string OutputFolder = "../../../../AssetRipper.TextureDecoder/Rgb/Formats/";
+	private const string RgbNamespace = "AssetRipper.TextureDecoder.Rgb";
+	private const string RgbFolder = "../../../../AssetRipper.TextureDecoder/Rgb/";
+	private const string FormatsNamespace = "AssetRipper.TextureDecoder.Rgb.Formats";
+	private const string FormatsFolder = "../../../../AssetRipper.TextureDecoder/Rgb/Formats/";
 
 	/// <summary>
 	/// Name, Type, Red, Blue, Green, Alpha, Fully Utilized
@@ -46,6 +47,10 @@ internal static partial class Program
 		{
 			WriteGenericColor(genericColor);
 		}
+		for (int i = 1; i <= 4; i++)
+		{
+			WriteSuperGenericColor(i);
+		}
 		NumericConversionGenerator.Run();
 		Console.WriteLine("Done!");
 	}
@@ -54,7 +59,7 @@ internal static partial class Program
 	{
 		(string name, Type type, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha, bool fullyUtilized) = details;
 		Console.WriteLine(name);
-		using IndentedTextWriter writer = IndentedTextWriterFactory.Create(OutputFolder, name);
+		using IndentedTextWriter writer = IndentedTextWriterFactory.Create(FormatsFolder, name);
 		WriteCustomColor(writer, name, type, hasRed, hasGreen, hasBlue, hasAlpha, fullyUtilized);
 	}
 
@@ -62,8 +67,16 @@ internal static partial class Program
 	{
 		(string name, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha) = details;
 		Console.WriteLine(name);
-		using IndentedTextWriter writer = IndentedTextWriterFactory.Create(OutputFolder, name);
+		using IndentedTextWriter writer = IndentedTextWriterFactory.Create(FormatsFolder, name);
 		WriteGenericColor(writer, name, hasRed, hasGreen, hasBlue, hasAlpha);
+	}
+
+	private static void WriteSuperGenericColor(int channelCount)
+	{
+		string name = $"Color`{channelCount}";
+		Console.WriteLine(name);
+		using IndentedTextWriter writer = IndentedTextWriterFactory.Create(RgbFolder, name);
+		WriteSuperGenericColor(writer, channelCount);
 	}
 
 	private static void WriteCustomColor(IndentedTextWriter writer, string name, Type type, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha, bool fullyUtilized)
@@ -71,7 +84,7 @@ internal static partial class Program
 		string typeName = CSharpPrimitives.Dictionary[type].LangName;
 		writer.WriteGeneratedCodeWarning();
 		writer.WriteLine();
-		using (new Namespace(writer, OutputNamespace))
+		using (new Namespace(writer, FormatsNamespace))
 		{
 			writer.WriteLine($"public partial struct {name} : IColor<{typeName}>");
 			using (new CurlyBrackets(writer))
@@ -129,11 +142,16 @@ internal static partial class Program
 
 	private static void WriteNonGenericStaticProperties(IndentedTextWriter writer, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha, bool fullyUtilized, string typeName)
 	{
-		writer.WriteLine($"static bool IColor.HasRedChannel => {hasRed.ToLowerString()};");
-		writer.WriteLine($"static bool IColor.HasGreenChannel => {hasGreen.ToLowerString()};");
-		writer.WriteLine($"static bool IColor.HasBlueChannel => {hasBlue.ToLowerString()};");
-		writer.WriteLine($"static bool IColor.HasAlphaChannel => {hasAlpha.ToLowerString()};");
-		writer.WriteLine($"static bool IColor.ChannelsAreFullyUtilized => {fullyUtilized.ToLowerString()};");
+		WriteNonGenericStaticProperties(writer, hasRed.ToLowerString(), hasGreen.ToLowerString(), hasBlue.ToLowerString(), hasAlpha.ToLowerString(), fullyUtilized.ToLowerString(), typeName);
+	}
+
+	private static void WriteNonGenericStaticProperties(IndentedTextWriter writer, string hasRed, string hasGreen, string hasBlue, string hasAlpha, string fullyUtilized, string typeName)
+	{
+		writer.WriteLine($"static bool IColor.HasRedChannel => {hasRed};");
+		writer.WriteLine($"static bool IColor.HasGreenChannel => {hasGreen};");
+		writer.WriteLine($"static bool IColor.HasBlueChannel => {hasBlue};");
+		writer.WriteLine($"static bool IColor.HasAlphaChannel => {hasAlpha};");
+		writer.WriteLine($"static bool IColor.ChannelsAreFullyUtilized => {fullyUtilized};");
 		writer.WriteLine($"static Type IColor.ChannelType => typeof({typeName});");
 	}
 
@@ -205,7 +223,7 @@ internal static partial class Program
 		writer.WriteGeneratedCodeWarning();
 		writer.WriteLineNoTabs();
 
-		writer.WriteFileScopedNamespace(OutputNamespace);
+		writer.WriteFileScopedNamespace(FormatsNamespace);
 		writer.WriteLineNoTabs();
 
 		writer.WriteLine($"public partial struct {name}<T> : IColor<{name}<T>, T> where T : unmanaged, INumberBase<T>, IMinMaxValue<T>");
@@ -231,6 +249,165 @@ internal static partial class Program
 			WriteBlackWhiteStaticProperties(writer, hasRed, hasGreen, hasBlue, hasAlpha, name, typeName);
 			writer.WriteLineNoTabs();
 			WriteToString(writer, hasRed, hasGreen, hasBlue, hasAlpha);
+		}
+	}
+
+	private static void WriteSuperGenericColor(IndentedTextWriter writer, int channelCount)
+	{
+		const string typeName = "TChannelValue";
+		const string minValue = $"NumericConversion.GetMinimumValueSafe<{typeName}>()";
+		const string maxValue = $"NumericConversion.GetMaximumValueSafe<{typeName}>()";
+
+		string[] channelTypeParameters = channelCount switch
+		{
+			1 => ["TChannel"],
+			2 => ["TChannel1", "TChannel2"],
+			3 => ["TChannel1", "TChannel2", "TChannel3"],
+			4 => ["TChannel1", "TChannel2", "TChannel3", "TChannel4"],
+			_ => throw new(),
+		};
+
+		string[] fieldNames = channelCount switch
+		{
+			1 => ["value"],
+			2 => ["value1", "value2"],
+			3 => ["value1", "value2", "value3"],
+			4 => ["value1", "value2", "value3", "value4"],
+			_ => throw new(),
+		};
+
+
+
+		writer.WriteGeneratedCodeWarning();
+		writer.WriteLineNoTabs();
+
+		writer.WriteUsing("AssetRipper.TextureDecoder.Rgb.Channels");
+		writer.WriteLineNoTabs();
+
+		writer.WriteFileScopedNamespace("AssetRipper.TextureDecoder.Rgb");
+		writer.WriteLineNoTabs();
+
+		string structName;
+		{
+			StringBuilder sb = new();
+			sb.Append("Color<");
+			sb.Append(typeName);
+			for (int i = 0; i < channelTypeParameters.Length; i++)
+			{
+				sb.Append(", ");
+				sb.Append(channelTypeParameters[i]);
+			}
+			sb.Append('>');
+			structName = sb.ToString();
+		}
+
+		writer.WriteLine($"public partial struct {structName} : IColor<{structName}, {typeName}>");
+		using (new Indented(writer))
+		{
+			writer.WriteLine($"where {typeName} : unmanaged, INumberBase<{typeName}>, IMinMaxValue<{typeName}>");
+			foreach (string channel in channelTypeParameters)
+			{
+				writer.WriteLine($"where {channel} : IChannel");
+			}
+		}
+
+		using (new CurlyBrackets(writer))
+		{
+			foreach (string fieldName in fieldNames)
+			{
+				writer.WriteLine($"private {typeName} {fieldName};");
+			}
+			writer.WriteLineNoTabs();
+
+			WriteProperty(writer, 'R', "Red", channelTypeParameters, fieldNames, minValue, typeName);
+			writer.WriteLineNoTabs();
+			WriteProperty(writer, 'G', "Green", channelTypeParameters, fieldNames, minValue, typeName);
+			writer.WriteLineNoTabs();
+			WriteProperty(writer, 'B', "Blue", channelTypeParameters, fieldNames, minValue, typeName);
+			writer.WriteLineNoTabs();
+			WriteProperty(writer, 'A', "Alpha", channelTypeParameters, fieldNames, maxValue, typeName);
+			writer.WriteLineNoTabs();
+
+			writer.Write("public Color(");
+			for (int i = 0; i < fieldNames.Length; i++)
+			{
+				if (i != 0)
+				{
+					writer.Write(", ");
+				}
+
+				writer.Write(typeName);
+				writer.Write(' ');
+				writer.Write(fieldNames[i]);
+			}
+			writer.WriteLine(')');
+			using (new CurlyBrackets(writer))
+			{
+				foreach (string fieldName in fieldNames)
+				{
+					writer.WriteLine($"this.{fieldName} = {fieldName};");
+				}
+			}
+			writer.WriteLineNoTabs();
+			WriteGetChannels(writer, typeName);
+			writer.WriteLineNoTabs();
+			WriteSetChannels(writer, typeName, true, true, true, true);
+			writer.WriteLineNoTabs();
+			WriteNonGenericStaticProperties(
+				writer,
+				string.Join(" || ", channelTypeParameters.Select(c => $"{c}.IsRed")),
+				string.Join(" || ", channelTypeParameters.Select(c => $"{c}.IsGreen")),
+				string.Join(" || ", channelTypeParameters.Select(c => $"{c}.IsBlue")),
+				string.Join(" || ", channelTypeParameters.Select(c => $"{c}.IsAlpha")),
+				string.Join(" && ", channelTypeParameters.Select(c => $"{c}.FullyUtilized")),
+				typeName);
+			writer.WriteLineNoTabs();
+
+			writer.WriteLine($"public static {structName} Black");
+			using (new CurlyBrackets(writer))
+			{
+				writer.WriteLine($"get => new({string.Join(", ", channelTypeParameters.Select(c => $"{c}.GetBlack<{typeName}>()"))});");
+			}
+			writer.WriteLineNoTabs();
+
+			writer.WriteLine($"public static {structName} White");
+			using (new CurlyBrackets(writer))
+			{
+				writer.WriteLine($"get => new({string.Join(", ", channelTypeParameters.Select(c => $"{c}.GetWhite<{typeName}>()"))});");
+			}
+			writer.WriteLineNoTabs();
+
+			WriteToString(writer, true, true, true, true);
+		}
+
+		static void WriteProperty(IndentedTextWriter writer, char property, string channel, string[] channels, string[] fields, string defaultValue, string typeName)
+		{
+			writer.WriteLine($"public {typeName} {property}");
+			using (new CurlyBrackets(writer))
+			{
+				writer.WriteLine("readonly get");
+				using (new CurlyBrackets(writer))
+				{
+					If.Write(
+						writer,
+						Enumerable.Range(0, channels.Length).Select(i => new ValueTuple<string, Action<IndentedTextWriter>?>($"{channels[i]}.Is{channel}", (writer) =>
+						{
+							writer.WriteLine($"return {channels[i]}.Get{channel}({fields[i]});");
+						})),
+						(writer) =>
+						{
+							writer.WriteLine($"return {defaultValue};");
+						});
+				}
+				writer.WriteLine("set");
+				using (new CurlyBrackets(writer))
+				{
+					for (int i = 0; i < channels.Length; i++)
+					{
+						writer.WriteLine($"Channel.SetIf{channel}<{channels[i]}, {typeName}>(ref {fields[i]}, value);");
+					}
+				}
+			}
 		}
 	}
 

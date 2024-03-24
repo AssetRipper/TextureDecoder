@@ -62,7 +62,7 @@ namespace AssetRipper.TextureDecoder.TestGenerator
 							writer.WriteLine($"case {i}:");
 							using (new Indented(writer))
 							{
-								writer.WriteLine($"RgbConverter.Convert<{colorName}, {channelName}, ColorBGRA32, byte>(input, width, height, output);");
+								writer.WriteLine($"RgbConverter.Convert<{colorName}, {channelName}, Color<byte, B, G, R, A>, byte>(input, width, height, output);");
 								writer.WriteLine("break;");
 							}
 						}
