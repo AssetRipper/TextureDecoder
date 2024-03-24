@@ -127,7 +127,7 @@ internal static class TestClassGenerator
 				writer.WriteLine($"[TestFixture(TypeArgs = new Type[] {{ typeof({colorName}<{channeName}>), typeof({channeName}) }})]");
 			}
 		}
-		writer.WriteLine("partial class GenericColorTests<TColor, TChannel>");
+		writer.WriteLine("partial class GenericColorTests<TColor, TChannelValue>");
 		using (new CurlyBrackets(writer))
 		{
 		}

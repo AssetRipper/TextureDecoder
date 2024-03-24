@@ -88,6 +88,6 @@ namespace AssetRipper.TextureDecoder.Tests.Formats.Generic;
 [TestFixture(TypeArgs = new Type[] { typeof(ColorRGB<decimal>), typeof(decimal) })]
 [TestFixture(TypeArgs = new Type[] { typeof(ColorRGBA<decimal>), typeof(decimal) })]
 [TestFixture(TypeArgs = new Type[] { typeof(ColorA<decimal>), typeof(decimal) })]
-partial class GenericColorTests<TColor, TChannel>
+partial class GenericColorTests<TColor, TChannelValue>
 {
 }

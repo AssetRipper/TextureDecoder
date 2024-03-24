@@ -74,11 +74,11 @@ public static class Color
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-	public static TTarget Convert<TThis, TThisChannel, TTarget, TTargetChannel>(this TThis color)
-		where TThisChannel : unmanaged
-		where TTargetChannel : unmanaged
-		where TThis : unmanaged, IColor<TThisChannel>
-		where TTarget : unmanaged, IColor<TTargetChannel>
+	public static TTarget Convert<TThis, TThisChannelValue, TTarget, TTargetChannelValue>(this TThis color)
+		where TThisChannelValue : unmanaged
+		where TTargetChannelValue : unmanaged
+		where TThis : unmanaged, IColor<TThisChannelValue>
+		where TTarget : unmanaged, IColor<TTargetChannelValue>
 	{
 		if (typeof(TThis) == typeof(TTarget))
 		{
@@ -87,8 +87,8 @@ public static class Color
 		else
 		{
 			TTarget destination = default;
-			color.GetChannels(out TThisChannel r, out TThisChannel g, out TThisChannel b, out TThisChannel a);
-			destination.SetConvertedChannels<TTarget, TTargetChannel, TThisChannel>(r, g, b, a);
+			color.GetChannels(out TThisChannelValue r, out TThisChannelValue g, out TThisChannelValue b, out TThisChannelValue a);
+			destination.SetConvertedChannels<TTarget, TTargetChannelValue, TThisChannelValue>(r, g, b, a);
 			return destination;
 		}
 	}

@@ -3,19 +3,19 @@ using System.Runtime.CompilerServices;
 
 namespace AssetRipper.TextureDecoder.Tests.Formats.Generic;
 
-internal partial class GenericColorTests<TColor, TChannel> where TColor : unmanaged, IColor<TChannel> where TChannel : unmanaged
+internal partial class GenericColorTests<TColor, TChannelValue> where TColor : unmanaged, IColor<TChannelValue> where TChannelValue : unmanaged
 {
 	[Test]
 	public void CorrectSizeTest()
 	{
-		Assert.That(Unsafe.SizeOf<TColor>(), Is.EqualTo(Color.GetChannelCount<TColor>() * Unsafe.SizeOf<TChannel>()));
+		Assert.That(Unsafe.SizeOf<TColor>(), Is.EqualTo(Color.GetChannelCount<TColor>() * Unsafe.SizeOf<TChannelValue>()));
 	}
 
 	[Test]
 	public void PropertyIsSymmetric_R()
 	{
 		TColor color = MakeRandomColor();
-		TChannel r = color.R;
+		TChannelValue r = color.R;
 		color.R = r;
 		Assert.That(color.R, Is.EqualTo(r));
 	}
@@ -24,7 +24,7 @@ internal partial class GenericColorTests<TColor, TChannel> where TColor : unmana
 	public void PropertyIsSymmetric_G()
 	{
 		TColor color = MakeRandomColor();
-		TChannel g = color.G;
+		TChannelValue g = color.G;
 		color.G = g;
 		Assert.That(color.G, Is.EqualTo(g));
 	}
@@ -33,7 +33,7 @@ internal partial class GenericColorTests<TColor, TChannel> where TColor : unmana
 	public void PropertyIsSymmetric_B()
 	{
 		TColor color = MakeRandomColor();
-		TChannel b = color.B;
+		TChannelValue b = color.B;
 		color.B = b;
 		Assert.That(color.B, Is.EqualTo(b));
 	}
@@ -42,7 +42,7 @@ internal partial class GenericColorTests<TColor, TChannel> where TColor : unmana
 	public void PropertyIsSymmetric_A()
 	{
 		TColor color = MakeRandomColor();
-		TChannel a = color.A;
+		TChannelValue a = color.A;
 		color.A = a;
 		Assert.That(color.A, Is.EqualTo(a));
 	}
@@ -51,9 +51,9 @@ internal partial class GenericColorTests<TColor, TChannel> where TColor : unmana
 	public void ChannelsAreIndependent_R()
 	{
 		TColor color = MakeRandomColor();
-		TChannel g = color.G;
-		TChannel b = color.B;
-		TChannel a = color.A;
+		TChannelValue g = color.G;
+		TChannelValue b = color.B;
+		TChannelValue a = color.A;
 		color.R = MakeRandomValue();
 		Assert.Multiple(() =>
 		{
@@ -67,9 +67,9 @@ internal partial class GenericColorTests<TColor, TChannel> where TColor : unmana
 	public void ChannelsAreIndependent_G()
 	{
 		TColor color = MakeRandomColor();
-		TChannel r = color.R;
-		TChannel b = color.B;
-		TChannel a = color.A;
+		TChannelValue r = color.R;
+		TChannelValue b = color.B;
+		TChannelValue a = color.A;
 		color.G = MakeRandomValue();
 		Assert.Multiple(() =>
 		{
@@ -83,9 +83,9 @@ internal partial class GenericColorTests<TColor, TChannel> where TColor : unmana
 	public void ChannelsAreIndependent_B()
 	{
 		TColor color = MakeRandomColor();
-		TChannel r = color.R;
-		TChannel g = color.G;
-		TChannel a = color.A;
+		TChannelValue r = color.R;
+		TChannelValue g = color.G;
+		TChannelValue a = color.A;
 		color.B = MakeRandomValue();
 		Assert.Multiple(() =>
 		{
@@ -99,9 +99,9 @@ internal partial class GenericColorTests<TColor, TChannel> where TColor : unmana
 	public void ChannelsAreIndependent_A()
 	{
 		TColor color = MakeRandomColor();
-		TChannel r = color.R;
-		TChannel g = color.G;
-		TChannel b = color.B;
+		TChannelValue r = color.R;
+		TChannelValue g = color.G;
+		TChannelValue b = color.B;
 		color.A = MakeRandomValue();
 		Assert.Multiple(() =>
 		{
@@ -115,7 +115,7 @@ internal partial class GenericColorTests<TColor, TChannel> where TColor : unmana
 	public void GetMethodMatchesProperties()
 	{
 		TColor color = MakeRandomColor();
-		color.GetChannels(out TChannel r, out TChannel g, out TChannel b, out TChannel a);
+		color.GetChannels(out TChannelValue r, out TChannelValue g, out TChannelValue b, out TChannelValue a);
 		Assert.Multiple(() =>
 		{
 			Assert.That(color.R, Is.EqualTo(r));
@@ -129,7 +129,7 @@ internal partial class GenericColorTests<TColor, TChannel> where TColor : unmana
 	public void MethodsAreSymmetric()
 	{
 		TColor color = MakeRandomColor();
-		color.GetChannels(out TChannel r, out TChannel g, out TChannel b, out TChannel a);
+		color.GetChannels(out TChannelValue r, out TChannelValue g, out TChannelValue b, out TChannelValue a);
 		color.SetChannels(r, g, b, a);
 		Assert.Multiple(() =>
 		{
@@ -140,7 +140,7 @@ internal partial class GenericColorTests<TColor, TChannel> where TColor : unmana
 		});
 	}
 
-	private static TChannel MakeRandomValue() => ColorRandom<TColor, TChannel>.MakeRandomValue();
+	private static TChannelValue MakeRandomValue() => ColorRandom<TColor, TChannelValue>.MakeRandomValue();
 
-	private static TColor MakeRandomColor() => ColorRandom<TColor, TChannel>.MakeRandomColor();
+	private static TColor MakeRandomColor() => ColorRandom<TColor, TChannelValue>.MakeRandomColor();
 }

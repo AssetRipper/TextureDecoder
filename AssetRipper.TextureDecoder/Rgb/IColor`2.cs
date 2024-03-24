@@ -10,7 +10,7 @@
 /// <typeparam name="TSelf">
 /// The implementing type.
 /// </typeparam>
-/// <typeparam name="TChannel">
+/// <typeparam name="TChannelValue">
 /// Supported types are:
 /// <list type="bullet">
 /// <item><see cref="sbyte"/></item>
@@ -32,9 +32,9 @@
 /// <item><see cref="decimal"/></item>
 /// </list>
 /// </typeparam>
-public interface IColor<TSelf, TChannel> : IColor<TChannel>
-	where TSelf : unmanaged, IColor<TSelf, TChannel>
-	where TChannel : unmanaged
+public interface IColor<TSelf, TChannelValue> : IColor<TChannelValue>
+	where TSelf : unmanaged, IColor<TSelf, TChannelValue>
+	where TChannelValue : unmanaged
 {
 	/// <summary>
 	/// A black pixel.

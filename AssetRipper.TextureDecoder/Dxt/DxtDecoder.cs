@@ -36,50 +36,50 @@ namespace AssetRipper.TextureDecoder.Dxt
 		/// Decompress a DXT1 image
 		/// </summary>
 		/// <typeparam name="TOutputColor">The <see cref="IColor{T}"/> type used for each pixel.</typeparam>
-		/// <typeparam name="TOutputChannel">The channel type used in <typeparamref name="TOutputColor"/>.</typeparam>
+		/// <typeparam name="TOutputChannelValue">The channel type used in <typeparamref name="TOutputColor"/>.</typeparam>
 		/// <param name="input">Input buffer containing the compressed image.</param>
 		/// <param name="width">Pixel width of the image.</param>
 		/// <param name="height">Pixel height of the image.</param>
 		/// <param name="output">An output buffer. Must be at least width * height * pixelSize.</param>
 		/// <returns>Number of bytes read from <paramref name="input"/></returns>
-		public static int DecompressDXT1<TOutputColor, TOutputChannel>(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
-			where TOutputChannel : unmanaged
-			where TOutputColor : unmanaged, IColor<TOutputChannel>
+		public static int DecompressDXT1<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
 			output = new byte[width * height * Unsafe.SizeOf<TOutputColor>()];
-			return DecompressDXT1<TOutputColor, TOutputChannel>(input, width, height, output);
+			return DecompressDXT1<TOutputColor, TOutputChannelValue>(input, width, height, output);
 		}
 
 		/// <summary>
 		/// Decompress a DXT1 image
 		/// </summary>
 		/// <typeparam name="TOutputColor">The <see cref="IColor{T}"/> type used for each pixel.</typeparam>
-		/// <typeparam name="TOutputChannel">The channel type used in <typeparamref name="TOutputColor"/>.</typeparam>
+		/// <typeparam name="TOutputChannelValue">The channel type used in <typeparamref name="TOutputColor"/>.</typeparam>
 		/// <param name="input">Input buffer containing the compressed image.</param>
 		/// <param name="width">Pixel width of the image.</param>
 		/// <param name="height">Pixel height of the image.</param>
 		/// <param name="output">An output buffer. Must be at least width * height * pixelSize.</param>
 		/// <returns>Number of bytes read from <paramref name="input"/></returns>
-		public static int DecompressDXT1<TOutputColor, TOutputChannel>(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
-			where TOutputChannel : unmanaged
-			where TOutputColor : unmanaged, IColor<TOutputChannel>
+		public static int DecompressDXT1<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
-			return DecompressDXT1<TOutputColor, TOutputChannel>(input, width, height, MemoryMarshal.Cast<byte, TOutputColor>(output));
+			return DecompressDXT1<TOutputColor, TOutputChannelValue>(input, width, height, MemoryMarshal.Cast<byte, TOutputColor>(output));
 		}
 
 		/// <summary>
 		/// Decompress a DXT1 image
 		/// </summary>
 		/// <typeparam name="TOutputColor">The <see cref="IColor{T}"/> type used for each pixel.</typeparam>
-		/// <typeparam name="TOutputChannel">The channel type used in <typeparamref name="TOutputColor"/>.</typeparam>
+		/// <typeparam name="TOutputChannelValue">The channel type used in <typeparamref name="TOutputColor"/>.</typeparam>
 		/// <param name="input">Input buffer containing the compressed image.</param>
 		/// <param name="width">Pixel width of the image.</param>
 		/// <param name="height">Pixel height of the image.</param>
 		/// <param name="output">An output buffer. Must be at least width * height * pixelSize.</param>
 		/// <returns>Number of bytes read from <paramref name="input"/></returns>
-		public static int DecompressDXT1<TOutputColor, TOutputChannel>(ReadOnlySpan<byte> input, int width, int height, Span<TOutputColor> output)
-			where TOutputChannel : unmanaged
-			where TOutputColor : unmanaged, IColor<TOutputChannel>
+		public static int DecompressDXT1<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, Span<TOutputColor> output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
 			ThrowHelper.ThrowIfNotEnoughSpace(output.Length, width * height);
 
@@ -97,17 +97,17 @@ namespace AssetRipper.TextureDecoder.Dxt
 					int q1 = input[offset + 2] | input[offset + 3] << 8;
 					Rgb565(q0, out byte r0, out byte g0, out byte b0);
 					Rgb565(q1, out byte r1, out byte g1, out byte b1);
-					colors[0].SetConvertedChannels<TOutputColor, TOutputChannel, byte>(r0, g0, b0);
-					colors[1].SetConvertedChannels<TOutputColor, TOutputChannel, byte>(r1, g1, b1);
+					colors[0].SetConvertedChannels<TOutputColor, TOutputChannelValue, byte>(r0, g0, b0);
+					colors[1].SetConvertedChannels<TOutputColor, TOutputChannelValue, byte>(r1, g1, b1);
 					if (q0 > q1)
 					{
-						colors[2].SetConvertedChannels<TOutputColor, TOutputChannel, byte>((byte)((r0 * 2 + r1) / 3), (byte)((g0 * 2 + g1) / 3), (byte)((b0 * 2 + b1) / 3));
-						colors[3].SetConvertedChannels<TOutputColor, TOutputChannel, byte>((byte)((r0 + r1 * 2) / 3), (byte)((g0 + g1 * 2) / 3), (byte)((b0 + b1 * 2) / 3));
+						colors[2].SetConvertedChannels<TOutputColor, TOutputChannelValue, byte>((byte)((r0 * 2 + r1) / 3), (byte)((g0 * 2 + g1) / 3), (byte)((b0 * 2 + b1) / 3));
+						colors[3].SetConvertedChannels<TOutputColor, TOutputChannelValue, byte>((byte)((r0 + r1 * 2) / 3), (byte)((g0 + g1 * 2) / 3), (byte)((b0 + b1 * 2) / 3));
 					}
 					else
 					{
-						colors[2].SetConvertedChannels<TOutputColor, TOutputChannel, byte>((byte)((r0 + r1) / 2), (byte)((g0 + g1) / 2), (byte)((b0 + b1) / 2));
-						colors[3].SetBlack<TOutputColor, TOutputChannel>();
+						colors[2].SetConvertedChannels<TOutputColor, TOutputChannelValue, byte>((byte)((r0 + r1) / 2), (byte)((g0 + g1) / 2), (byte)((b0 + b1) / 2));
+						colors[3].SetBlack<TOutputColor, TOutputChannelValue>();
 					}
 
 					uint d = ToUInt32(input, offset + 4);
@@ -157,50 +157,50 @@ namespace AssetRipper.TextureDecoder.Dxt
 		/// Decompress a DXT3 image
 		/// </summary>
 		/// <typeparam name="TOutputColor">The <see cref="IColor{T}"/> type used for each pixel.</typeparam>
-		/// <typeparam name="TOutputChannel">The channel type used in <typeparamref name="TOutputColor"/>.</typeparam>
+		/// <typeparam name="TOutputChannelValue">The channel type used in <typeparamref name="TOutputColor"/>.</typeparam>
 		/// <param name="input">Input buffer containing the compressed image.</param>
 		/// <param name="width">Pixel width of the image.</param>
 		/// <param name="height">Pixel height of the image.</param>
 		/// <param name="output">An output buffer. Must be at least width * height * pixelSize.</param>
 		/// <returns>Number of bytes read from <paramref name="input"/></returns>
-		public static int DecompressDXT3<TOutputColor, TOutputChannel>(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
-			where TOutputChannel : unmanaged
-			where TOutputColor : unmanaged, IColor<TOutputChannel>
+		public static int DecompressDXT3<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
 			output = new byte[width * height * Unsafe.SizeOf<TOutputColor>()];
-			return DecompressDXT3<TOutputColor, TOutputChannel>(input, width, height, output);
+			return DecompressDXT3<TOutputColor, TOutputChannelValue>(input, width, height, output);
 		}
 
 		/// <summary>
 		/// Decompress a DXT1 image
 		/// </summary>
 		/// <typeparam name="TOutputColor">The <see cref="IColor{T}"/> type used for each pixel.</typeparam>
-		/// <typeparam name="TOutputChannel">The channel type used in <typeparamref name="TOutputColor"/>.</typeparam>
+		/// <typeparam name="TOutputChannelValue">The channel type used in <typeparamref name="TOutputColor"/>.</typeparam>
 		/// <param name="input">Input buffer containing the compressed image.</param>
 		/// <param name="width">Pixel width of the image.</param>
 		/// <param name="height">Pixel height of the image.</param>
 		/// <param name="output">An output buffer. Must be at least width * height * pixelSize.</param>
 		/// <returns>Number of bytes read from <paramref name="input"/></returns>
-		public static int DecompressDXT3<TOutputColor, TOutputChannel>(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
-			where TOutputChannel : unmanaged
-			where TOutputColor : unmanaged, IColor<TOutputChannel>
+		public static int DecompressDXT3<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
-			return DecompressDXT3<TOutputColor, TOutputChannel>(input, width, height, MemoryMarshal.Cast<byte, TOutputColor>(output));
+			return DecompressDXT3<TOutputColor, TOutputChannelValue>(input, width, height, MemoryMarshal.Cast<byte, TOutputColor>(output));
 		}
 
 		/// <summary>
 		/// Decompress a DXT3 image
 		/// </summary>
 		/// <typeparam name="TOutputColor">The <see cref="IColor{T}"/> type used for each pixel.</typeparam>
-		/// <typeparam name="TOutputChannel">The channel type used in <typeparamref name="TOutputColor"/>.</typeparam>
+		/// <typeparam name="TOutputChannelValue">The channel type used in <typeparamref name="TOutputColor"/>.</typeparam>
 		/// <param name="input">Input buffer containing the compressed image.</param>
 		/// <param name="width">Pixel width of the image.</param>
 		/// <param name="height">Pixel height of the image.</param>
 		/// <param name="output">An output buffer. Must be at least width * height * pixelSize.</param>
 		/// <returns>Number of bytes read from <paramref name="input"/></returns>
-		public static int DecompressDXT3<TOutputColor, TOutputChannel>(ReadOnlySpan<byte> input, int width, int height, Span<TOutputColor> output)
-			where TOutputChannel : unmanaged
-			where TOutputColor : unmanaged, IColor<TOutputChannel>
+		public static int DecompressDXT3<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, Span<TOutputColor> output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
 			ThrowHelper.ThrowIfNotEnoughSpace(output.Length, width * height);
 
@@ -244,7 +244,7 @@ namespace AssetRipper.TextureDecoder.Dxt
 					uint d = ToUInt32(input, offset + 12);
 					for (int i = 0; i < 16; i++, d >>= 2)
 					{
-						buffer[i].SetConvertedChannels<TOutputColor, TOutputChannel, byte>(colors[unchecked((int)(d & 3))], alphas[i]);
+						buffer[i].SetConvertedChannels<TOutputColor, TOutputChannelValue, byte>(colors[unchecked((int)(d & 3))], alphas[i]);
 					}
 
 					int clen = s < bcw - 1 ? 4 : clen_last;
@@ -288,50 +288,50 @@ namespace AssetRipper.TextureDecoder.Dxt
 		/// Decompress a DXT5 image
 		/// </summary>
 		/// <typeparam name="TOutputColor">The <see cref="IColor{T}"/> type used for each pixel.</typeparam>
-		/// <typeparam name="TOutputChannel">The channel type used in <typeparamref name="TOutputColor"/>.</typeparam>
+		/// <typeparam name="TOutputChannelValue">The channel type used in <typeparamref name="TOutputColor"/>.</typeparam>
 		/// <param name="input">Input buffer containing the compressed image.</param>
 		/// <param name="width">Pixel width of the image.</param>
 		/// <param name="height">Pixel height of the image.</param>
 		/// <param name="output">An output buffer. Must be at least width * height * pixelSize.</param>
 		/// <returns>Number of bytes read from <paramref name="input"/></returns>
-		public static int DecompressDXT5<TOutputColor, TOutputChannel>(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
-			where TOutputChannel : unmanaged
-			where TOutputColor : unmanaged, IColor<TOutputChannel>
+		public static int DecompressDXT5<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
 			output = new byte[width * height * Unsafe.SizeOf<TOutputColor>()];
-			return DecompressDXT5<TOutputColor, TOutputChannel>(input, width, height, output);
+			return DecompressDXT5<TOutputColor, TOutputChannelValue>(input, width, height, output);
 		}
 
 		/// <summary>
 		/// Decompress a DXT1 image
 		/// </summary>
 		/// <typeparam name="TOutputColor">The <see cref="IColor{T}"/> type used for each pixel.</typeparam>
-		/// <typeparam name="TOutputChannel">The channel type used in <typeparamref name="TOutputColor"/>.</typeparam>
+		/// <typeparam name="TOutputChannelValue">The channel type used in <typeparamref name="TOutputColor"/>.</typeparam>
 		/// <param name="input">Input buffer containing the compressed image.</param>
 		/// <param name="width">Pixel width of the image.</param>
 		/// <param name="height">Pixel height of the image.</param>
 		/// <param name="output">An output buffer. Must be at least width * height * pixelSize.</param>
 		/// <returns>Number of bytes read from <paramref name="input"/></returns>
-		public static int DecompressDXT5<TOutputColor, TOutputChannel>(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
-			where TOutputChannel : unmanaged
-			where TOutputColor : unmanaged, IColor<TOutputChannel>
+		public static int DecompressDXT5<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
-			return DecompressDXT5<TOutputColor, TOutputChannel>(input, width, height, MemoryMarshal.Cast<byte, TOutputColor>(output));
+			return DecompressDXT5<TOutputColor, TOutputChannelValue>(input, width, height, MemoryMarshal.Cast<byte, TOutputColor>(output));
 		}
 
 		/// <summary>
 		/// Decompress a DXT5 image
 		/// </summary>
 		/// <typeparam name="TOutputColor">The <see cref="IColor{T}"/> type used for each pixel.</typeparam>
-		/// <typeparam name="TOutputChannel">The channel type used in <typeparamref name="TOutputColor"/>.</typeparam>
+		/// <typeparam name="TOutputChannelValue">The channel type used in <typeparamref name="TOutputColor"/>.</typeparam>
 		/// <param name="input">Input buffer containing the compressed image.</param>
 		/// <param name="width">Pixel width of the image.</param>
 		/// <param name="height">Pixel height of the image.</param>
 		/// <param name="output">An output buffer. Must be at least width * height * pixelSize.</param>
 		/// <returns>Number of bytes read from <paramref name="input"/></returns>
-		public static int DecompressDXT5<TOutputColor, TOutputChannel>(ReadOnlySpan<byte> input, int width, int height, Span<TOutputColor> output)
-			where TOutputChannel : unmanaged
-			where TOutputColor : unmanaged, IColor<TOutputChannel>
+		public static int DecompressDXT5<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, Span<TOutputColor> output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
 			ThrowHelper.ThrowIfNotEnoughSpace(output.Length, width * height);
 
@@ -390,7 +390,7 @@ namespace AssetRipper.TextureDecoder.Dxt
 					uint dc = ToUInt32(input, offset + 12);
 					for (int i = 0; i < 16; i++, da >>= 3, dc >>= 2)
 					{
-						buffer[i].SetConvertedChannels<TOutputColor, TOutputChannel, byte>(colors[unchecked((int)(dc & 3))], alphas[unchecked((int)(da & 7))]);
+						buffer[i].SetConvertedChannels<TOutputColor, TOutputChannelValue, byte>(colors[unchecked((int)(dc & 3))], alphas[unchecked((int)(da & 7))]);
 					}
 
 					int clen = s < bcw - 1 ? 4 : clen_last;

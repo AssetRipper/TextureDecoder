@@ -1,12 +1,12 @@
 ﻿using AssetRipper.TextureDecoder.Rgb;
 
 namespace AssetRipper.TextureDecoder.Tests.Formats;
-internal static class ColorRandom<TColor, TChannel> where TColor : unmanaged, IColor<TChannel> where TChannel : unmanaged
+internal static class ColorRandom<TColor, TChannelValue> where TColor : unmanaged, IColor<TChannelValue> where TChannelValue : unmanaged
 {
-	public static TChannel MakeRandomValue()
+	public static TChannelValue MakeRandomValue()
 	{
 		ulong value = TestContext.CurrentContext.Random.NextULong();
-		return NumericConversion.Convert<ulong, TChannel>(value);
+		return NumericConversion.Convert<ulong, TChannelValue>(value);
 	}
 
 	public static TColor MakeRandomColor()
