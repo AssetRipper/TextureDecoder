@@ -1,3 +1,4 @@
+using AssetRipper.TextureDecoder.Exr;
 using AssetRipper.TextureDecoder.Rgb;
 using AssetRipper.TextureDecoder.Rgb.Channels;
 using AssetRipper.TextureDecoder.Rgb.Formats;
@@ -53,6 +54,12 @@ public readonly struct DirectBitmap<TColor, TColorArg>
 		{
 			imageWriter.WriteBmp(data, Width, Height, components, stream);
 		}
+	}
+
+	public void SaveAsExr(string path)
+	{
+		using Stream stream = File.OpenWrite(path);
+		ExrWriter.Write<TColor, TColorArg>(stream, Width, Height, Pixels);
 	}
 
 	public void SaveAsHdr(string path)

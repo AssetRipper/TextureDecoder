@@ -63,18 +63,32 @@ internal static partial class Program
 		
 		switch (outputType)
 		{
-			case "png":
-				{
-					string newPath = Path.Combine(dirPath, name + ".png");
-					bitmap.FlipY();
-					bitmap.SaveAsPng(newPath);
-				}
-				break;
 			case "bgra":
-				{
-					string newPath = Path.Combine(dirPath, name + ".bgra");
-					WriteAllBytes(newPath, bitmap.Bits);
-				}
+				WriteAllBytes(Path.Combine(dirPath, name + ".bgra"), bitmap.Bits);
+				break;
+			case "bmp":
+				bitmap.FlipY();
+				bitmap.SaveAsBmp(Path.Combine(dirPath, name + ".bmp"));
+				break;
+			case "exr":
+				bitmap.FlipY();
+				bitmap.SaveAsExr(Path.Combine(dirPath, name + ".exr"));
+				break;
+			case "hdr":
+				bitmap.FlipY();
+				bitmap.SaveAsHdr(Path.Combine(dirPath, name + ".hdr"));
+				break;
+			case "jpg":
+				bitmap.FlipY();
+				bitmap.SaveAsJpg(Path.Combine(dirPath, name + ".jpg"));
+				break;
+			case "png":
+				bitmap.FlipY();
+				bitmap.SaveAsPng(Path.Combine(dirPath, name + ".png"));
+				break;
+			case "tga":
+				bitmap.FlipY();
+				bitmap.SaveAsTga(Path.Combine(dirPath, name + ".tga"));
 				break;
 			default:
 				throw new NotSupportedException(outputType);
