@@ -10,7 +10,7 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<RepositoryType>git</RepositoryType>
 		<PackageProjectUrl>https://github.com/AssetRipper/TextureDecoder</PackageProjectUrl>
-		<Copyright>Copyright (c) 2022 - 2023 ds5678</Copyright>
+		<Copyright>Copyright (c) 2022 - 2024 ds5678</Copyright>
 		<Description>Managed library for decoding textures in multiple formats.</Description>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 
