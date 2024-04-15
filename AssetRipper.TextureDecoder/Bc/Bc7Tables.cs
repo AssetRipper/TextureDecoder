@@ -789,11 +789,11 @@ internal static class Bc7Tables
 		]
 	];
 
-	internal static int[] AWeight2 { get; } = [0, 21, 43, 64];
+	internal static ReadOnlySpan<int> AWeight2 => [0, 21, 43, 64];
 
-	internal static int[] AWeight3 { get; } = [0, 9, 18, 27, 37, 46, 55, 64];
+	internal static ReadOnlySpan<int> AWeight3 => [0, 9, 18, 27, 37, 46, 55, 64];
 
-	internal static int[] AWeight4 { get; } = [0, 4, 9, 13, 17, 21, 26, 30, 34, 38, 43, 47, 51, 55, 60, 64];
+	internal static ReadOnlySpan<int> AWeight4 => [0, 4, 9, 13, 17, 21, 26, 30, 34, 38, 43, 47, 51, 55, 60, 64];
 
 	internal const byte bcdec_bc7_sModeHasPBits = 0b11001011;
 }

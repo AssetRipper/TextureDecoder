@@ -211,7 +211,7 @@ internal static class Bc6hTables
 		]
 	];
 
-	internal static int[] AWeight3 { get; } = [0, 9, 18, 27, 37, 46, 55, 64];
+	internal static ReadOnlySpan<int> AWeight3 => [0, 9, 18, 27, 37, 46, 55, 64];
 
-	internal static int[] AWeight4 { get; } = [0, 4, 9, 13, 17, 21, 26, 30, 34, 38, 43, 47, 51, 55, 60, 64];
+	internal static ReadOnlySpan<int> AWeight4 => [0, 4, 9, 13, 17, 21, 26, 30, 34, 38, 43, 47, 51, 55, 60, 64];
 }

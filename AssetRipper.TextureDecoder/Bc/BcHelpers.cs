@@ -707,8 +707,8 @@ internal static class BcHelpers
 		// Determine weights tables 
 		int indexBits = (mode == 0 || mode == 1) ? 3 : ((mode == 6) ? 4 : 2);
 		int indexBits2 = (mode == 4) ? 3 : ((mode == 5) ? 2 : 0);
-		int[] weights = (indexBits == 2) ? Bc7Tables.AWeight2 : ((indexBits == 3) ? Bc7Tables.AWeight3 : Bc7Tables.AWeight4);
-		int[] weights2 = (indexBits2 == 2) ? Bc7Tables.AWeight2 : Bc7Tables.AWeight3;
+		ReadOnlySpan<int> weights = (indexBits == 2) ? Bc7Tables.AWeight2 : ((indexBits == 3) ? Bc7Tables.AWeight3 : Bc7Tables.AWeight4);
+		ReadOnlySpan<int> weights2 = (indexBits2 == 2) ? Bc7Tables.AWeight2 : Bc7Tables.AWeight3;
 
 		// Quite inconvenient that indices aren't interleaved so we have to make 2 passes here 
 		// Pass #1: collecting color indices 

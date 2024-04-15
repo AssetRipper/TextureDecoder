@@ -217,36 +217,36 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 			int modVal;
 			if (modulationModes[y * 16 + x] == 0)
 			{
-				modVal = m_repVals0[modulationVals[y * 16 + x]];
+				modVal = RepVals0[modulationVals[y * 16 + x]];
 			}
 			else if (do2bitMode)
 			{
 				// if this is a stored value
 				if (((x ^ y) & 1) == 0)
 				{
-					modVal = m_repVals0[modulationVals[y * 16 + x]];
+					modVal = RepVals0[modulationVals[y * 16 + x]];
 				}
 				// else average from the neighbours if H&V interpolation..
 				else if (modulationModes[y * 16 + x] == 1)
 				{
-					modVal = (m_repVals0[modulationVals[(y - 1) * 16 + x]] + m_repVals0[modulationVals[(y + 1) * 16 + x]] +
-						m_repVals0[modulationVals[y * 16 + x - 1]] + m_repVals0[modulationVals[y * 16 + x + 1]] + 2) / 4;
+					modVal = (RepVals0[modulationVals[(y - 1) * 16 + x]] + RepVals0[modulationVals[(y + 1) * 16 + x]] +
+						RepVals0[modulationVals[y * 16 + x - 1]] + RepVals0[modulationVals[y * 16 + x + 1]] + 2) / 4;
 				}
 				// else if H-Only
 				else if (modulationModes[y * 16 + x] == 2)
 				{
-					modVal = (m_repVals0[modulationVals[y * 16 + x - 1]] + m_repVals0[modulationVals[y * 16 + x + 1]] + 1) / 2;
+					modVal = (RepVals0[modulationVals[y * 16 + x - 1]] + RepVals0[modulationVals[y * 16 + x + 1]] + 1) / 2;
 				}
 				// else it's V-Only
 				else
 				{
-					modVal = (m_repVals0[modulationVals[(y - 1) * 16 + x]] + m_repVals0[modulationVals[(y + 1) * 16 + x]] + 1) / 2;
+					modVal = (RepVals0[modulationVals[(y - 1) * 16 + x]] + RepVals0[modulationVals[(y + 1) * 16 + x]] + 1) / 2;
 				}
 			}
 			// else it's 4BPP and PT encoding
 			else
 			{
-				modVal = m_repVals1[modulationVals[y * 16 + x]];
+				modVal = RepVals1[modulationVals[y * 16 + x]];
 				doPT = modulationVals[y * 16 + x] == PTIndex;
 			}
 
@@ -487,7 +487,7 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 		private const int BlockX2bpp = 8;
 		private const int BlockX4bpp = 4;
 
-		private static readonly int[] m_repVals0 = [0, 3, 5, 8];
-		private static readonly int[] m_repVals1 = [0, 4, 4, 8];
+		private static ReadOnlySpan<int> RepVals0 => [0, 3, 5, 8];
+		private static ReadOnlySpan<int> RepVals1 => [0, 4, 4, 8];
 	}
 }
