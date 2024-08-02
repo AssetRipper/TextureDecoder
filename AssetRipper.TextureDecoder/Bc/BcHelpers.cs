@@ -34,9 +34,7 @@ internal static class BcHelpers
 
 	public static void DecompressBc6h(ReadOnlySpan<byte> compressedBlock, Span<byte> decompressedBlock, int destinationPitch, bool isSigned)
 	{
-		BitStream bstream = new(
-			BinaryPrimitives.ReadUInt64LittleEndian(compressedBlock),
-			BinaryPrimitives.ReadUInt64LittleEndian(compressedBlock.Slice(sizeof(ulong))));
+		BitStream bstream = new(compressedBlock);
 		Span<uint> r = stackalloc uint[4]; // wxyz
 		Span<uint> g = stackalloc uint[4];
 		Span<uint> b = stackalloc uint[4];
@@ -475,7 +473,7 @@ internal static class BcHelpers
 
 		// Mode 11 (like Mode 10) does not use delta compression,
 		// and instead stores both color endpoints explicitly.
-		if ((mode != 9 && mode != 10) || isSigned)
+		if ((mode is not 9 and not 10) || isSigned)
 		{
 			for (int i = 1; i < (numPartitions + 1) * 2; ++i)
 			{
@@ -485,7 +483,7 @@ internal static class BcHelpers
 			}
 		}
 
-		if (mode != 9 && mode != 10)
+		if (mode is not 9 and not 10)
 		{
 			for (int i = 1; i < (numPartitions + 1) * 2; ++i)
 			{
@@ -557,9 +555,7 @@ internal static class BcHelpers
 
 	public static void DecompressBc7(ReadOnlySpan<byte> compressedBlock, Span<byte> decompressedBlock, int destinationPitch)
 	{
-		BitStream bstream = new(
-			BinaryPrimitives.ReadUInt64LittleEndian(compressedBlock),
-			BinaryPrimitives.ReadUInt64LittleEndian(compressedBlock.Slice(sizeof(ulong))));
+		BitStream bstream = new(compressedBlock);
 		Span2D<uint> endpoints = new(stackalloc uint[6 * 4], 6, 4);
 		Span2D<int> indices = new(stackalloc int[4 * 4], 4, 4);
 
@@ -590,23 +586,30 @@ internal static class BcHelpers
 		uint rotation = 0;
 		uint indexSelectionBit = 0;
 
-		if (mode == 0 || mode == 1 || mode == 2 || mode == 3 || mode == 7)
+		switch (mode)
 		{
-			numPartitions = (mode is 0 or 2) ? 3 : 2;
-			partition = bstream.ReadBits((mode is 0) ? 4 : 6);
+			case 0:
+				numPartitions = 3;
+				partition = bstream.ReadBits(4);
+				break;
+			case 1 or 3 or 7:
+				numPartitions = 2;
+				partition = bstream.ReadBits(6);
+				break;
+			case 2:
+				numPartitions = 3;
+				partition = bstream.ReadBits(6);
+				break;
+			case 4:
+				rotation = bstream.ReadBits(2);
+				indexSelectionBit = bstream.ReadBit();
+				break;
+			case 5:
+				rotation = bstream.ReadBits(2);
+				break;
 		}
 
 		int numEndpoints = numPartitions * 2;
-
-		if (mode == 4 || mode == 5)
-		{
-			rotation = bstream.ReadBits(2);
-
-			if (mode == 4)
-			{
-				indexSelectionBit = bstream.ReadBit();
-			}
-		}
 
 		// Extract endpoints 
 		// RGB 
@@ -701,9 +704,24 @@ internal static class BcHelpers
 		}
 
 		// Determine weights tables 
-		int indexBits = (mode == 0 || mode == 1) ? 3 : ((mode == 6) ? 4 : 2);
-		int indexBits2 = (mode == 4) ? 3 : ((mode == 5) ? 2 : 0);
-		ReadOnlySpan<int> weights = (indexBits == 2) ? Bc7Tables.AWeight2 : ((indexBits == 3) ? Bc7Tables.AWeight3 : Bc7Tables.AWeight4);
+		int indexBits = mode switch
+		{
+			0 or 1 => 3,
+			6 => 4,
+			_ => 2
+		};
+		int indexBits2 = mode switch
+		{
+			4 => 3,
+			5 => 2,
+			_ => 0
+		};
+		ReadOnlySpan<int> weights = indexBits switch
+		{
+			2 => Bc7Tables.AWeight2,
+			3 => Bc7Tables.AWeight3,
+			_ => Bc7Tables.AWeight4
+		};
 		ReadOnlySpan<int> weights2 = (indexBits2 == 2) ? Bc7Tables.AWeight2 : Bc7Tables.AWeight3;
 
 		// Quite inconvenient that indices aren't interleaved so we have to make 2 passes here 
@@ -807,12 +825,10 @@ internal static class BcHelpers
 
 		static int ReadBc7Mode(ref BitStream bstream)
 		{
-			int i = 0;
-			while (i < 8 && bstream.ReadBit() == 0)
-			{
-				i++;
-			}
-			return i;
+			uint eightBits = bstream.PeakBits(8);
+			int index = BitOperations.TrailingZeroCount(eightBits);
+			bstream.ReadBits(index + 1);
+			return index;
 		}
 	}
 

@@ -1,4 +1,6 @@
-﻿namespace AssetRipper.TextureDecoder.Bc;
+﻿using System.Buffers.Binary;
+
+namespace AssetRipper.TextureDecoder.Bc;
 
 internal ref struct BitStream
 {
@@ -10,16 +12,32 @@ internal ref struct BitStream
 		get => unchecked((uint)this.value);
 	}
 
+	public BitStream(UInt128 value)
+	{
+		this.value = value;
+	}
+
+	public BitStream(ReadOnlySpan<byte> span) : this(BinaryPrimitives.ReadUInt128LittleEndian(span))
+	{
+	}
+
 	public BitStream(ulong low, ulong high)
 	{
 		value = new UInt128(high, low);
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-	public uint ReadBits(int numBits)
+	public readonly uint PeakBits(int numBits)
 	{
 		uint mask = (1u << numBits) - 1u;
 		uint bits = BottomBits & mask;
+		return bits;
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+	public uint ReadBits(int numBits)
+	{
+		uint bits = PeakBits(numBits);
 		this.value >>= numBits;
 		return bits;
 	}
