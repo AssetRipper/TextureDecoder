@@ -39,9 +39,9 @@ internal static class BcHelpers
 			low = BinaryPrimitives.ReadUInt64LittleEndian(compressedBlock),
 			high = BinaryPrimitives.ReadUInt64LittleEndian(compressedBlock.Slice(sizeof(ulong)))
 		};
-		Span<int> r = stackalloc int[4]; // wxyz
-		Span<int> g = stackalloc int[4];
-		Span<int> b = stackalloc int[4];
+		Span<uint> r = stackalloc uint[4]; // wxyz
+		Span<uint> g = stackalloc uint[4];
+		Span<uint> b = stackalloc uint[4];
 
 		int decompressedOffset = 0;
 
@@ -52,7 +52,7 @@ internal static class BcHelpers
 		int mode;
 
 		//modes >= 11 (10 in my code) are using 0 one, others will read it from the bitstream
-		int partition;
+		uint partition;
 
 		switch (ReadBc6hModeBits(ref bstream))
 		{
@@ -520,7 +520,7 @@ internal static class BcHelpers
 				}
 				partitionSet &= 0x01;
 
-				int index = bstream.ReadBits(indexBits);
+				int index = bstream.ReadBits(indexBits).ToSigned();
 
 				int ep_i = (partitionSet * 2);
 
@@ -542,12 +542,12 @@ internal static class BcHelpers
 			decompressedOffset += destinationPitch * sizeof(ushort);
 		}
 
-		static int ReadBc6hModeBits(ref BitStream bstream)
+		static uint ReadBc6hModeBits(ref BitStream bstream)
 		{
-			int twoBits = bstream.ReadBits(2);
+			uint twoBits = bstream.ReadBits(2);
 			if (twoBits > 1)
 			{
-				int threeBits = bstream.ReadBits(3);
+				uint threeBits = bstream.ReadBits(3);
 				return (threeBits << 2) | twoBits;
 			}
 			else
@@ -564,7 +564,7 @@ internal static class BcHelpers
 			low = BinaryPrimitives.ReadUInt64LittleEndian(compressedBlock),
 			high = BinaryPrimitives.ReadUInt64LittleEndian(compressedBlock.Slice(sizeof(ulong)))
 		};
-		Span2D<int> endpoints = new(stackalloc int[6 * 4], 6, 4);
+		Span2D<uint> endpoints = new(stackalloc uint[6 * 4], 6, 4);
 		Span2D<int> indices = new(stackalloc int[4 * 4], 4, 4);
 
 		int decompressedOffset = 0;
@@ -589,15 +589,15 @@ internal static class BcHelpers
 			return;
 		}
 
-		int partition = 0;
+		uint partition = 0;
 		int numPartitions = 1;
-		int rotation = 0;
-		int indexSelectionBit = 0;
+		uint rotation = 0;
+		uint indexSelectionBit = 0;
 
 		if (mode == 0 || mode == 1 || mode == 2 || mode == 3 || mode == 7)
 		{
-			numPartitions = (mode == 0 || mode == 2) ? 3 : 2;
-			partition = bstream.ReadBits((mode == 0) ? 4 : 6);
+			numPartitions = (mode is 0 or 2) ? 3 : 2;
+			partition = bstream.ReadBits((mode is 0) ? 4 : 6);
 		}
 
 		int numEndpoints = numPartitions * 2;
@@ -646,8 +646,8 @@ internal static class BcHelpers
 			// if P-bit is shared 
 			if (mode == 1)
 			{
-				int i = bstream.ReadBit();
-				int j = bstream.ReadBit();
+				uint i = bstream.ReadBit();
+				uint j = bstream.ReadBit();
 
 				// rgb component-wise insert pbits 
 				for (int k = 0; k < 3; ++k)
@@ -663,7 +663,7 @@ internal static class BcHelpers
 				// unique P-bit per endpoint 
 				for (int i = 0; i < numEndpoints; ++i)
 				{
-					int j = bstream.ReadBit();
+					uint j = bstream.ReadBit();
 					for (int k = 0; k < 4; ++k)
 					{
 						endpoints[i, k] |= j;
@@ -726,7 +726,7 @@ internal static class BcHelpers
 					indexBits--;
 				}
 
-				indices[i, j] = bstream.ReadBits(indexBits);
+				indices[i, j] = bstream.ReadBits(indexBits).ToSigned();
 			}
 		}
 
@@ -742,10 +742,10 @@ internal static class BcHelpers
 
 				int index = indices[i, j];
 
-				int r;
-				int g;
-				int b;
-				int a;
+				uint r;
+				uint g;
+				uint b;
+				uint a;
 
 				if (indexBits2 == 0)
 				{
@@ -756,7 +756,7 @@ internal static class BcHelpers
 				}
 				else
 				{
-					int index2 = bstream.ReadBits((i | j) != 0 ? indexBits2 : (indexBits2 - 1));
+					int index2 = bstream.ReadBits((i | j) != 0 ? indexBits2 : (indexBits2 - 1)).ToSigned();
 					// The index value for interpolating color comes from the secondary index bits for the texel
 					// if the mode has an index selection bit and its value is one, and from the primary index bits otherwise.
 					// The alpha index comes from the secondary index bits if the block has a secondary index
@@ -949,6 +949,11 @@ internal static class BcHelpers
 		return (val << (32 - bits)) >> (32 - bits);
 	}
 
+	private static uint ExtendSign(uint val, int bits)
+	{
+		return ExtendSign(val.ToSigned(), bits).ToUnsigned();
+	}
+
 	public static int TransformInverse(int val, int a0, int bits, bool isSigned)
 	{
 		// If the precision of A0 is "p" bits, then the transform algorithm is:
@@ -959,6 +964,11 @@ internal static class BcHelpers
 			val = ExtendSign(val, bits);
 		}
 		return val;
+	}
+
+	private static uint TransformInverse(uint val, uint a0, int bits, bool isSigned)
+	{
+		return TransformInverse(val.ToSigned(), a0.ToSigned(), bits, isSigned).ToUnsigned();
 	}
 
 	/// <summary>
@@ -1028,9 +1038,19 @@ internal static class BcHelpers
 		return unq;
 	}
 
+	private static uint Unquantize(uint val, int bits, bool isSigned)
+	{
+		return Unquantize(val.ToSigned(), bits, isSigned).ToUnsigned();
+	}
+
 	public static int Interpolate(int a, int b, ReadOnlySpan<int> weights, int index)
 	{
 		return ((a * (64 - weights[index])) + (b * weights[index]) + 32) >> 6;
+	}
+
+	private static uint Interpolate(uint a, uint b, ReadOnlySpan<int> weights, int index)
+	{
+		return Interpolate(a.ToSigned(), b.ToSigned(), weights, index).ToUnsigned();
 	}
 
 	public static ushort FinishUnquantize(int val, bool isSigned)
@@ -1041,7 +1061,7 @@ internal static class BcHelpers
 		}
 		else
 		{
-			val = (val < 0) ? -(((-val) * 31) >> 5) : (val * 31) >> 5; // scale the magnitude by 31 / 32
+			val = (val < 0) ? (((-val) * 31) >> 5) : (val * 31) >> 5; // scale the magnitude by 31 / 32
 			int s = 0;
 			if (val < 0)
 			{
@@ -1052,8 +1072,23 @@ internal static class BcHelpers
 		}
 	}
 
-	public static void SwapValues(ref int a, ref int b)
+	private static ushort FinishUnquantize(uint val, bool isSigned)
+	{
+		return FinishUnquantize(val.ToSigned(), isSigned);
+	}
+
+	public static void SwapValues(ref uint a, ref uint b)
 	{
 		(a, b) = (b, a);
+	}
+
+	private static uint ToUnsigned(this int value)
+	{
+		return unchecked((uint)value);
+	}
+
+	private static int ToSigned(this uint value)
+	{
+		return unchecked((int)value);
 	}
 }

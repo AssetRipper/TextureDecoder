@@ -5,21 +5,21 @@ internal struct BitStream
 	public ulong low;
 	public ulong high;
 	
-	public int ReadBits(int numBits)
+	public uint ReadBits(int numBits)
 	{
-		uint mask = (uint)((1 << numBits) - 1);
+		uint mask = (1u << numBits) - 1u;
 		// Read the low N bits
-		uint bits = (uint)(this.low & mask);
+		uint bits = unchecked((uint)(this.low & mask));
 
 		this.low >>= numBits;
 		// Put the low N bits of "high" into the high 64-N bits of "low".
 		this.low |= (this.high & mask) << ((sizeof(ulong) * 8) - numBits);
 		this.high >>= numBits;
 
-		return (int)bits;
+		return bits;
 	}
 
-	public int ReadBit()
+	public uint ReadBit()
 	{
 		return this.ReadBits(1);
 	}
@@ -29,11 +29,11 @@ internal struct BitStream
 	/// </summary>
 	/// <param name="numBits"></param>
 	/// <returns></returns>
-	public int ReadBitsReversed(int numBits)
+	public uint ReadBitsReversed(int numBits)
 	{
-		int bits = this.ReadBits(numBits);
+		uint bits = this.ReadBits(numBits);
 		// Reverse the bits.
-		int result = 0;
+		uint result = 0;
 		while (numBits-- != 0)
 		{
 			result <<= 1;
