@@ -1,9 +1,15 @@
 ﻿namespace AssetRipper.TextureDecoder.Bc;
 
-internal struct BitStream
+internal ref struct BitStream
 {
-	public ulong low;
-	public ulong high;
+	private ulong low;
+	private ulong high;
+
+	public BitStream(ulong low, ulong high)
+	{
+		this.low = low;
+		this.high = high;
+	}
 	
 	public uint ReadBits(int numBits)
 	{
@@ -19,6 +25,7 @@ internal struct BitStream
 		return bits;
 	}
 
+	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 	public uint ReadBit()
 	{
 		return this.ReadBits(1);
@@ -29,17 +36,11 @@ internal struct BitStream
 	/// </summary>
 	/// <param name="numBits"></param>
 	/// <returns></returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 	public uint ReadBitsReversed(int numBits)
 	{
 		uint bits = this.ReadBits(numBits);
 		// Reverse the bits.
-		uint result = 0;
-		while (numBits-- != 0)
-		{
-			result <<= 1;
-			result |= bits & 1;
-			bits >>= 1;
-		}
-		return result;
+		return bits.ReverseBits() >> (32 - numBits);
 	}
 }

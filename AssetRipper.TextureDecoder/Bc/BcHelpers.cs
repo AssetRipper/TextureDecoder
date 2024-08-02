@@ -34,11 +34,9 @@ internal static class BcHelpers
 
 	public static void DecompressBc6h(ReadOnlySpan<byte> compressedBlock, Span<byte> decompressedBlock, int destinationPitch, bool isSigned)
 	{
-		BitStream bstream = new()
-		{
-			low = BinaryPrimitives.ReadUInt64LittleEndian(compressedBlock),
-			high = BinaryPrimitives.ReadUInt64LittleEndian(compressedBlock.Slice(sizeof(ulong)))
-		};
+		BitStream bstream = new(
+			BinaryPrimitives.ReadUInt64LittleEndian(compressedBlock),
+			BinaryPrimitives.ReadUInt64LittleEndian(compressedBlock.Slice(sizeof(ulong))));
 		Span<uint> r = stackalloc uint[4]; // wxyz
 		Span<uint> g = stackalloc uint[4];
 		Span<uint> b = stackalloc uint[4];
@@ -559,11 +557,9 @@ internal static class BcHelpers
 
 	public static void DecompressBc7(ReadOnlySpan<byte> compressedBlock, Span<byte> decompressedBlock, int destinationPitch)
 	{
-		BitStream bstream = new()
-		{
-			low = BinaryPrimitives.ReadUInt64LittleEndian(compressedBlock),
-			high = BinaryPrimitives.ReadUInt64LittleEndian(compressedBlock.Slice(sizeof(ulong)))
-		};
+		BitStream bstream = new(
+			BinaryPrimitives.ReadUInt64LittleEndian(compressedBlock),
+			BinaryPrimitives.ReadUInt64LittleEndian(compressedBlock.Slice(sizeof(ulong))));
 		Span2D<uint> endpoints = new(stackalloc uint[6 * 4], 6, 4);
 		Span2D<int> indices = new(stackalloc int[4 * 4], 4, 4);
 
@@ -1080,15 +1076,5 @@ internal static class BcHelpers
 	public static void SwapValues(ref uint a, ref uint b)
 	{
 		(a, b) = (b, a);
-	}
-
-	private static uint ToUnsigned(this int value)
-	{
-		return unchecked((uint)value);
-	}
-
-	private static int ToSigned(this uint value)
-	{
-		return unchecked((int)value);
 	}
 }
