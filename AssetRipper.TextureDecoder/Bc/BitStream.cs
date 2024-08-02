@@ -2,33 +2,34 @@
 
 internal ref struct BitStream
 {
-	private ulong low;
-	private ulong high;
+	private UInt128 value;
+
+	private readonly uint BottomBits
+	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+		get => unchecked((uint)this.value);
+	}
 
 	public BitStream(ulong low, ulong high)
 	{
-		this.low = low;
-		this.high = high;
+		value = new UInt128(high, low);
 	}
-	
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 	public uint ReadBits(int numBits)
 	{
 		uint mask = (1u << numBits) - 1u;
-		// Read the low N bits
-		uint bits = unchecked((uint)(this.low & mask));
-
-		this.low >>= numBits;
-		// Put the low N bits of "high" into the high 64-N bits of "low".
-		this.low |= (this.high & mask) << ((sizeof(ulong) * 8) - numBits);
-		this.high >>= numBits;
-
+		uint bits = BottomBits & mask;
+		this.value >>= numBits;
 		return bits;
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 	public uint ReadBit()
 	{
-		return this.ReadBits(1);
+		uint result = BottomBits & 1u;
+		this.value >>= 1;
+		return result;
 	}
 
 	/// <summary>
