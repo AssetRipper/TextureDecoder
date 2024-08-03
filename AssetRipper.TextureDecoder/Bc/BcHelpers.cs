@@ -825,10 +825,13 @@ internal static class BcHelpers
 
 		static int ReadBc7Mode(ref BitStream bstream)
 		{
+			// Read bits until we find a non-zero bit, up to 8 bits.
+			// The mode is the number of bits read.
 			uint eightBits = bstream.PeakBits(8);
-			int index = BitOperations.TrailingZeroCount(eightBits);
-			bstream.ReadBits(index + 1);
-			return index;
+			int zeros = BitOperations.TrailingZeroCount(eightBits);
+			int bitCount = zeros >= 8 ? 8 : zeros + 1;
+			bstream.Advance(bitCount);
+			return int.Min(zeros, 8);
 		}
 	}
 

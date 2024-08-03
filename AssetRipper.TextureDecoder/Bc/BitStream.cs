@@ -35,10 +35,16 @@ internal ref struct BitStream
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+	public void Advance(int numBits)
+	{
+		this.value >>= numBits;
+	}
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 	public uint ReadBits(int numBits)
 	{
 		uint bits = PeakBits(numBits);
-		this.value >>= numBits;
+		Advance(numBits);
 		return bits;
 	}
 
@@ -46,7 +52,7 @@ internal ref struct BitStream
 	public uint ReadBit()
 	{
 		uint result = BottomBits & 1u;
-		this.value >>= 1;
+		Advance(1);
 		return result;
 	}
 
