@@ -63,6 +63,7 @@ namespace AssetRipper.TextureDecoder.Yuy2
 			where TOutputChannelValue : unmanaged
 			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
+			ThrowHelper.ThrowIfNotLittleEndian();
 			return DecompressYUY2<TOutputColor, TOutputChannelValue>(input, width, height, MemoryMarshal.Cast<byte, TOutputColor>(output));
 		}
 

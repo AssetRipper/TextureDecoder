@@ -121,6 +121,7 @@ namespace AssetRipper.TextureDecoder.Atc
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static T ReadAtOffset<T>(this ReadOnlySpan<byte> input, int offset) where T : unmanaged
 		{
+			ThrowHelper.ThrowIfNotLittleEndian();
 			return MemoryMarshal.Read<T>(input.Slice(offset));
 		}
 

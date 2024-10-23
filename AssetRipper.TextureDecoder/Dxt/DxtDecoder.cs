@@ -64,6 +64,7 @@ namespace AssetRipper.TextureDecoder.Dxt
 			where TOutputChannelValue : unmanaged
 			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
+			ThrowHelper.ThrowIfNotLittleEndian();
 			return DecompressDXT1<TOutputColor, TOutputChannelValue>(input, width, height, MemoryMarshal.Cast<byte, TOutputColor>(output));
 		}
 
@@ -185,6 +186,7 @@ namespace AssetRipper.TextureDecoder.Dxt
 			where TOutputChannelValue : unmanaged
 			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
+			ThrowHelper.ThrowIfNotLittleEndian();
 			return DecompressDXT3<TOutputColor, TOutputChannelValue>(input, width, height, MemoryMarshal.Cast<byte, TOutputColor>(output));
 		}
 
@@ -316,6 +318,7 @@ namespace AssetRipper.TextureDecoder.Dxt
 			where TOutputChannelValue : unmanaged
 			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
+			ThrowHelper.ThrowIfNotLittleEndian();
 			return DecompressDXT5<TOutputColor, TOutputChannelValue>(input, width, height, MemoryMarshal.Cast<byte, TOutputColor>(output));
 		}
 

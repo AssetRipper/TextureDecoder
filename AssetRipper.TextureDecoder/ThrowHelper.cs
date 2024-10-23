@@ -19,5 +19,13 @@
 				throw new InvalidOperationException($"Not enough space. {spaceRequired} is required, but only {spaceAvailable} is available");
 			}
 		}
+
+		internal static void ThrowIfNotLittleEndian()
+		{
+			if (!BitConverter.IsLittleEndian)
+			{
+				throw new PlatformNotSupportedException();
+			}
+		}
 	}
 }

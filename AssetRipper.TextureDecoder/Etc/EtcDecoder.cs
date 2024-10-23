@@ -10,6 +10,7 @@ namespace AssetRipper.TextureDecoder.Etc
 
 		public static int DecompressETC(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
+			ThrowHelper.ThrowIfNotLittleEndian();
 			int requiredLength = ((width + 3) / 4) * ((height + 3) / 4) * 8;
 			if (input.Length < requiredLength)
 			{
@@ -50,6 +51,7 @@ namespace AssetRipper.TextureDecoder.Etc
 
 		public static int DecompressETC2(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
+			ThrowHelper.ThrowIfNotLittleEndian();
 			int requiredLength = ((width + 3) / 4) * ((height + 3) / 4) * 8;
 			if (input.Length < requiredLength)
 			{
@@ -90,6 +92,7 @@ namespace AssetRipper.TextureDecoder.Etc
 
 		public static int DecompressETC2A1(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
+			ThrowHelper.ThrowIfNotLittleEndian();
 			int requiredLength = ((width + 3) / 4) * ((height + 3) / 4) * 8;
 			if (input.Length < requiredLength)
 			{
@@ -130,6 +133,7 @@ namespace AssetRipper.TextureDecoder.Etc
 
 		public static int DecompressETC2A8(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
+			ThrowHelper.ThrowIfNotLittleEndian();
 			int requiredLength = ((width + 3) / 4) * ((height + 3) / 4) * 16;
 			if (input.Length < requiredLength)
 			{
@@ -171,6 +175,7 @@ namespace AssetRipper.TextureDecoder.Etc
 
 		public static int DecompressEACRUnsigned(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
+			ThrowHelper.ThrowIfNotLittleEndian();
 			int requiredLength = ((width + 3) / 4) * ((height + 3) / 4) * 8;
 			if (input.Length < requiredLength)
 			{
@@ -215,6 +220,7 @@ namespace AssetRipper.TextureDecoder.Etc
 
 		public static int DecompressEACRSigned(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
+			ThrowHelper.ThrowIfNotLittleEndian();
 			int requiredLength = ((width + 3) / 4) * ((height + 3) / 4) * 8;
 			if (input.Length < requiredLength)
 			{
@@ -259,6 +265,7 @@ namespace AssetRipper.TextureDecoder.Etc
 
 		public static int DecompressEACRGUnsigned(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
+			ThrowHelper.ThrowIfNotLittleEndian();
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
 			
@@ -304,6 +311,7 @@ namespace AssetRipper.TextureDecoder.Etc
 
 		public static int DecompressEACRGSigned(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 		{
+			ThrowHelper.ThrowIfNotLittleEndian();
 			int requiredLength = ((width + 3) / 4) * ((height + 3) / 4) * 16;
 			if (input.Length < requiredLength)
 			{
@@ -741,6 +749,7 @@ namespace AssetRipper.TextureDecoder.Etc
 
 		private static void DecodeEtc2a8Block(ReadOnlySpan<byte> input, Span<uint> output)
 		{
+			ThrowHelper.ThrowIfNotLittleEndian();
 			int @base = input[0];
 			int data1 = input[1];
 			int mul = data1 >> 4;
@@ -761,6 +770,7 @@ namespace AssetRipper.TextureDecoder.Etc
 
 		private static void DecodeEacUnsignedBlock(ReadOnlySpan<byte> input, Span<uint> output, int channel)
 		{
+			ThrowHelper.ThrowIfNotLittleEndian();
 			int @base = input[0];
 			int data1 = input[1];
 			int mul = data1 >> 4;
@@ -778,6 +788,7 @@ namespace AssetRipper.TextureDecoder.Etc
 
 		private static void DecodeEacSignedBlock(ReadOnlySpan<byte> input, Span<uint> output, int channel)
 		{
+			ThrowHelper.ThrowIfNotLittleEndian();
 			int @base = 127 + unchecked((sbyte)input[0]);
 			int data1 = input[1];
 			int mul = data1 >> 4;

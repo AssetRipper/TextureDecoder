@@ -503,6 +503,7 @@ namespace AssetRipper.TextureDecoder.Rgb
 			where TDestinationChannel : unmanaged
 			where TDestinationColor : unmanaged, IColor<TDestinationChannel>
 		{
+			ThrowHelper.ThrowIfNotLittleEndian();
 			ReadOnlySpan<TSourceColor> sourceSpan = MemoryMarshal.Cast<byte, TSourceColor>(input).Slice(0, width * height);
 			Span<TDestinationColor> destinationSpan = MemoryMarshal.Cast<byte, TDestinationColor>(output).Slice(0, width * height);
 			Convert<TSourceColor, TSourceChannel, TDestinationColor, TDestinationChannel>(sourceSpan, destinationSpan);

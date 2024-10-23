@@ -33,6 +33,7 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		public static int DecompressPVRTC(ReadOnlySpan<byte> input, int xDim, int yDim, bool do2bitMode, Span<byte> output)
 		{
+			ThrowHelper.ThrowIfNotLittleEndian();
 			int xBlockSize = do2bitMode ? BlockX2bpp : BlockX4bpp;
 			// for MBX don't allow the sizes to get too small
 			int blockXDim = Math.Max(2, xDim / xBlockSize);
