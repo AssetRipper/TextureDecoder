@@ -21,7 +21,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		}
 		
 		[Test]
-		public void DecompressDXT1Test()
+		public void Decompress_BC1()
 		{
 			ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.DxtTestFiles + "test.dxt1");
 			int totalBytesRead = 0;
@@ -36,7 +36,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		}
 
 		[Test]
-		public void DecompressDXT3Test()
+		public void Decompress_BC2()
 		{
 			ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.DxtTestFiles + "test.dxt3");
 			int totalBytesRead = 0;
@@ -51,7 +51,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		}
 
 		[Test]
-		public void DecompressDXT5Test()
+		public void Decompress_BC3()
 		{
 			ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.DxtTestFiles + "test.dxt5");
 			int totalBytesRead = 0;
@@ -66,7 +66,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		}
 
 		[Test]
-		public void DecompressBC4Test()
+		public void Decompress_BC4()
 		{
 			ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.BcTestFiles + "test.bc4");
 			int bytesRead = Bc4.Decompress(data, 512, 512, out _);
@@ -74,7 +74,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		}
 
 		[Test]
-		public void DecompressBC5Test()
+		public void Decompress_BC5()
 		{
 			ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.BcTestFiles + "test.bc5");
 			int bytesRead = Bc5.Decompress(data, 512, 512, out _);
@@ -84,7 +84,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		[TestCase("test.bc6h_fast")]
 		[TestCase("test.bc6h_normal")]
 		[TestCase("test.bc6h_best")]
-		public void DecompressBC6HTest(string fileName)
+		public void Decompress_BC6H(string fileName)
 		{
 			AssertCorrectBC6HDecompression(TestFileFolders.BcTestFiles + fileName, 512, 512, false);
 		}
@@ -92,14 +92,85 @@ namespace AssetRipper.TextureDecoder.Tests
 		[TestCase("test.bc7_fast")]
 		[TestCase("test.bc7_normal")]
 		[TestCase("test.bc7_best")]
-		public void DecompressBC7Test(string fileName)
+		public void Decompress_BC7(string fileName)
 		{
 			AssertCorrectBC7Decompression(TestFileFolders.BcTestFiles + fileName, 512, 512);
 		}
 
 		[Test]
-		[Ignore("Not implemented")]
-		public void BC7PartialBlockTest([Range(1, 4)] int width, [Range(1, 4)] int height)
+		public void PartialBlock_BC1([Range(1, 4)] int width, [Range(1, 4)] int height)
+		{
+			Assert.Multiple(() =>
+			{
+				ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.DxtTestFiles + "test.dxt1").AsSpan()[..Bc1.BlockSize];
+				int bytesRead = Bc1.Decompress(data, width, height, out byte[] decodedData);
+				Assert.That(bytesRead, Is.EqualTo(data.Length));
+				Assert.That(decodedData, Has.Length.EqualTo(width * height * Unsafe.SizeOf<ColorBGRA32>()));
+			});
+		}
+
+		[Test]
+		public void PartialBlock_BC2([Range(1, 4)] int width, [Range(1, 4)] int height)
+		{
+			Assert.Multiple(() =>
+			{
+				ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.DxtTestFiles + "test.dxt3").AsSpan()[..Bc2.BlockSize];
+				int bytesRead = Bc2.Decompress(data, width, height, out byte[] decodedData);
+				Assert.That(bytesRead, Is.EqualTo(data.Length));
+				Assert.That(decodedData, Has.Length.EqualTo(width * height * Unsafe.SizeOf<ColorBGRA32>()));
+			});
+		}
+
+		[Test]
+		public void PartialBlock_BC3([Range(1, 4)] int width, [Range(1, 4)] int height)
+		{
+			Assert.Multiple(() =>
+			{
+				ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.DxtTestFiles + "test.dxt5").AsSpan()[..Bc3.BlockSize];
+				int bytesRead = Bc3.Decompress(data, width, height, out byte[] decodedData);
+				Assert.That(bytesRead, Is.EqualTo(data.Length));
+				Assert.That(decodedData, Has.Length.EqualTo(width * height * Unsafe.SizeOf<ColorBGRA32>()));
+			});
+		}
+
+		[Test]
+		public void PartialBlock_BC4([Range(1, 4)] int width, [Range(1, 4)] int height)
+		{
+			Assert.Multiple(() =>
+			{
+				ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.BcTestFiles + "test.bc4").AsSpan()[..Bc4.BlockSize];
+				int bytesRead = Bc4.Decompress(data, width, height, out byte[] decodedData);
+				Assert.That(bytesRead, Is.EqualTo(data.Length));
+				Assert.That(decodedData, Has.Length.EqualTo(width * height * Unsafe.SizeOf<ColorBGRA32>()));
+			});
+		}
+
+		[Test]
+		public void PartialBlock_BC5([Range(1, 4)] int width, [Range(1, 4)] int height)
+		{
+			Assert.Multiple(() =>
+			{
+				ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.BcTestFiles + "test.bc5").AsSpan()[..Bc5.BlockSize];
+				int bytesRead = Bc5.Decompress(data, width, height, out byte[] decodedData);
+				Assert.That(bytesRead, Is.EqualTo(data.Length));
+				Assert.That(decodedData, Has.Length.EqualTo(width * height * Unsafe.SizeOf<ColorBGRA32>()));
+			});
+		}
+
+		[Test]
+		public void PartialBlock_BC6H([Range(1, 4)] int width, [Range(1, 4)] int height)
+		{
+			Assert.Multiple(() =>
+			{
+				ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.BcTestFiles + "test.bc6h_best").AsSpan()[..Bc6h.BlockSize];
+				int bytesRead = Bc6h.Decompress(data, width, height, false, out byte[] decodedData);
+				Assert.That(bytesRead, Is.EqualTo(data.Length));
+				Assert.That(decodedData, Has.Length.EqualTo(width * height * Unsafe.SizeOf<ColorBGRA32>()));
+			});
+		}
+
+		[Test]
+		public void PartialBlock_BC7([Range(1, 4)] int width, [Range(1, 4)] int height)
 		{
 			Assert.Multiple(() =>
 			{

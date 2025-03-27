@@ -10,6 +10,22 @@ public static class Bc4
 	/// The size of an encoded block, in bytes.
 	/// </summary>
 	public const int BlockSize = 8;
+	/// <summary>
+	/// The width of a decoded block, in pixels.
+	/// </summary>
+	private const int BlockWidth = 4;
+	/// <summary>
+	/// The height of a decoded block, in pixels.
+	/// </summary>
+	private const int BlockHeight = 4;
+	/// <summary>
+	/// The size of the natural pixel type.
+	/// </summary>
+	private static int PixelSize => Unsafe.SizeOf<ColorR<byte>>();
+	/// <summary>
+	/// The size of a decoded block, in bytes.
+	/// </summary>
+	internal static int DecodedBlockSize => BlockWidth * BlockHeight * PixelSize;
 
 	public static int Decompress(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 	{
@@ -19,21 +35,22 @@ public static class Bc4
 
 	public static int Decompress(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 	{
-		int bufferSize = width * height * Unsafe.SizeOf<ColorR<byte>>();
-		byte[] bufferArray = ArrayPool<byte>.Shared.Rent(bufferSize);
-		Span<byte> buffer = new Span<byte>(bufferArray, 0, bufferSize);
+		int naturalSize = width * height * PixelSize;
+		byte[] rentedArray = ArrayPool<byte>.Shared.Rent(naturalSize);
+		Span<byte> naturalPixels = new Span<byte>(rentedArray, 0, naturalSize);
+		Span<byte> buffer = stackalloc byte[DecodedBlockSize];
 		int inputOffset = 0;
-		for (int i = 0; i < height; i += 4)
+		for (int i = 0; i < height; i += BlockHeight)
 		{
-			for (int j = 0; j < width; j += 4)
+			for (int j = 0; j < width; j += BlockWidth)
 			{
-				int bufferOffset = ((i * width) + j) * Unsafe.SizeOf<ColorR<byte>>();
-				BcHelpers.DecompressBc4(input.Slice(inputOffset), buffer.Slice(bufferOffset), width);
+				BcHelpers.DecompressBc4(input.Slice(inputOffset), buffer);
+				BcHelpers.CopyBufferToOutput(buffer, naturalPixels, width, height, j, i, BlockWidth, BlockHeight, PixelSize);
 				inputOffset += BlockSize;
 			}
 		}
-		RgbConverter.Convert<ColorR<byte>, byte, ColorBGRA32, byte>(buffer, width, height, output);
-		ArrayPool<byte>.Shared.Return(bufferArray);
+		RgbConverter.Convert<ColorR<byte>, byte, ColorBGRA32, byte>(naturalPixels, width, height, output);
+		ArrayPool<byte>.Shared.Return(rentedArray);
 		return inputOffset;
 	}
 

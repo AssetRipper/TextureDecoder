@@ -9,6 +9,22 @@ public static class Bc2
 	/// The size of an encoded block, in bytes.
 	/// </summary>
 	public const int BlockSize = 16;
+	/// <summary>
+	/// The width of a decoded block, in pixels.
+	/// </summary>
+	private const int BlockWidth = 4;
+	/// <summary>
+	/// The height of a decoded block, in pixels.
+	/// </summary>
+	private const int BlockHeight = 4;
+	/// <summary>
+	/// The size of the natural pixel type.
+	/// </summary>
+	private static int PixelSize => Unsafe.SizeOf<ColorRGBA<byte>>();
+	/// <summary>
+	/// The size of a decoded block, in bytes.
+	/// </summary>
+	internal static int DecodedBlockSize => BlockWidth * BlockHeight * PixelSize;
 
 	public static int Decompress(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
 	{
@@ -18,13 +34,14 @@ public static class Bc2
 
 	public static int Decompress(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
 	{
+		Span<byte> buffer = stackalloc byte[DecodedBlockSize];
 		int inputOffset = 0;
-		for (int i = 0; i < height; i += 4)
+		for (int i = 0; i < height; i += BlockHeight)
 		{
-			for (int j = 0; j < width; j += 4)
+			for (int j = 0; j < width; j += BlockWidth)
 			{
-				int outputOffset = ((i * width) + j) * Unsafe.SizeOf<ColorRGBA<byte>>();
-				BcHelpers.DecompressBc2(input.Slice(inputOffset), output.Slice(outputOffset), width * 4);
+				BcHelpers.DecompressBc2(input.Slice(inputOffset), buffer);
+				BcHelpers.CopyBufferToOutput(buffer, output, width, height, j, i, BlockWidth, BlockHeight, PixelSize);
 				inputOffset += BlockSize;
 			}
 		}

@@ -10,6 +10,23 @@ public static class Bc6h
 	/// The size of an encoded block, in bytes.
 	/// </summary>
 	public const int BlockSize = 16;
+	/// <summary>
+	/// The width of a decoded block, in pixels.
+	/// </summary>
+	private const int BlockWidth = 4;
+	/// <summary>
+	/// The height of a decoded block, in pixels.
+	/// </summary>
+	private const int BlockHeight = 4;
+	/// <summary>
+	/// The size of the natural pixel type.
+	/// </summary>
+	private static int PixelSize => Unsafe.SizeOf<ColorRGB<Half>>();
+	/// <summary>
+	/// The size of a decoded block, in bytes.
+	/// </summary>
+	internal static int DecodedBlockSize => BlockWidth * BlockHeight * PixelSize;
+
 
 	public static int Decompress(ReadOnlySpan<byte> input, int width, int height, bool isSigned, out byte[] output)
 	{
@@ -19,25 +36,27 @@ public static class Bc6h
 
 	public static int Decompress(ReadOnlySpan<byte> input, int width, int height, bool isSigned, Span<byte> output)
 	{
-		int bufferSize = width * height * Unsafe.SizeOf<ColorRGB<Half>>();
-		byte[] bufferArray = ArrayPool<byte>.Shared.Rent(bufferSize);
-		Span<byte> buffer = new Span<byte>(bufferArray, 0, bufferSize);
+		int naturalSize = width * height * PixelSize;
+		byte[] rentedArray = ArrayPool<byte>.Shared.Rent(naturalSize);
+		Span<byte> naturalPixels = new Span<byte>(rentedArray, 0, naturalSize);
+		Span<byte> buffer = stackalloc byte[DecodedBlockSize];
 		int inputOffset = 0;
-		for (int i = 0; i < height; i += 4)
+		for (int i = 0; i < height; i += BlockHeight)
 		{
-			for (int j = 0; j < width; j += 4)
+			for (int j = 0; j < width; j += BlockWidth)
 			{
-				int outputOffset = ((i * width) + j) * Unsafe.SizeOf<ColorRGB<Half>>();
 				BcHelpers.DecompressBc6h(
 					input.Slice(inputOffset, BlockSize),
-					buffer.Slice(outputOffset),
-					width * 3,
+					buffer,
 					isSigned);
+
+				BcHelpers.CopyBufferToOutput(buffer, naturalPixels, width, height, j, i, BlockWidth, BlockHeight, PixelSize);
+
 				inputOffset += BlockSize;
 			}
 		}
-		RgbConverter.Convert<ColorRGB<Half>, Half, ColorBGRA32, byte>(buffer, width, height, output);
-		ArrayPool<byte>.Shared.Return(bufferArray);
+		RgbConverter.Convert<ColorRGB<Half>, Half, ColorBGRA32, byte>(naturalPixels, width, height, output);
+		ArrayPool<byte>.Shared.Return(rentedArray);
 		return inputOffset;
 	}
 

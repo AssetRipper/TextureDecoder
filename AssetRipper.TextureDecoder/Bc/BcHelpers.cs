@@ -1,39 +1,52 @@
 ﻿using System.Buffers.Binary;
+using System.Diagnostics;
 
 namespace AssetRipper.TextureDecoder.Bc;
 
 internal static class BcHelpers
 {
-	public static void DecompressBc1(ReadOnlySpan<byte> compressedBlock, Span<byte> decompressedBlock, int destinationPitch)
+	public static void DecompressBc1(ReadOnlySpan<byte> compressedBlock, Span<byte> decompressedBlock)
 	{
+		Debug.Assert(decompressedBlock.Length == Bc1.DecodedBlockSize);
+		int destinationPitch = 4 * 4;
 		ColorBlock(compressedBlock, decompressedBlock, destinationPitch, 0);
 	}
 
-	public static void DecompressBc2(ReadOnlySpan<byte> compressedBlock, Span<byte> decompressedBlock, int destinationPitch)
+	public static void DecompressBc2(ReadOnlySpan<byte> compressedBlock, Span<byte> decompressedBlock)
 	{
+		Debug.Assert(decompressedBlock.Length == Bc2.DecodedBlockSize);
+		int destinationPitch = 4 * 4;
 		ColorBlock(compressedBlock.Slice(8), decompressedBlock, destinationPitch, 1);
 		SharpAlphaBlock(compressedBlock, decompressedBlock.Slice(3), destinationPitch);
 	}
 
-	public static void DecompressBc3(ReadOnlySpan<byte> compressedBlock, Span<byte> decompressedBlock, int destinationPitch)
+	public static void DecompressBc3(ReadOnlySpan<byte> compressedBlock, Span<byte> decompressedBlock)
 	{
+		Debug.Assert(decompressedBlock.Length == Bc3.DecodedBlockSize);
+		int destinationPitch = 4 * 4;
 		ColorBlock(compressedBlock.Slice(8), decompressedBlock, destinationPitch, 1);
 		SmoothAlphaBlock(compressedBlock, decompressedBlock.Slice(3), destinationPitch, 4);
 	}
 
-	public static void DecompressBc4(ReadOnlySpan<byte> compressedBlock, Span<byte> decompressedBlock, int destinationPitch)
+	public static void DecompressBc4(ReadOnlySpan<byte> compressedBlock, Span<byte> decompressedBlock)
 	{
+		Debug.Assert(decompressedBlock.Length == Bc4.DecodedBlockSize);
+		int destinationPitch = 4 * 1;
 		SmoothAlphaBlock(compressedBlock, decompressedBlock, destinationPitch, 1);
 	}
 
-	public static void DecompressBc5(ReadOnlySpan<byte> compressedBlock, Span<byte> decompressedBlock, int destinationPitch)
+	public static void DecompressBc5(ReadOnlySpan<byte> compressedBlock, Span<byte> decompressedBlock)
 	{
+		Debug.Assert(decompressedBlock.Length == Bc5.DecodedBlockSize);
+		int destinationPitch = 4 * 2;
 		SmoothAlphaBlock(compressedBlock, decompressedBlock, destinationPitch, 2);
 		SmoothAlphaBlock(compressedBlock.Slice(8), decompressedBlock.Slice(1), destinationPitch, 2);
 	}
 
-	public static void DecompressBc6h(ReadOnlySpan<byte> compressedBlock, Span<byte> decompressedBlock, int destinationPitch, bool isSigned)
+	public static void DecompressBc6h(ReadOnlySpan<byte> compressedBlock, Span<byte> decompressedBlock, bool isSigned)
 	{
+		Debug.Assert(decompressedBlock.Length == Bc6h.DecodedBlockSize);
+
 		BitStream bstream = new(compressedBlock);
 		Span<uint> r = stackalloc uint[4]; // wxyz
 		Span<uint> g = stackalloc uint[4];
@@ -448,15 +461,7 @@ internal static class BcHelpers
 					// Do not use these in your encoder. If the hardware is passed blocks
 					// with one of these modes specified, the resulting decompressed block
 					// must contain all zeroes in all channels except for the alpha channel.
-					for (int i = 0; i < 4; ++i)
-					{
-						for (int j = 0; j < 4; ++j)
-						{
-							Span<byte> pixel = decompressedBlock.Slice(decompressedOffset + (j * 3 * sizeof(ushort)), 3 * sizeof(ushort));
-							pixel.Clear();
-						}
-						decompressedOffset += destinationPitch * sizeof(ushort);
-					}
+					decompressedBlock.Clear();
 
 					return;
 				}
@@ -535,7 +540,7 @@ internal static class BcHelpers
 				BinaryPrimitives.WriteUInt16LittleEndian(decompressedBlock.Slice(bOffset), bFinal);
 			}
 
-			decompressedOffset += destinationPitch * sizeof(ushort);
+			decompressedOffset += 4 * 3 * sizeof(ushort);
 		}
 
 		static uint ReadBc6hModeBits(ref BitStream bstream)
@@ -553,30 +558,20 @@ internal static class BcHelpers
 		}
 	}
 
-	public static void DecompressBc7(ReadOnlySpan<byte> compressedBlock, Span<byte> decompressedBlock, int destinationPitch)
+	public static void DecompressBc7(ReadOnlySpan<byte> compressedBlock, Span<byte> decompressedBlock)
 	{
+		Debug.Assert(decompressedBlock.Length == Bc7.DecodedBlockSize);
+
 		BitStream bstream = new(compressedBlock);
 		Span2D<uint> endpoints = new(stackalloc uint[6 * 4], 6, 4);
 		Span2D<int> indices = new(stackalloc int[4 * 4], 4, 4);
-
-		int decompressedOffset = 0;
 
 		int mode = ReadBc7Mode(ref bstream);
 
 		// unexpected mode, clear the block (transparent black)
 		if (mode >= 8)
 		{
-			for (int i = 0; i < 4; ++i)
-			{
-				for (int j = 0; j < 4; ++j)
-				{
-					decompressedBlock[decompressedOffset + (j * 4) + 0] = 0;
-					decompressedBlock[decompressedOffset + (j * 4) + 1] = 0;
-					decompressedBlock[decompressedOffset + (j * 4) + 2] = 0;
-					decompressedBlock[decompressedOffset + (j * 4) + 3] = 0;
-				}
-				decompressedOffset += destinationPitch;
-			}
+			decompressedBlock.Clear();
 
 			return;
 		}
@@ -814,13 +809,12 @@ internal static class BcHelpers
 						break;
 				}
 
-				decompressedBlock[decompressedOffset + (j * 4) + 0] = (byte)r;
-				decompressedBlock[decompressedOffset + (j * 4) + 1] = (byte)g;
-				decompressedBlock[decompressedOffset + (j * 4) + 2] = (byte)b;
-				decompressedBlock[decompressedOffset + (j * 4) + 3] = (byte)a;
+				int offset = (i * 16) + (j * 4);
+				decompressedBlock[offset + 0] = (byte)r;
+				decompressedBlock[offset + 1] = (byte)g;
+				decompressedBlock[offset + 2] = (byte)b;
+				decompressedBlock[offset + 3] = (byte)a;
 			}
-
-			decompressedOffset += destinationPitch;
 		}
 
 		static int ReadBc7Mode(ref BitStream bstream)
@@ -1095,5 +1089,22 @@ internal static class BcHelpers
 	public static void SwapValues(ref uint a, ref uint b)
 	{
 		(a, b) = (b, a);
+	}
+
+	/// <summary>
+	/// This is for copying a decoded block to the output buffer. It handles the pitch and non-4x4 blocks (if necessary).
+	/// </summary>
+	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+	public static void CopyBufferToOutput(Span<byte> buffer, Span<byte> output, int width, int height, int w, int h, int blockWidth, int blockHeight, int pixelSize)
+	{
+		int hEnd = Math.Min(h + blockHeight, height);
+		int wEnd = Math.Min(w + blockWidth, width);
+		for (int i = h; i < hEnd; i++)
+		{
+			int outputOffset = ((i * width) + w) * pixelSize;
+			int outputBufferOffset = ((i - h) * blockWidth) * pixelSize;
+			int copyLength = (wEnd - w) * pixelSize;
+			buffer.Slice(outputBufferOffset, copyLength).CopyTo(output.Slice(outputOffset, copyLength));
+		}
 	}
 }
