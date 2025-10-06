@@ -27,36 +27,39 @@ public static class Bc6h
 	/// </summary>
 	internal static int DecodedBlockSize => BlockWidth * BlockHeight * PixelSize;
 
-
-	public static int Decompress(ReadOnlySpan<byte> input, int width, int height, bool isSigned, out byte[] output)
+	public static int Decompress<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, bool isSigned, out byte[] output)
+		where TOutputChannelValue : unmanaged
+		where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 	{
-		output = new byte[width * height * Unsafe.SizeOf<ColorBGRA32>()];
-		return Decompress(input, width, height, isSigned, output);
+		output = new byte[width * height * Unsafe.SizeOf<TOutputColor>()];
+		return Decompress<TOutputColor, TOutputChannelValue>(input, width, height, isSigned, output);
 	}
 
-	public static int Decompress(ReadOnlySpan<byte> input, int width, int height, bool isSigned, Span<byte> output)
+	public static int Decompress<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, bool isSigned, Span<byte> output)
+		where TOutputChannelValue : unmanaged
+		where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 	{
-		int naturalSize = width * height * PixelSize;
-		byte[] rentedArray = ArrayPool<byte>.Shared.Rent(naturalSize);
-		Span<byte> naturalPixels = new Span<byte>(rentedArray, 0, naturalSize);
+		ThrowHelper.ThrowIfNotLittleEndian();
+		return Decompress<TOutputColor, TOutputChannelValue>(input, width, height, isSigned, MemoryMarshal.Cast<byte, TOutputColor>(output));
+	}
+
+	public static int Decompress<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, bool isSigned, Span<TOutputColor> output)
+		where TOutputChannelValue : unmanaged
+		where TOutputColor : unmanaged, IColor<TOutputChannelValue>
+	{
+		ThrowHelper.ThrowIfNotLittleEndian();
+		ThrowHelper.ThrowIfNotEnoughSpace(output.Length, width * height);
 		Span<byte> buffer = stackalloc byte[DecodedBlockSize];
 		int inputOffset = 0;
 		for (int i = 0; i < height; i += BlockHeight)
 		{
 			for (int j = 0; j < width; j += BlockWidth)
 			{
-				BcHelpers.DecompressBc6h(
-					input.Slice(inputOffset, BlockSize),
-					buffer,
-					isSigned);
-
-				BcHelpers.CopyBufferToOutput(buffer, naturalPixels, width, height, j, i, BlockWidth, BlockHeight, PixelSize);
-
+				BcHelpers.DecompressBc6h(input.Slice(inputOffset, BlockSize), buffer, isSigned);
+				BcHelpers.CopyBufferToOutput<ColorRGB<Half>, Half, TOutputColor, TOutputChannelValue>(MemoryMarshal.Cast<byte, ColorRGB<Half>>(buffer), output, width, height, j, i, BlockWidth, BlockHeight);
 				inputOffset += BlockSize;
 			}
 		}
-		RgbConverter.Convert<ColorRGB<Half>, Half, ColorBGRA32, byte>(naturalPixels, width, height, output);
-		ArrayPool<byte>.Shared.Return(rentedArray);
 		return inputOffset;
 	}
 

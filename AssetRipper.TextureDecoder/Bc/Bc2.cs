@@ -26,26 +26,39 @@ public static class Bc2
 	/// </summary>
 	internal static int DecodedBlockSize => BlockWidth * BlockHeight * PixelSize;
 
-	public static int Decompress(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+	public static int Decompress<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+		where TOutputChannelValue : unmanaged
+		where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 	{
-		output = new byte[width * height * Unsafe.SizeOf<ColorBGRA32>()];
-		return Decompress(input, width, height, output);
+		output = new byte[width * height * Unsafe.SizeOf<TOutputColor>()];
+		return Decompress<TOutputColor, TOutputChannelValue>(input, width, height, output);
 	}
 
-	public static int Decompress(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+	public static int Decompress<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		where TOutputChannelValue : unmanaged
+		where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 	{
+		ThrowHelper.ThrowIfNotLittleEndian();
+		return Decompress<TOutputColor, TOutputChannelValue>(input, width, height, MemoryMarshal.Cast<byte, TOutputColor>(output));
+	}
+
+	public static int Decompress<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, Span<TOutputColor> output)
+		where TOutputChannelValue : unmanaged
+		where TOutputColor : unmanaged, IColor<TOutputChannelValue>
+	{
+		ThrowHelper.ThrowIfNotLittleEndian();
+		ThrowHelper.ThrowIfNotEnoughSpace(output.Length, width * height);
 		Span<byte> buffer = stackalloc byte[DecodedBlockSize];
 		int inputOffset = 0;
 		for (int i = 0; i < height; i += BlockHeight)
 		{
 			for (int j = 0; j < width; j += BlockWidth)
 			{
-				BcHelpers.DecompressBc2(input.Slice(inputOffset), buffer);
-				BcHelpers.CopyBufferToOutput(buffer, output, width, height, j, i, BlockWidth, BlockHeight, PixelSize);
+				BcHelpers.DecompressBc2(input.Slice(inputOffset, BlockSize), buffer);
+				BcHelpers.CopyBufferToOutput<ColorRGBA<byte>, byte, TOutputColor, TOutputChannelValue>(MemoryMarshal.Cast<byte, ColorRGBA<byte>>(buffer), output, width, height, j, i, BlockWidth, BlockHeight);
 				inputOffset += BlockSize;
 			}
 		}
-		RgbConverter.Convert<ColorRGBA<byte>, byte, ColorBGRA32, byte>(output, width, height, output);
 		return inputOffset;
 	}
 

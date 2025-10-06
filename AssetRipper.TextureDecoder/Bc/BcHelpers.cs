@@ -1,4 +1,5 @@
-﻿using System.Buffers.Binary;
+﻿using AssetRipper.TextureDecoder.Rgb;
+using System.Buffers.Binary;
 using System.Diagnostics;
 
 namespace AssetRipper.TextureDecoder.Bc;
@@ -1094,17 +1095,22 @@ internal static class BcHelpers
 	/// <summary>
 	/// This is for copying a decoded block to the output buffer. It handles the pitch and non-4x4 blocks (if necessary).
 	/// </summary>
-	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-	public static void CopyBufferToOutput(Span<byte> buffer, Span<byte> output, int width, int height, int w, int h, int blockWidth, int blockHeight, int pixelSize)
+	public static void CopyBufferToOutput<TBufferColor, TBufferChannelValue, TOutputColor, TOutputChannelValue>(Span<TBufferColor> buffer, Span<TOutputColor> output, int width, int height, int w, int h, int blockWidth, int blockHeight)
+		where TBufferChannelValue : unmanaged
+		where TBufferColor : unmanaged, IColor<TBufferChannelValue>
+		where TOutputChannelValue : unmanaged
+		where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 	{
-		int hEnd = Math.Min(h + blockHeight, height);
-		int wEnd = Math.Min(w + blockWidth, width);
+		int hEnd = int.Min(h + blockHeight, height);
+		int wEnd = int.Min(w + blockWidth, width);
 		for (int i = h; i < hEnd; i++)
 		{
-			int outputOffset = ((i * width) + w) * pixelSize;
-			int outputBufferOffset = ((i - h) * blockWidth) * pixelSize;
-			int copyLength = (wEnd - w) * pixelSize;
-			buffer.Slice(outputBufferOffset, copyLength).CopyTo(output.Slice(outputOffset, copyLength));
+			int outputOffset = i * width;
+			int bufferOffset = (i - h) * blockWidth;
+			for (int j = w; j < wEnd; j++)
+			{
+				output[outputOffset + j] = buffer[bufferOffset + (j - w)].Convert<TBufferColor, TBufferChannelValue, TOutputColor, TOutputChannelValue>();
+			}
 		}
 	}
 }

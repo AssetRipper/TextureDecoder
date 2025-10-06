@@ -27,7 +27,7 @@ namespace AssetRipper.TextureDecoder.Tests
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4 }) //mipmaps 2 and 1 cause a buffer overrun for the output
 			{
-				int bytesRead = Bc1.Decompress(data.Slice(totalBytesRead), size, size, out byte[] bcDecodedData);
+				int bytesRead = Bc1.Decompress<ColorBGRA32, byte>(data.Slice(totalBytesRead), size, size, out byte[] bcDecodedData);
 				DxtDecoder.DecompressDXT1<ColorBGRA32, byte>(data.Slice(totalBytesRead), size, size, out byte[] dxtDecodedData);
 				totalBytesRead += bytesRead;
 				AssertAlmostEqual(dxtDecodedData, bcDecodedData);
@@ -42,7 +42,7 @@ namespace AssetRipper.TextureDecoder.Tests
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4 }) //mipmaps 2 and 1 cause a buffer overrun for the output
 			{
-				int bytesRead = Bc2.Decompress(data.Slice(totalBytesRead), size, size, out byte[] bcDecodedData);
+				int bytesRead = Bc2.Decompress<ColorBGRA32, byte>(data.Slice(totalBytesRead), size, size, out byte[] bcDecodedData);
 				DxtDecoder.DecompressDXT3<ColorBGRA32, byte>(data.Slice(totalBytesRead), size, size, out byte[] dxtDecodedData);
 				totalBytesRead += bytesRead;
 				AssertAlmostEqual(dxtDecodedData, bcDecodedData);
@@ -57,7 +57,7 @@ namespace AssetRipper.TextureDecoder.Tests
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4 }) //mipmaps 2 and 1 cause a buffer overrun for the output
 			{
-				int bytesRead = Bc3.Decompress(data.Slice(totalBytesRead), size, size, out byte[] bcDecodedData);
+				int bytesRead = Bc3.Decompress<ColorBGRA32, byte>(data.Slice(totalBytesRead), size, size, out byte[] bcDecodedData);
 				DxtDecoder.DecompressDXT5<ColorBGRA32, byte>(data.Slice(totalBytesRead), size, size, out byte[] dxtDecodedData);
 				totalBytesRead += bytesRead;
 				AssertAlmostEqual(dxtDecodedData, bcDecodedData);
@@ -69,7 +69,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		public void Decompress_BC4()
 		{
 			ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.BcTestFiles + "test.bc4");
-			int bytesRead = Bc4.Decompress(data, 512, 512, out _);
+			int bytesRead = Bc4.Decompress<ColorBGRA32, byte>(data, 512, 512, out _);
 			Assert.That(bytesRead, Is.EqualTo(data.Length));
 		}
 
@@ -77,7 +77,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		public void Decompress_BC5()
 		{
 			ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.BcTestFiles + "test.bc5");
-			int bytesRead = Bc5.Decompress(data, 512, 512, out _);
+			int bytesRead = Bc5.Decompress<ColorBGRA32, byte>(data, 512, 512, out _);
 			Assert.That(bytesRead, Is.EqualTo(data.Length));
 		}
 
@@ -103,7 +103,7 @@ namespace AssetRipper.TextureDecoder.Tests
 			Assert.Multiple(() =>
 			{
 				ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.DxtTestFiles + "test.dxt1").AsSpan()[..Bc1.BlockSize];
-				int bytesRead = Bc1.Decompress(data, width, height, out byte[] decodedData);
+				int bytesRead = Bc1.Decompress<ColorBGRA32, byte>(data, width, height, out byte[] decodedData);
 				Assert.That(bytesRead, Is.EqualTo(data.Length));
 				Assert.That(decodedData, Has.Length.EqualTo(width * height * Unsafe.SizeOf<ColorBGRA32>()));
 			});
@@ -115,7 +115,7 @@ namespace AssetRipper.TextureDecoder.Tests
 			Assert.Multiple(() =>
 			{
 				ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.DxtTestFiles + "test.dxt3").AsSpan()[..Bc2.BlockSize];
-				int bytesRead = Bc2.Decompress(data, width, height, out byte[] decodedData);
+				int bytesRead = Bc2.Decompress<ColorBGRA32, byte>(data, width, height, out byte[] decodedData);
 				Assert.That(bytesRead, Is.EqualTo(data.Length));
 				Assert.That(decodedData, Has.Length.EqualTo(width * height * Unsafe.SizeOf<ColorBGRA32>()));
 			});
@@ -127,7 +127,7 @@ namespace AssetRipper.TextureDecoder.Tests
 			Assert.Multiple(() =>
 			{
 				ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.DxtTestFiles + "test.dxt5").AsSpan()[..Bc3.BlockSize];
-				int bytesRead = Bc3.Decompress(data, width, height, out byte[] decodedData);
+				int bytesRead = Bc3.Decompress<ColorBGRA32, byte>(data, width, height, out byte[] decodedData);
 				Assert.That(bytesRead, Is.EqualTo(data.Length));
 				Assert.That(decodedData, Has.Length.EqualTo(width * height * Unsafe.SizeOf<ColorBGRA32>()));
 			});
@@ -139,7 +139,7 @@ namespace AssetRipper.TextureDecoder.Tests
 			Assert.Multiple(() =>
 			{
 				ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.BcTestFiles + "test.bc4").AsSpan()[..Bc4.BlockSize];
-				int bytesRead = Bc4.Decompress(data, width, height, out byte[] decodedData);
+				int bytesRead = Bc4.Decompress<ColorBGRA32, byte>(data, width, height, out byte[] decodedData);
 				Assert.That(bytesRead, Is.EqualTo(data.Length));
 				Assert.That(decodedData, Has.Length.EqualTo(width * height * Unsafe.SizeOf<ColorBGRA32>()));
 			});
@@ -151,7 +151,7 @@ namespace AssetRipper.TextureDecoder.Tests
 			Assert.Multiple(() =>
 			{
 				ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.BcTestFiles + "test.bc5").AsSpan()[..Bc5.BlockSize];
-				int bytesRead = Bc5.Decompress(data, width, height, out byte[] decodedData);
+				int bytesRead = Bc5.Decompress<ColorBGRA32, byte>(data, width, height, out byte[] decodedData);
 				Assert.That(bytesRead, Is.EqualTo(data.Length));
 				Assert.That(decodedData, Has.Length.EqualTo(width * height * Unsafe.SizeOf<ColorBGRA32>()));
 			});
@@ -163,7 +163,7 @@ namespace AssetRipper.TextureDecoder.Tests
 			Assert.Multiple(() =>
 			{
 				ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.BcTestFiles + "test.bc6h_best").AsSpan()[..Bc6h.BlockSize];
-				int bytesRead = Bc6h.Decompress(data, width, height, false, out byte[] decodedData);
+				int bytesRead = Bc6h.Decompress<ColorBGRA32, byte>(data, width, height, false, out byte[] decodedData);
 				Assert.That(bytesRead, Is.EqualTo(data.Length));
 				Assert.That(decodedData, Has.Length.EqualTo(width * height * Unsafe.SizeOf<ColorBGRA32>()));
 			});
@@ -175,7 +175,7 @@ namespace AssetRipper.TextureDecoder.Tests
 			Assert.Multiple(() =>
 			{
 				ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.BcTestFiles + "test.bc7_best").AsSpan()[..Bc7.BlockSize];
-				int bytesRead = Bc7.Decompress(data, width, height, out byte[] decodedData);
+				int bytesRead = Bc7.Decompress<ColorBGRA32, byte>(data, width, height, out byte[] decodedData);
 				Assert.That(bytesRead, Is.EqualTo(data.Length));
 				Assert.That(decodedData, Has.Length.EqualTo(width * height * Unsafe.SizeOf<ColorBGRA32>()));
 			});
@@ -184,7 +184,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		private static void AssertCorrectBC6HDecompression(string path, int width, int height, bool isSigned)
 		{
 			ReadOnlySpan<byte> data = File.ReadAllBytes(path);
-			int bytesRead = Bc6h.Decompress(data, width, height, isSigned, out byte[] decodedData);
+			int bytesRead = Bc6h.Decompress<ColorBGRA32, byte>(data, width, height, isSigned, out byte[] decodedData);
 			Assert.That(bytesRead, Is.EqualTo(data.Length));
 			ByteArrayDeviation.AssertMinimalDeviation(decodedData, originalBgra32LogoData, MaxMeanDeviationBc6h, MaxStandardDeviationBc6h);
 		}
@@ -192,7 +192,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		private static void AssertCorrectBC7Decompression(string path, int width, int height)
 		{
 			ReadOnlySpan<byte> data = File.ReadAllBytes(path);
-			int bytesRead = Bc7.Decompress(data, width, height, out byte[] decodedData);
+			int bytesRead = Bc7.Decompress<ColorBGRA32, byte>(data, width, height, out byte[] decodedData);
 			Assert.That(bytesRead, Is.EqualTo(data.Length));
 			ByteArrayDeviation.AssertMinimalDeviation(decodedData, originalBgra32LogoData, MaxMeanDeviationBc7, MaxStandardDeviationBc7);
 		}

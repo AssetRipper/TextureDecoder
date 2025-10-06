@@ -143,25 +143,25 @@ internal static partial class Program
 		switch (mode)
 		{
 			case 1:
-				Bc1.Decompress(input, width, height, output);
+				Bc1.Decompress<ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 2:
-				Bc2.Decompress(input, width, height, output);
+				Bc2.Decompress<ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 3:
-				Bc3.Decompress(input, width, height, output);
+				Bc3.Decompress<ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 4:
-				Bc4.Decompress(input, width, height, output);
+				Bc4.Decompress<ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 5:
-				Bc5.Decompress(input, width, height, output);
+				Bc5.Decompress<ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 6:
-				Bc6h.Decompress(input, width, height, bool.Parse(isSignedString), output);
+				Bc6h.Decompress<ColorBGRA32, byte>(input, width, height, bool.Parse(isSignedString), output);
 				break;
 			case 7:
-				Bc7.Decompress(input, width, height, output);
+				Bc7.Decompress<ColorBGRA32, byte>(input, width, height, output);
 				break;
 
 			default:
