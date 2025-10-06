@@ -105,7 +105,7 @@ internal static partial class Program
 		Console.WriteLine("Arg at index 6 : blockYSize");
 		int blockXSize = int.Parse(blockXSizeString);
 		int blockYSize = int.Parse(blockYSizeString);
-		AstcDecoder.DecodeASTC(input, width, height, blockXSize, blockYSize, output);
+		AstcDecoder.DecodeASTC<ColorBGRA32, byte>(input, width, height, blockXSize, blockYSize, output);
 	}
 
 	private static void DecodeAtc(ReadOnlySpan<byte> input, int width, int height, string modeString, Span<byte> output)

@@ -1,3 +1,5 @@
+using AssetRipper.TextureDecoder.Rgb;
+using AssetRipper.TextureDecoder.Rgb.Formats;
 using System.Buffers.Binary;
 
 namespace AssetRipper.TextureDecoder.Astc
@@ -12,51 +14,58 @@ namespace AssetRipper.TextureDecoder.Astc
 			}
 		}
 
-		public static int DecodeASTC(ReadOnlySpan<byte> input, int width, int height, int blockWidth, int blockHeight, out byte[] output)
+		public static int DecodeASTC<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, int blockWidth, int blockHeight, out byte[] output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
 			output = new byte[width * height * 4];
-			return DecodeASTC(input, width, height, blockWidth, blockHeight, output);
+			return DecodeASTC<TOutputColor, TOutputChannelValue>(input, width, height, blockWidth, blockHeight, output);
 		}
 
-		public static int DecodeASTC(ReadOnlySpan<byte> input, int width, int height, int blockWidth, int blockHeight, Span<byte> output)
+		public static int DecodeASTC<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, int blockWidth, int blockHeight, Span<byte> output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
+			ThrowHelper.ThrowIfNotLittleEndian();
+			return DecodeASTC<TOutputColor, TOutputChannelValue>(input, width, height, blockWidth, blockHeight, MemoryMarshal.Cast<byte, TOutputColor>(output));
+		}
+
+		public static int DecodeASTC<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, int blockWidth, int blockHeight, Span<TOutputColor> output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
+		{
+			ThrowHelper.ThrowIfNotEnoughSpace(output.Length, width * height);
 			ValidateBlockDimension(blockWidth);
 			ValidateBlockDimension(blockHeight);
 			int bcw = (width + blockWidth - 1) / blockWidth;
 			int bch = (height + blockHeight - 1) / blockHeight;
 			int clen_last = (width + blockWidth - 1) % blockWidth + 1;
-			Span<uint> buf = stackalloc uint[blockWidth * blockHeight];
+			Span<ColorRGBA<byte>> buffer = stackalloc ColorRGBA<byte>[blockWidth * blockHeight];
 			int inputOffset = 0;
 			for (int t = 0; t < bch; t++)
 			{
 				for (int s = 0; s < bcw; s++, inputOffset += 16)
 				{
-					DecodeBlock(input[inputOffset..], blockWidth, blockHeight, buf);
+					DecodeBlock(input[inputOffset..], blockWidth, blockHeight, buffer);
 					int clen = s < bcw - 1 ? blockWidth : clen_last;
 					for (int i = 0, y = t * blockHeight; i < blockHeight && y < height; i++, y++)
 					{
 						int outputOffsetUInt32 = t * blockHeight * width + s * blockWidth + i * width;
 						for (int j = 0; j < clen; j++)
 						{
-							WriteUInt32(output, outputOffsetUInt32 + j, buf[j + i * blockWidth]);
+							output[outputOffsetUInt32 + j] = buffer[j + i * blockWidth].Convert<ColorRGBA<byte>, byte, TOutputColor, TOutputChannelValue>();
 						}
 					}
 				}
 			}
 			return inputOffset;
-
-			[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-			static void WriteUInt32(Span<byte> buffer, int offsetUInt32, uint value)
-			{
-				BinaryPrimitives.WriteUInt32LittleEndian(buffer.Slice(offsetUInt32 * sizeof(uint)), value);
-			}
 		}
 
-		private static void DecodeBlock(ReadOnlySpan<byte> input, int blockWidth, int blockHeight, Span<uint> output)
+		private static void DecodeBlock(ReadOnlySpan<byte> input, int blockWidth, int blockHeight, Span<ColorRGBA<byte>> output)
 		{
 			if (input[0] == 0xfc && (input[1] & 1) == 1)
 			{
-				uint c = Color(input[9], input[11], input[13], input[15]);
+				ColorRGBA<byte> c = new(input[9], input[11], input[13], input[15]);
 				for (int i = 0; i < blockWidth * blockHeight; i++)
 				{
 					output[i] = c;
@@ -674,7 +683,7 @@ namespace AssetRipper.TextureDecoder.Astc
 			}
 		}
 
-		private static void ApplicateColor(BlockData block, Span<uint> output)
+		private static void ApplicateColor(BlockData block, Span<ColorRGBA<byte>> output)
 		{
 			if (block.dual_plane != 0)
 			{
@@ -689,7 +698,7 @@ namespace AssetRipper.TextureDecoder.Astc
 						byte g = SelectColor(block.endpoints[p][1], block.endpoints[p][5], block.weights[i * 2 + ps[1]]);
 						byte b = SelectColor(block.endpoints[p][2], block.endpoints[p][6], block.weights[i * 2 + ps[2]]);
 						byte a = SelectColor(block.endpoints[p][3], block.endpoints[p][7], block.weights[i * 2 + ps[3]]);
-						output[i] = Color(r, g, b, a);
+						output[i] = new(r, g, b, a);
 					}
 				}
 				else
@@ -700,7 +709,7 @@ namespace AssetRipper.TextureDecoder.Astc
 						byte g = SelectColor(block.endpoints[0][1], block.endpoints[0][5], block.weights[i * 2 + ps[1]]);
 						byte b = SelectColor(block.endpoints[0][2], block.endpoints[0][6], block.weights[i * 2 + ps[2]]);
 						byte a = SelectColor(block.endpoints[0][3], block.endpoints[0][7], block.weights[i * 2 + ps[3]]);
-						output[i] = Color(r, g, b, a);
+						output[i] = new(r, g, b, a);
 					}
 				}
 			}
@@ -713,7 +722,7 @@ namespace AssetRipper.TextureDecoder.Astc
 					byte g = SelectColor(block.endpoints[p][1], block.endpoints[p][5], block.weights[i * 2]);
 					byte b = SelectColor(block.endpoints[p][2], block.endpoints[p][6], block.weights[i * 2]);
 					byte a = SelectColor(block.endpoints[p][3], block.endpoints[p][7], block.weights[i * 2]);
-					output[i] = Color(r, g, b, a);
+					output[i] = new(r, g, b, a);
 				}
 			}
 			else
@@ -724,7 +733,7 @@ namespace AssetRipper.TextureDecoder.Astc
 					byte g = SelectColor(block.endpoints[0][1], block.endpoints[0][5], block.weights[i * 2]);
 					byte b = SelectColor(block.endpoints[0][2], block.endpoints[0][6], block.weights[i * 2]);
 					byte a = SelectColor(block.endpoints[0][3], block.endpoints[0][7], block.weights[i * 2]);
-					output[i] = Color(r, g, b, a);
+					output[i] = new(r, g, b, a);
 				}
 			}
 		}
@@ -847,12 +856,6 @@ namespace AssetRipper.TextureDecoder.Astc
 					}
 				}
 			}
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-		private static uint Color(uint r, uint g, uint b, uint a)
-		{
-			return r << 16 | g << 8 | b | a << 24;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
