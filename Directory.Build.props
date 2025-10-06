@@ -6,7 +6,7 @@
 		<IsAotCompatible>true</IsAotCompatible>
 		<CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
 
-		<Version>2.3.0</Version>
+		<Version>2.4.0</Version>
 		<AssemblyVersion>$(Version)</AssemblyVersion>
 		<Copyright>Copyright © ds5678</Copyright>
 		<Authors>ds5678</Authors>
