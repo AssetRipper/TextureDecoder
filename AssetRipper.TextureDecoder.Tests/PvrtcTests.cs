@@ -1,4 +1,5 @@
 ﻿using AssetRipper.TextureDecoder.Pvrtc;
+using AssetRipper.TextureDecoder.Rgb.Formats;
 
 namespace AssetRipper.TextureDecoder.Tests;
 
@@ -11,7 +12,7 @@ public sealed class PvrtcTests
 		int totalBytesRead = 0;
 		foreach (int size in new int[] { 512, 256, 128, 64, 32, 16, 8, 4, 2, 1 }) //mip maps
 		{
-			int bytesRead = PvrtcDecoder.DecompressPVRTC(data, size, size, false, out _);
+			int bytesRead = PvrtcDecoder.DecompressPVRTC<ColorBGRA32, byte>(data, size, size, false, out _);
 			totalBytesRead += bytesRead;
 		}
 		Assert.That(totalBytesRead, Is.EqualTo(data.Length));
@@ -32,7 +33,7 @@ public sealed class PvrtcTests
 	private static void AssertCorrectDecompression<T>(bool do2bitMode, double maxMeanDeviation, double maxStandardDeviation) where T : ITexture
 	{
 		ReadOnlySpan<byte> data = T.Data;
-		int bytesRead = PvrtcDecoder.DecompressPVRTC(data, T.Width, T.Height, do2bitMode, out byte[] decompressedData);
+		int bytesRead = PvrtcDecoder.DecompressPVRTC<ColorBGRA32, byte>(data, T.Width, T.Height, do2bitMode, out byte[] decompressedData);
 		if (!T.Mips)
 		{
 			Assert.That(bytesRead, Is.EqualTo(data.Length));

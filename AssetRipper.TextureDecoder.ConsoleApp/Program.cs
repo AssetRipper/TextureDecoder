@@ -241,7 +241,7 @@ internal static partial class Program
 	{
 		Console.WriteLine("Arg at index 5 : 2bitMode");
 		bool do2bit = bool.Parse(do2bitModeString);
-		PvrtcDecoder.DecompressPVRTC(input, width, height, do2bit, output);
+		PvrtcDecoder.DecompressPVRTC<ColorBGRA32, byte>(input, width, height, do2bit, output);
 	}
 
 	public static void WriteAllBytes(string path, ReadOnlySpan<byte> bytes)

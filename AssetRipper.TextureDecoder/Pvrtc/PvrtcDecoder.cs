@@ -2,41 +2,12 @@
 #define ASSUME_IMAGE_TILING
 
 using AssetRipper.TextureDecoder.Rgb;
-using AssetRipper.TextureDecoder.Rgb.Formats;
 using System.Diagnostics;
 
 namespace AssetRipper.TextureDecoder.Pvrtc
 {
 	public static partial class PvrtcDecoder
 	{
-		/// <summary>
-		/// Decompresses PVRTC to BGRA 8888
-		/// </summary>
-		/// <param name="input">The PVRTC texture data to decompress</param>
-		/// <param name="xDim">X dimension (width) of the texture</param>
-		/// <param name="yDim">Y dimension (height) of the texture</param>
-		/// <param name="output">The decompressed texture data</param>
-		/// <param name="do2bitMode">Signifies whether the data is PVRTC2 or PVRTC4</param>
-		/// <returns>The number of bytes read from <paramref name="input"/></returns>
-		public static int DecompressPVRTC(ReadOnlySpan<byte> input, int xDim, int yDim, bool do2bitMode, out byte[] output)
-		{
-			return DecompressPVRTC<ColorBGRA32, byte>(input, xDim, yDim, do2bitMode, out output);
-		}
-
-		/// <summary>
-		/// Decompresses PVRTC to BGRA 8888
-		/// </summary>
-		/// <param name="input">The PVRTC texture data to decompress</param>
-		/// <param name="xDim">X dimension (width) of the texture</param>
-		/// <param name="yDim">Y dimension (height) of the texture</param>
-		/// <param name="output">The decompressed texture data</param>
-		/// <param name="do2bitMode">Signifies whether the data is PVRTC2 or PVRTC4</param>
-		/// <returns>The number of bytes read from <paramref name="input"/></returns>
-		public static int DecompressPVRTC(ReadOnlySpan<byte> input, int xDim, int yDim, bool do2bitMode, Span<byte> output)
-		{
-			return DecompressPVRTC<ColorBGRA32, byte>(input, xDim, yDim, do2bitMode, output);
-		}
-
 		/// <summary>
 		/// Decompresses PVRTC
 		/// </summary>
@@ -91,6 +62,7 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
 			ThrowHelper.ThrowIfNotLittleEndian();
+			ThrowHelper.ThrowIfNotEnoughSpace(output.Length, xDim * yDim);
 			int xBlockSize = do2bitMode ? BlockX2bpp : BlockX4bpp;
 			// for MBX don't allow the sizes to get too small
 			int blockXDim = Math.Max(2, xDim / xBlockSize);
