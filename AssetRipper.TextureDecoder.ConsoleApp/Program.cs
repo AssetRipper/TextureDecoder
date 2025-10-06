@@ -117,10 +117,10 @@ internal static partial class Program
 		switch (mode)
 		{
 			case 0:
-				AtcDecoder.DecompressAtcRgb4(input, width, height, output);
+				AtcDecoder.DecompressAtcRgb4<ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 1:
-				AtcDecoder.DecompressAtcRgba8(input, width, height, output);
+				AtcDecoder.DecompressAtcRgba8<ColorBGRA32, byte>(input, width, height, output);
 				break;
 
 			default:
