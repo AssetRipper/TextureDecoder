@@ -61,7 +61,7 @@ internal static partial class Program
 		switch (outputType)
 		{
 			case "bgra":
-				WriteAllBytes(path + ".bgra", bitmap.Bits);
+				File.WriteAllBytes(path + ".bgra", bitmap.Bits);
 				break;
 			case "bmp":
 				bitmap.FlipY();
@@ -242,12 +242,5 @@ internal static partial class Program
 		Console.WriteLine("Arg at index 5 : 2bitMode");
 		bool do2bit = bool.Parse(do2bitModeString);
 		PvrtcDecoder.DecompressPVRTC<ColorBGRA32, byte>(input, width, height, do2bit, output);
-	}
-
-	public static void WriteAllBytes(string path, ReadOnlySpan<byte> bytes)
-	{
-		ArgumentException.ThrowIfNullOrEmpty(path, nameof(path));
-		using Microsoft.Win32.SafeHandles.SafeFileHandle sfh = File.OpenHandle(path, FileMode.Create, FileAccess.Write, FileShare.Read);
-		RandomAccess.Write(sfh, bytes, 0);
 	}
 }
