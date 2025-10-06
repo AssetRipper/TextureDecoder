@@ -517,9 +517,34 @@ namespace AssetRipper.TextureDecoder.Rgb
 			where TDestinationChannel : unmanaged
 			where TDestinationColor : unmanaged, IColor<TDestinationChannel>
 		{
-			for (int i = 0; i < sourceSpan.Length; i++)
+			if (sourceSpan.Length is 0)
 			{
-				destinationSpan[i] = sourceSpan[i].Convert<TSourceColor, TSourceChannel, TDestinationColor, TDestinationChannel>();
+				// Do nothing if the source span is empty
+			}
+			else if (destinationSpan.Length < sourceSpan.Length)
+			{
+				ThrowDestinationSpanNotLargeEnough();
+			}
+			else if (typeof(TSourceColor) != typeof(TDestinationColor))
+			{
+				for (int i = 0; i < sourceSpan.Length; i++)
+				{
+					destinationSpan[i] = sourceSpan[i].Convert<TSourceColor, TSourceChannel, TDestinationColor, TDestinationChannel>();
+				}
+			}
+			else if (Unsafe.AreSame(in sourceSpan[0], ref Unsafe.As<TDestinationColor, TSourceColor>(ref destinationSpan[0])))
+			{
+				// Do nothing because the source and destination point to the same memory
+			}
+			else
+			{
+				// Note: This assumes that the source and destination will never overlap.
+				sourceSpan.CopyTo(MemoryMarshal.Cast<TDestinationColor, TSourceColor>(destinationSpan));
+			}
+
+			static void ThrowDestinationSpanNotLargeEnough()
+			{
+				throw new ArgumentException("Destination span is not large enough to hold the converted data.", nameof(destinationSpan));
 			}
 		}
 
