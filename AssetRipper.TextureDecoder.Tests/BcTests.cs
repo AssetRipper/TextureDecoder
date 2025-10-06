@@ -28,7 +28,7 @@ namespace AssetRipper.TextureDecoder.Tests
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4 }) //mipmaps 2 and 1 cause a buffer overrun for the output
 			{
 				int bytesRead = Bc1.Decompress(data.Slice(totalBytesRead), size, size, out byte[] bcDecodedData);
-				DxtDecoder.DecompressDXT1(data.Slice(totalBytesRead), size, size, out byte[] dxtDecodedData);
+				DxtDecoder.DecompressDXT1<ColorBGRA32, byte>(data.Slice(totalBytesRead), size, size, out byte[] dxtDecodedData);
 				totalBytesRead += bytesRead;
 				AssertAlmostEqual(dxtDecodedData, bcDecodedData);
 			}
@@ -43,7 +43,7 @@ namespace AssetRipper.TextureDecoder.Tests
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4 }) //mipmaps 2 and 1 cause a buffer overrun for the output
 			{
 				int bytesRead = Bc2.Decompress(data.Slice(totalBytesRead), size, size, out byte[] bcDecodedData);
-				DxtDecoder.DecompressDXT3(data.Slice(totalBytesRead), size, size, out byte[] dxtDecodedData);
+				DxtDecoder.DecompressDXT3<ColorBGRA32, byte>(data.Slice(totalBytesRead), size, size, out byte[] dxtDecodedData);
 				totalBytesRead += bytesRead;
 				AssertAlmostEqual(dxtDecodedData, bcDecodedData);
 			}
@@ -58,7 +58,7 @@ namespace AssetRipper.TextureDecoder.Tests
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4 }) //mipmaps 2 and 1 cause a buffer overrun for the output
 			{
 				int bytesRead = Bc3.Decompress(data.Slice(totalBytesRead), size, size, out byte[] bcDecodedData);
-				DxtDecoder.DecompressDXT5(data.Slice(totalBytesRead), size, size, out byte[] dxtDecodedData);
+				DxtDecoder.DecompressDXT5<ColorBGRA32, byte>(data.Slice(totalBytesRead), size, size, out byte[] dxtDecodedData);
 				totalBytesRead += bytesRead;
 				AssertAlmostEqual(dxtDecodedData, bcDecodedData);
 			}

@@ -52,7 +52,7 @@ internal static partial class Program
 				DecodeRgb(data, width, height, args5, bitmap.Bits);
 				break;
 			case "yuy2":
-				Yuy2Decoder.DecompressYUY2(data, width, height, bitmap.Bits);
+				Yuy2Decoder.DecompressYUY2<ColorBGRA32, byte>(data, width, height, bitmap.Bits);
 				break;
 			default:
 				throw new NotSupportedException(inputType);
@@ -179,13 +179,13 @@ internal static partial class Program
 		switch (mode)
 		{
 			case 0:
-				DxtDecoder.DecompressDXT1(input, width, height, output);
+				DxtDecoder.DecompressDXT1<ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 1:
-				DxtDecoder.DecompressDXT3(input, width, height, output);
+				DxtDecoder.DecompressDXT3<ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 2:
-				DxtDecoder.DecompressDXT5(input, width, height, output);
+				DxtDecoder.DecompressDXT5<ColorBGRA32, byte>(input, width, height, output);
 				break;
 
 			default:

@@ -9,32 +9,6 @@ namespace AssetRipper.TextureDecoder.Dxt
 		/// <summary>
 		/// Decompress a DXT1 image
 		/// </summary>
-		/// <param name="input">Input buffer containing the compressed image.</param>
-		/// <param name="width">Pixel width of the image.</param>
-		/// <param name="height">Pixel height of the image.</param>
-		/// <param name="output">An output buffer of size 4 * width * height.</param>
-		/// <returns>Number of bytes read from <paramref name="input"/></returns>
-		public static int DecompressDXT1(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
-		{
-			return DecompressDXT1<ColorBGRA32, byte>(input, width, height, out output);
-		}
-
-		/// <summary>
-		/// Decompress a DXT1 image
-		/// </summary>
-		/// <param name="input">Input buffer containing the compressed image.</param>
-		/// <param name="width">Pixel width of the image.</param>
-		/// <param name="height">Pixel height of the image.</param>
-		/// <param name="output">An output buffer. Must be at least 4 * width * height.</param>
-		/// <returns>Number of bytes read from <paramref name="input"/></returns>
-		public static int DecompressDXT1(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
-		{
-			return DecompressDXT1<ColorBGRA32, byte>(input, width, height, output);
-		}
-
-		/// <summary>
-		/// Decompress a DXT1 image
-		/// </summary>
 		/// <typeparam name="TOutputColor">The <see cref="IColor{T}"/> type used for each pixel.</typeparam>
 		/// <typeparam name="TOutputChannelValue">The channel type used in <typeparamref name="TOutputColor"/>.</typeparam>
 		/// <param name="input">Input buffer containing the compressed image.</param>
@@ -126,32 +100,6 @@ namespace AssetRipper.TextureDecoder.Dxt
 			}
 
 			return offset;
-		}
-
-		/// <summary>
-		/// Decompress a DXT3 image
-		/// </summary>
-		/// <param name="input">Input buffer containing the compressed image.</param>
-		/// <param name="width">Pixel width of the image.</param>
-		/// <param name="height">Pixel height of the image.</param>
-		/// <param name="output">An output buffer of size 4 * width * height.</param>
-		/// <returns>Number of bytes read from <paramref name="input"/></returns>
-		public static int DecompressDXT3(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
-		{
-			return DecompressDXT3<ColorBGRA32, byte>(input, width, height, out output);
-		}
-
-		/// <summary>
-		/// Decompress a DXT3 image
-		/// </summary>
-		/// <param name="input">Input buffer containing the compressed image.</param>
-		/// <param name="width">Pixel width of the image.</param>
-		/// <param name="height">Pixel height of the image.</param>
-		/// <param name="output">An output buffer. Must be at least 4 * width * height.</param>
-		/// <returns>Number of bytes read from <paramref name="input"/></returns>
-		public static int DecompressDXT3(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
-		{
-			return DecompressDXT3<ColorBGRA32, byte>(input, width, height, output);
 		}
 
 		/// <summary>
@@ -258,32 +206,6 @@ namespace AssetRipper.TextureDecoder.Dxt
 			}
 
 			return offset;
-		}
-
-		/// <summary>
-		/// Decompress a DXT5 image
-		/// </summary>
-		/// <param name="input">Input buffer containing the compressed image.</param>
-		/// <param name="width">Pixel width of the image.</param>
-		/// <param name="height">Pixel height of the image.</param>
-		/// <param name="output">An output buffer of size 4 * width * height.</param>
-		/// <returns>Number of bytes read from <paramref name="input"/></returns>
-		public static int DecompressDXT5(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
-		{
-			return DecompressDXT5<ColorBGRA32, byte>(input, width, height, out output);
-		}
-
-		/// <summary>
-		/// Decompress a DXT5 image
-		/// </summary>
-		/// <param name="input">Input buffer containing the compressed image.</param>
-		/// <param name="width">Pixel width of the image.</param>
-		/// <param name="height">Pixel height of the image.</param>
-		/// <param name="output">An output buffer. Must be at least 4 * width * height.</param>
-		/// <returns>Number of bytes read from <paramref name="input"/></returns>
-		public static int DecompressDXT5(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
-		{
-			return DecompressDXT5<ColorBGRA32, byte>(input, width, height, output);
 		}
 
 		/// <summary>

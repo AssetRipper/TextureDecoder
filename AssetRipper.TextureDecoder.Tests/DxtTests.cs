@@ -1,4 +1,6 @@
-﻿namespace AssetRipper.TextureDecoder.Tests
+﻿using AssetRipper.TextureDecoder.Rgb.Formats;
+
+namespace AssetRipper.TextureDecoder.Tests
 {
 	public sealed class DxtTests
 	{
@@ -9,7 +11,7 @@
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4, 2, 1 }) //mip maps
 			{
-				int bytesRead = Dxt.DxtDecoder.DecompressDXT1(data.Slice(totalBytesRead), size, size, out _);
+				int bytesRead = Dxt.DxtDecoder.DecompressDXT1<ColorBGRA32, byte>(data.Slice(totalBytesRead), size, size, out _);
 				totalBytesRead += bytesRead;
 			}
 			Assert.That(totalBytesRead, Is.EqualTo(data.Length));
@@ -22,7 +24,7 @@
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4, 2, 1 }) //mip maps
 			{
-				int bytesRead = Dxt.DxtDecoder.DecompressDXT3(data.Slice(totalBytesRead), size, size, out _);
+				int bytesRead = Dxt.DxtDecoder.DecompressDXT3<ColorBGRA32, byte>(data.Slice(totalBytesRead), size, size, out _);
 				totalBytesRead += bytesRead;
 			}
 			Assert.That(totalBytesRead, Is.EqualTo(data.Length));
@@ -35,7 +37,7 @@
 			int totalBytesRead = 0;
 			foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4, 2, 1 }) //mip maps
 			{
-				int bytesRead = Dxt.DxtDecoder.DecompressDXT5(data.Slice(totalBytesRead), size, size, out _);
+				int bytesRead = Dxt.DxtDecoder.DecompressDXT5<ColorBGRA32, byte>(data.Slice(totalBytesRead), size, size, out _);
 				totalBytesRead += bytesRead;
 			}
 			Assert.That(totalBytesRead, Is.EqualTo(data.Length));

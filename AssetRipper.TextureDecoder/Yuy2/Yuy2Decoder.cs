@@ -1,36 +1,9 @@
 using AssetRipper.TextureDecoder.Rgb;
-using AssetRipper.TextureDecoder.Rgb.Formats;
 
 namespace AssetRipper.TextureDecoder.Yuy2
 {
 	public static class Yuy2Decoder
 	{
-		/// <summary>
-		/// Decompress a YUY2 image
-		/// </summary>
-		/// <param name="input">Input buffer containing the compressed image.</param>
-		/// <param name="width">Pixel width of the image.</param>
-		/// <param name="height">Pixel height of the image.</param>
-		/// <param name="output">An output buffer of size 4 * width * height.</param>
-		/// <returns>Number of bytes read from <paramref name="input"/></returns>
-		public static int DecompressYUY2(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
-		{
-			return DecompressYUY2<ColorBGRA32, byte>(input, width, height, out output);
-		}
-
-		/// <summary>
-		/// Decompress a YUY2 image
-		/// </summary>
-		/// <param name="input">Input buffer containing the compressed image.</param>
-		/// <param name="width">Pixel width of the image.</param>
-		/// <param name="height">Pixel height of the image.</param>
-		/// <param name="output">An output buffer. Must be at least 4 * width * height.</param>
-		/// <returns>Number of bytes read from <paramref name="input"/></returns>
-		public static int DecompressYUY2(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
-		{
-			return DecompressYUY2<ColorBGRA32, byte>(input, width, height, output);
-		}
-
 		/// <summary>
 		/// Decompress a YUY2 image
 		/// </summary>
