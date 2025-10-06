@@ -1,4 +1,3 @@
-//#define DISABLE_TWINDDLING_ROUTINE
 #define ASSUME_IMAGE_TILING
 
 using AssetRipper.TextureDecoder.Rgb;
@@ -180,10 +179,6 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 				maxValue = yPos;
 			}
 
-#if DISABLE_TWINDDLING_ROUTINE
-			// nasty hack to disable twiddling
-			return (yPos * xSize + xPos);
-#else
 			// step through all the bits in the "minimum" dimension
 			uint srcBitPos = 1;
 			uint dstBitPos = 1;
@@ -211,7 +206,6 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 			maxValue >>= shiftCount;
 			twiddled |= (maxValue << (2 * shiftCount));
 			return twiddled;
-#endif
 		}
 
 		/// <summary>
