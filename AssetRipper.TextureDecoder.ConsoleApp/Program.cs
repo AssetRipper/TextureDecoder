@@ -58,37 +58,34 @@ internal static partial class Program
 				throw new NotSupportedException(inputType);
 		}
 
-		string dirPath = Path.GetDirectoryName(path) ?? Environment.CurrentDirectory;
-		string name = Path.GetFileName(path);
-		
 		switch (outputType)
 		{
 			case "bgra":
-				WriteAllBytes(Path.Combine(dirPath, name + ".bgra"), bitmap.Bits);
+				WriteAllBytes(path + ".bgra", bitmap.Bits);
 				break;
 			case "bmp":
 				bitmap.FlipY();
-				bitmap.SaveAsBmp(Path.Combine(dirPath, name + ".bmp"));
+				bitmap.SaveAsBmp(path + ".bmp");
 				break;
 			case "exr":
 				bitmap.FlipY();
-				bitmap.SaveAsExr(Path.Combine(dirPath, name + ".exr"));
+				bitmap.SaveAsExr(path + ".exr");
 				break;
 			case "hdr":
 				bitmap.FlipY();
-				bitmap.SaveAsHdr(Path.Combine(dirPath, name + ".hdr"));
+				bitmap.SaveAsHdr(path + ".hdr");
 				break;
 			case "jpg":
 				bitmap.FlipY();
-				bitmap.SaveAsJpg(Path.Combine(dirPath, name + ".jpg"));
+				bitmap.SaveAsJpg(path + ".jpg");
 				break;
 			case "png":
 				bitmap.FlipY();
-				bitmap.SaveAsPng(Path.Combine(dirPath, name + ".png"));
+				bitmap.SaveAsPng(path + ".png");
 				break;
 			case "tga":
 				bitmap.FlipY();
-				bitmap.SaveAsTga(Path.Combine(dirPath, name + ".tga"));
+				bitmap.SaveAsTga(path + ".tga");
 				break;
 			default:
 				throw new NotSupportedException(outputType);
