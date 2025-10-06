@@ -1,12 +1,16 @@
 //#define DISABLE_TWINDDLING_ROUTINE
 #define ASSUME_IMAGE_TILING
 
+using AssetRipper.TextureDecoder.Rgb;
+using AssetRipper.TextureDecoder.Rgb.Formats;
+using System.Diagnostics;
+
 namespace AssetRipper.TextureDecoder.Pvrtc
 {
 	public static partial class PvrtcDecoder
 	{
 		/// <summary>
-		/// Decompresses PVRTC to RGBA 8888
+		/// Decompresses PVRTC to BGRA 8888
 		/// </summary>
 		/// <param name="input">The PVRTC texture data to decompress</param>
 		/// <param name="xDim">X dimension (width) of the texture</param>
@@ -14,15 +18,13 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 		/// <param name="output">The decompressed texture data</param>
 		/// <param name="do2bitMode">Signifies whether the data is PVRTC2 or PVRTC4</param>
 		/// <returns>The number of bytes read from <paramref name="input"/></returns>
-		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		public static int DecompressPVRTC(ReadOnlySpan<byte> input, int xDim, int yDim, bool do2bitMode, out byte[] output)
 		{
-			output = new byte[xDim * yDim * sizeof(uint)];
-			return DecompressPVRTC(input, xDim, yDim, do2bitMode, output);
+			return DecompressPVRTC<ColorBGRA32, byte>(input, xDim, yDim, do2bitMode, out output);
 		}
 
 		/// <summary>
-		/// Decompresses PVRTC to RGBA 8888
+		/// Decompresses PVRTC to BGRA 8888
 		/// </summary>
 		/// <param name="input">The PVRTC texture data to decompress</param>
 		/// <param name="xDim">X dimension (width) of the texture</param>
@@ -30,8 +32,63 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 		/// <param name="output">The decompressed texture data</param>
 		/// <param name="do2bitMode">Signifies whether the data is PVRTC2 or PVRTC4</param>
 		/// <returns>The number of bytes read from <paramref name="input"/></returns>
-		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		public static int DecompressPVRTC(ReadOnlySpan<byte> input, int xDim, int yDim, bool do2bitMode, Span<byte> output)
+		{
+			return DecompressPVRTC<ColorBGRA32, byte>(input, xDim, yDim, do2bitMode, output);
+		}
+
+		/// <summary>
+		/// Decompresses PVRTC
+		/// </summary>
+		/// <typeparam name="TOutputColor">The <see cref="IColor{T}"/> type used for each pixel.</typeparam>
+		/// <typeparam name="TOutputChannelValue">The channel type used in <typeparamref name="TOutputColor"/>.</typeparam>
+		/// <param name="input">The PVRTC texture data to decompress</param>
+		/// <param name="xDim">X dimension (width) of the texture</param>
+		/// <param name="yDim">Y dimension (height) of the texture</param>
+		/// <param name="output">The decompressed texture data</param>
+		/// <param name="do2bitMode">Signifies whether the data is PVRTC2 or PVRTC4</param>
+		/// <returns>The number of bytes read from <paramref name="input"/></returns>
+		public static int DecompressPVRTC<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int xDim, int yDim, bool do2bitMode, out byte[] output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
+		{
+			output = new byte[xDim * yDim * Unsafe.SizeOf<TOutputColor>()];
+			return DecompressPVRTC<TOutputColor, TOutputChannelValue>(input, xDim, yDim, do2bitMode, output);
+		}
+
+		/// <summary>
+		/// Decompresses PVRTC
+		/// </summary>
+		/// <typeparam name="TOutputColor">The <see cref="IColor{T}"/> type used for each pixel.</typeparam>
+		/// <typeparam name="TOutputChannelValue">The channel type used in <typeparamref name="TOutputColor"/>.</typeparam>
+		/// <param name="input">The PVRTC texture data to decompress</param>
+		/// <param name="xDim">X dimension (width) of the texture</param>
+		/// <param name="yDim">Y dimension (height) of the texture</param>
+		/// <param name="output">The decompressed texture data</param>
+		/// <param name="do2bitMode">Signifies whether the data is PVRTC2 or PVRTC4</param>
+		/// <returns>The number of bytes read from <paramref name="input"/></returns>
+		public static int DecompressPVRTC<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int xDim, int yDim, bool do2bitMode, Span<byte> output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
+		{
+			ThrowHelper.ThrowIfNotLittleEndian();
+			return DecompressPVRTC<TOutputColor, TOutputChannelValue>(input, xDim, yDim, do2bitMode, MemoryMarshal.Cast<byte, TOutputColor>(output));
+		}
+
+		/// <summary>
+		/// Decompresses PVRTC
+		/// </summary>
+		/// <typeparam name="TOutputColor">The <see cref="IColor{T}"/> type used for each pixel.</typeparam>
+		/// <typeparam name="TOutputChannelValue">The channel type used in <typeparamref name="TOutputColor"/>.</typeparam>
+		/// <param name="input">The PVRTC texture data to decompress</param>
+		/// <param name="xDim">X dimension (width) of the texture</param>
+		/// <param name="yDim">Y dimension (height) of the texture</param>
+		/// <param name="output">The decompressed texture data</param>
+		/// <param name="do2bitMode">Signifies whether the data is PVRTC2 or PVRTC4</param>
+		/// <returns>The number of bytes read from <paramref name="input"/></returns>
+		public static int DecompressPVRTC<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int xDim, int yDim, bool do2bitMode, Span<TOutputColor> output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
 			ThrowHelper.ThrowIfNotLittleEndian();
 			int xBlockSize = do2bitMode ? BlockX2bpp : BlockX4bpp;
@@ -109,12 +166,12 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 					InterpolateColours(m_colors[0], m_colors[1], m_colors[2], m_colors[3], 1, do2bitMode, x, y, bSig);
 					GetModulationValue(x, y, do2bitMode, modulationVals, modulationModes, out int mod, out bool doPT);
 
-					// compute the modulated color. Swap red and blue channel
-					int position = (x + y * xDim) << 2;
-					output[position + 0] = (byte)((aSig[2] * 8 + mod * (bSig[2] - aSig[2])) >> 3);
-					output[position + 1] = (byte)((aSig[1] * 8 + mod * (bSig[1] - aSig[1])) >> 3);
-					output[position + 2] = (byte)((aSig[0] * 8 + mod * (bSig[0] - aSig[0])) >> 3);
-					output[position + 3] = doPT ? (byte)0 : (byte)((aSig[3] * 8 + mod * (bSig[3] - aSig[3])) >> 3);
+					// compute the modulated color.
+					byte red = (byte)((aSig[0] * 8 + mod * (bSig[0] - aSig[0])) >> 3);
+					byte green = (byte)((aSig[1] * 8 + mod * (bSig[1] - aSig[1])) >> 3);
+					byte blue = (byte)((aSig[2] * 8 + mod * (bSig[2] - aSig[2])) >> 3);
+					byte alpha = doPT ? (byte)0 : (byte)((aSig[3] * 8 + mod * (bSig[3] - aSig[3])) >> 3);
+					output[x + y * xDim].SetConvertedChannels<TOutputColor, TOutputChannelValue, byte>(red, green, blue, alpha);
 				}
 			}
 
@@ -133,24 +190,10 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 		/// <returns>The twiddled offset of the pixel</returns>
 		private static uint TwiddleUV(uint ySize, uint xSize, uint yPos, uint xPos)
 		{
-#if DEBUG
-			if (yPos >= ySize)
-			{
-				throw new Exception();
-			}
-			if (xPos >= xSize)
-			{
-				throw new Exception();
-			}
-			if (!BitOperations.IsPow2(ySize))
-			{
-				throw new Exception();
-			}
-			if (!BitOperations.IsPow2(xSize))
-			{
-				throw new Exception();
-			}
-#endif
+			Debug.Assert(yPos < ySize);
+			Debug.Assert(xPos < xSize);
+			Debug.Assert(BitOperations.IsPow2(ySize));
+			Debug.Assert(BitOperations.IsPow2(xSize));
 
 			uint minDimension;
 			uint maxValue;
@@ -291,16 +334,11 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 				}
 			}
 
-#if DEBUG
 			// sanity check
-			for (int i = 0; i < 4; i++)
-			{
-				if (result[i] >= 256)
-				{
-					throw new Exception("Sanity failed");
-				}
-			}
-#endif
+			Debug.Assert(result[0] < 256);
+			Debug.Assert(result[1] < 256);
+			Debug.Assert(result[2] < 256);
+			Debug.Assert(result[3] < 256);
 
 			// convert from 5554 to 8888, do RGB 5.3 => 8
 			for (int i = 0; i < 3; i++)
@@ -309,16 +347,11 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 			}
 			result[3] += result[3] >> 4;
 
-#if DEBUG
 			// 2nd sanity check
-			for (int i = 0; i < 4; i++)
-			{
-				if (result[i] >= 256)
-				{
-					throw new Exception("2nd sanity failed");
-				}
-			}
-#endif
+			Debug.Assert(result[0] < 256);
+			Debug.Assert(result[1] < 256);
+			Debug.Assert(result[2] < 256);
+			Debug.Assert(result[3] < 256);
 		}
 
 		/// <summary>
