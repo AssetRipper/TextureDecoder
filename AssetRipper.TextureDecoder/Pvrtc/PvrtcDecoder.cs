@@ -1,5 +1,3 @@
-#define ASSUME_IMAGE_TILING
-
 using AssetRipper.TextureDecoder.Rgb;
 using System.Diagnostics;
 
@@ -94,12 +92,12 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 					int blockX = (x - xBlockSize / 2);
 					int blockY = (y - BlockYSize / 2);
 
-					blockX = LimitCoord(blockX, xDim) / xBlockSize;
-					blockY = LimitCoord(blockY, yDim) / BlockYSize;
+					blockX = LimitCoordinate(blockX, xDim) / xBlockSize;
+					blockY = LimitCoordinate(blockY, yDim) / BlockYSize;
 
 					// compute the positions of the other 3 blocks
-					int blockXp1 = LimitCoord(blockX + 1, blockXDim);
-					int blockYp1 = LimitCoord(blockY + 1, blockYDim);
+					int blockXp1 = LimitCoordinate(blockX + 1, blockXDim);
+					int blockYp1 = LimitCoordinate(blockY + 1, blockYDim);
 
 					// map to block memory locations
 					uint blocki00 = TwiddleUV((uint)blockYDim, (uint)blockXDim, (uint)blockY, (uint)blockX);
@@ -456,19 +454,20 @@ namespace AssetRipper.TextureDecoder.Pvrtc
 		}
 
 		/// <summary>
-		/// Define an expression to either wrap or clamp large or small vals to the legal coordinate range
+		/// Define an expression to either wrap or clamp large or small values to the legal coordinate range.
 		/// </summary>
-		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-		private static int LimitCoord(int value, int size)
+		private static int LimitCoordinate(int value, int size, bool assumeImageTiling = true)
 		{
-#if ASSUME_IMAGE_TILING
-			// wrap coord
-			return value & (size - 1);
-#else
-			// clamp
-			return h < x ? h : (x > l ? x : l);
-			return Clamp(Val, 0, Size - 1);
-#endif
+			if (assumeImageTiling)
+			{
+				// wrap coordinate
+				return value & (size - 1);
+			}
+			else
+			{
+				// clamp coordinate
+				return int.Clamp(value, 0, size - 1);
+			}
 		}
 
 		/// <summary>
