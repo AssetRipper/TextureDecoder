@@ -1,16 +1,31 @@
+using AssetRipper.TextureDecoder.Rgb;
+using AssetRipper.TextureDecoder.Rgb.Formats;
+
 namespace AssetRipper.TextureDecoder.Etc
 {
 	public static class EtcDecoder
 	{
-		public static int DecompressETC(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+		public static int DecompressETC<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
 			output = new byte[width * height * 4];
-			return DecompressETC(input, width, height, output);
+			return DecompressETC<TOutputColor, TOutputChannelValue>(input, width, height, output);
 		}
 
-		public static int DecompressETC(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		public static int DecompressETC<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
 			ThrowHelper.ThrowIfNotLittleEndian();
+			return DecompressETC<TOutputColor, TOutputChannelValue>(input, width, height, MemoryMarshal.Cast<byte, TOutputColor>(output));
+		}
+
+		public static int DecompressETC<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, Span<TOutputColor> output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
+		{
+			ThrowHelper.ThrowIfNotEnoughSpace(output.Length, width * height);
 			int requiredLength = ((width + 3) / 4) * ((height + 3) / 4) * 8;
 			if (input.Length < requiredLength)
 			{
@@ -20,22 +35,22 @@ namespace AssetRipper.TextureDecoder.Etc
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
 			int clen_last = (width + 3) % 4 + 1;
-			Span<uint> buf = stackalloc uint[16];
+			Span<ColorRGBA<byte>> buffer = stackalloc ColorRGBA<byte>[16];
 			int inputOffset = 0;
 			for (int t = 0; t < bch; t++)
 			{
 				for (int s = 0; s < bcw; s++, inputOffset += 8)
 				{
-					DecodeEtc1Block(input.Slice(inputOffset, 8), buf);
+					DecodeEtc1Block(input.Slice(inputOffset, 8), buffer);
 					int clen = s < bcw - 1 ? 4 : clen_last;
-					int outputOffset = t * 16 * width + s * 16;
-					Span<uint> outputPtr = MemoryMarshal.Cast<byte, uint>(output.Slice(outputOffset));
+					int outputOffset = t * 4 * width + s * 4;
+					Span<TOutputColor> outputPtr = output.Slice(outputOffset);
 
 					for (int i = 0, y = t * 4; i < 4 && y < height; i++, y++)
 					{
 						for (int j = 0; j < clen; j++)
 						{
-							outputPtr[j + i * width] = buf[j + 4 * i];
+							outputPtr[j + i * width] = buffer[j + 4 * i].Convert<ColorRGBA<byte>, byte, TOutputColor, TOutputChannelValue>();
 						}
 					}
 				}
@@ -43,15 +58,27 @@ namespace AssetRipper.TextureDecoder.Etc
 			return inputOffset;
 		}
 
-		public static int DecompressETC2(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+		public static int DecompressETC2<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
 			output = new byte[width * height * 4];
-			return DecompressETC2(input, width, height, output);
+			return DecompressETC2<TOutputColor, TOutputChannelValue>(input, width, height, output);
 		}
 
-		public static int DecompressETC2(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		public static int DecompressETC2<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
 			ThrowHelper.ThrowIfNotLittleEndian();
+			return DecompressETC2<TOutputColor, TOutputChannelValue>(input, width, height, MemoryMarshal.Cast<byte, TOutputColor>(output));
+		}
+
+		public static int DecompressETC2<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, Span<TOutputColor> output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
+		{
+			ThrowHelper.ThrowIfNotEnoughSpace(output.Length, width * height);
 			int requiredLength = ((width + 3) / 4) * ((height + 3) / 4) * 8;
 			if (input.Length < requiredLength)
 			{
@@ -61,22 +88,22 @@ namespace AssetRipper.TextureDecoder.Etc
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
 			int clen_last = (width + 3) % 4 + 1;
-			Span<uint> buf = stackalloc uint[16];
+			Span<ColorRGBA<byte>> buffer = stackalloc ColorRGBA<byte>[16];
 			int inputOffset = 0;
 			for (int t = 0; t < bch; t++)
 			{
 				for (int s = 0; s < bcw; s++, inputOffset += 8)
 				{
-					DecodeEtc2Block(input.Slice(inputOffset, 8), buf);
+					DecodeEtc2Block(input.Slice(inputOffset, 8), buffer);
 					int clen = s < bcw - 1 ? 4 : clen_last;
-					int outputOffset = t * 16 * width + s * 16;
-					Span<uint> outputPtr = MemoryMarshal.Cast<byte, uint>(output.Slice(outputOffset));
+					int outputOffset = t * 4 * width + s * 4;
+					Span<TOutputColor> outputPtr = output.Slice(outputOffset);
 
 					for (int i = 0, y = t * 4; i < 4 && y < height; i++, y++)
 					{
 						for (int j = 0; j < clen; j++)
 						{
-							outputPtr[j + i * width] = buf[j + 4 * i];
+							outputPtr[j + i * width] = buffer[j + 4 * i].Convert<ColorRGBA<byte>, byte, TOutputColor, TOutputChannelValue>();
 						}
 					}
 				}
@@ -84,15 +111,27 @@ namespace AssetRipper.TextureDecoder.Etc
 			return inputOffset;
 		}
 
-		public static int DecompressETC2A1(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+		public static int DecompressETC2A1<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
 			output = new byte[width * height * 4];
-			return DecompressETC2A1(input, width, height, output);
+			return DecompressETC2A1<TOutputColor, TOutputChannelValue>(input, width, height, output);
 		}
 
-		public static int DecompressETC2A1(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		public static int DecompressETC2A1<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
 			ThrowHelper.ThrowIfNotLittleEndian();
+			return DecompressETC2A1<TOutputColor, TOutputChannelValue>(input, width, height, MemoryMarshal.Cast<byte, TOutputColor>(output));
+		}
+
+		public static int DecompressETC2A1<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, Span<TOutputColor> output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
+		{
+			ThrowHelper.ThrowIfNotEnoughSpace(output.Length, width * height);
 			int requiredLength = ((width + 3) / 4) * ((height + 3) / 4) * 8;
 			if (input.Length < requiredLength)
 			{
@@ -102,22 +141,22 @@ namespace AssetRipper.TextureDecoder.Etc
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
 			int clen_last = (width + 3) % 4 + 1;
-			Span<uint> buf = stackalloc uint[16];
+			Span<ColorRGBA<byte>> buffer = stackalloc ColorRGBA<byte>[16];
 			int inputOffset = 0;
 			for (int t = 0; t < bch; t++)
 			{
 				for (int s = 0; s < bcw; s++, inputOffset += 8)
 				{
-					DecodeEtc2a1Block(input.Slice(inputOffset, 8), buf);
+					DecodeEtc2a1Block(input.Slice(inputOffset, 8), buffer);
 					int clen = s < bcw - 1 ? 4 : clen_last;
-					int outputOffset = t * 16 * width + s * 16;
-					Span<uint> outputPtr = MemoryMarshal.Cast<byte, uint>(output.Slice(outputOffset));
+					int outputOffset = t * 4 * width + s * 4;
+					Span<TOutputColor> outputPtr = output.Slice(outputOffset);
 
 					for (int i = 0, y = t * 4; i < 4 && y < height; i++, y++)
 					{
 						for (int j = 0; j < clen; j++)
 						{
-							outputPtr[j + i * width] = buf[j + 4 * i];
+							outputPtr[j + i * width] = buffer[j + 4 * i].Convert<ColorRGBA<byte>, byte, TOutputColor, TOutputChannelValue>();
 						}
 					}
 				}
@@ -125,15 +164,27 @@ namespace AssetRipper.TextureDecoder.Etc
 			return inputOffset;
 		}
 
-		public static int DecompressETC2A8(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+		public static int DecompressETC2A8<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
 			output = new byte[width * height * 4];
-			return DecompressETC2A8(input, width, height, output);
+			return DecompressETC2A8<TOutputColor, TOutputChannelValue>(input, width, height, output);
 		}
 
-		public static int DecompressETC2A8(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		public static int DecompressETC2A8<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
 			ThrowHelper.ThrowIfNotLittleEndian();
+			return DecompressETC2A8<TOutputColor, TOutputChannelValue>(input, width, height, MemoryMarshal.Cast<byte, TOutputColor>(output));
+		}
+
+		public static int DecompressETC2A8<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, Span<TOutputColor> output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
+		{
+			ThrowHelper.ThrowIfNotEnoughSpace(output.Length, width * height);
 			int requiredLength = ((width + 3) / 4) * ((height + 3) / 4) * 16;
 			if (input.Length < requiredLength)
 			{
@@ -143,23 +194,23 @@ namespace AssetRipper.TextureDecoder.Etc
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
 			int clen_last = (width + 3) % 4 + 1;
-			Span<uint> buf = stackalloc uint[16];
+			Span<ColorRGBA<byte>> buffer = stackalloc ColorRGBA<byte>[16];
 			int inputOffset = 0;
 			for (int t = 0; t < bch; t++)
 			{
 				for (int s = 0; s < bcw; s++, inputOffset += 16)
 				{
-					DecodeEtc2Block(input.Slice(inputOffset + 8, 8), buf);
-					DecodeEtc2a8Block(input.Slice(inputOffset + 0, 8), buf);
+					DecodeEtc2Block(input.Slice(inputOffset + 8, 8), buffer);
+					DecodeEtc2a8Block(input.Slice(inputOffset + 0, 8), buffer);
 					int clen = s < bcw - 1 ? 4 : clen_last;
-					int outputOffset = t * 16 * width + s * 16;
-					Span<uint> outputPtr = MemoryMarshal.Cast<byte, uint>(output.Slice(outputOffset));
+					int outputOffset = t * 4 * width + s * 4;
+					Span<TOutputColor> outputPtr = output.Slice(outputOffset);
 
 					for (int i = 0, y = t * 4; i < 4 && y < height; i++, y++)
 					{
 						for (int j = 0; j < clen; j++)
 						{
-							outputPtr[j + i * width] = buf[j + 4 * i];
+							outputPtr[j + i * width] = buffer[j + 4 * i].Convert<ColorRGBA<byte>, byte, TOutputColor, TOutputChannelValue>();
 						}
 					}
 				}
@@ -167,15 +218,27 @@ namespace AssetRipper.TextureDecoder.Etc
 			return inputOffset;
 		}
 
-		public static int DecompressEACRUnsigned(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+		public static int DecompressEACRUnsigned<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
 			output = new byte[width * height * 4];
-			return DecompressEACRUnsigned(input, width, height, output);
+			return DecompressEACRUnsigned<TOutputColor, TOutputChannelValue>(input, width, height, output);
 		}
 
-		public static int DecompressEACRUnsigned(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		public static int DecompressEACRUnsigned<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
 			ThrowHelper.ThrowIfNotLittleEndian();
+			return DecompressEACRUnsigned<TOutputColor, TOutputChannelValue>(input, width, height, MemoryMarshal.Cast<byte, TOutputColor>(output));
+		}
+
+		public static int DecompressEACRUnsigned<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, Span<TOutputColor> output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
+		{
+			ThrowHelper.ThrowIfNotEnoughSpace(output.Length, width * height);
 			int requiredLength = ((width + 3) / 4) * ((height + 3) / 4) * 8;
 			if (input.Length < requiredLength)
 			{
@@ -185,26 +248,26 @@ namespace AssetRipper.TextureDecoder.Etc
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
 			int clen_last = (width + 3) % 4 + 1;
-			Span<uint> buf = stackalloc uint[16];
+			Span<ColorRGBA<byte>> buffer = stackalloc ColorRGBA<byte>[16];
 			for (int i = 0; i < 16; i++)
 			{
-				buf[i] = 0xFF000000;
+				buffer[i] = ColorRGBA<byte>.Black;
 			}
 			int inputOffset = 0;
 			for (int t = 0; t < bch; t++)
 			{
 				for (int s = 0; s < bcw; s++, inputOffset += 8)
 				{
-					DecodeEacUnsignedBlock(input.Slice(inputOffset, 8), buf, 2);
+					DecodeEacUnsignedBlock(input.Slice(inputOffset, 8), buffer, 0);
 					int clen = s < bcw - 1 ? 4 : clen_last;
-					int outputOffset = t * 16 * width + s * 16;
-					Span<uint> outputPtr = MemoryMarshal.Cast<byte, uint>(output.Slice(outputOffset));
+					int outputOffset = t * 4 * width + s * 4;
+					Span<TOutputColor> outputPtr = output.Slice(outputOffset);
 
 					for (int i = 0, y = t * 4; i < 4 && y < height; i++, y++)
 					{
 						for (int j = 0; j < clen; j++)
 						{
-							outputPtr[j + i * width] = buf[j + 4 * i];
+							outputPtr[j + i * width] = buffer[j + 4 * i].Convert<ColorRGBA<byte>, byte, TOutputColor, TOutputChannelValue>();
 						}
 					}
 				}
@@ -212,15 +275,27 @@ namespace AssetRipper.TextureDecoder.Etc
 			return inputOffset;
 		}
 
-		public static int DecompressEACRSigned(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+		public static int DecompressEACRSigned<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
 			output = new byte[width * height * 4];
-			return DecompressEACRSigned(input, width, height, output);
+			return DecompressEACRSigned<TOutputColor, TOutputChannelValue>(input, width, height, output);
 		}
 
-		public static int DecompressEACRSigned(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		public static int DecompressEACRSigned<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
 			ThrowHelper.ThrowIfNotLittleEndian();
+			return DecompressEACRSigned<TOutputColor, TOutputChannelValue>(input, width, height, MemoryMarshal.Cast<byte, TOutputColor>(output));
+		}
+
+		public static int DecompressEACRSigned<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, Span<TOutputColor> output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
+		{
+			ThrowHelper.ThrowIfNotEnoughSpace(output.Length, width * height);
 			int requiredLength = ((width + 3) / 4) * ((height + 3) / 4) * 8;
 			if (input.Length < requiredLength)
 			{
@@ -230,26 +305,26 @@ namespace AssetRipper.TextureDecoder.Etc
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
 			int clen_last = (width + 3) % 4 + 1;
-			Span<uint> buf = stackalloc uint[16];
+			Span<ColorRGBA<byte>> buffer = stackalloc ColorRGBA<byte>[16];
 			for (int i = 0; i < 16; i++)
 			{
-				buf[i] = 0xFF000000;
+				buffer[i] = ColorRGBA<byte>.Black;
 			}
 			int inputOffset = 0;
 			for (int t = 0; t < bch; t++)
 			{
 				for (int s = 0; s < bcw; s++, inputOffset += 8)
 				{
-					DecodeEacSignedBlock(input.Slice(inputOffset, 8), buf, 2);
+					DecodeEacSignedBlock(input.Slice(inputOffset, 8), buffer, 0);
 					int clen = s < bcw - 1 ? 4 : clen_last;
-					int outputOffset = t * 16 * width + s * 16;
-					Span<uint> outputPtr = MemoryMarshal.Cast<byte, uint>(output.Slice(outputOffset));
+					int outputOffset = t * 4 * width + s * 4;
+					Span<TOutputColor> outputPtr = output.Slice(outputOffset);
 
 					for (int i = 0, y = t * 4; i < 4 && y < height; i++, y++)
 					{
 						for (int j = 0; j < clen; j++)
 						{
-							outputPtr[j + i * width] = buf[j + 4 * i];
+							outputPtr[j + i * width] = buffer[j + 4 * i].Convert<ColorRGBA<byte>, byte, TOutputColor, TOutputChannelValue>();
 						}
 					}
 				}
@@ -257,15 +332,27 @@ namespace AssetRipper.TextureDecoder.Etc
 			return inputOffset;
 		}
 
-		public static int DecompressEACRGUnsigned(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+		public static int DecompressEACRGUnsigned<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
 			output = new byte[width * height * 4];
-			return DecompressEACRGUnsigned(input, width, height, output);
+			return DecompressEACRGUnsigned<TOutputColor, TOutputChannelValue>(input, width, height, output);
 		}
 
-		public static int DecompressEACRGUnsigned(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		public static int DecompressEACRGUnsigned<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
 			ThrowHelper.ThrowIfNotLittleEndian();
+			return DecompressEACRGUnsigned<TOutputColor, TOutputChannelValue>(input, width, height, MemoryMarshal.Cast<byte, TOutputColor>(output));
+		}
+
+		public static int DecompressEACRGUnsigned<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, Span<TOutputColor> output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
+		{
+			ThrowHelper.ThrowIfNotEnoughSpace(output.Length, width * height);
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
 			
@@ -275,27 +362,27 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 
 			int clen_last = (width + 3) % 4 + 1;
-			Span<uint> buf = stackalloc uint[16];
+			Span<ColorRGBA<byte>> buffer = stackalloc ColorRGBA<byte>[16];
 			for (int i = 0; i < 16; i++)
 			{
-				buf[i] = 0xFF000000;
+				buffer[i] = ColorRGBA<byte>.Black;
 			}
 			int inputOffset = 0;
 			for (int t = 0; t < bch; t++)
 			{
 				for (int s = 0; s < bcw; s++, inputOffset += 16)
 				{
-					DecodeEacUnsignedBlock(input.Slice(inputOffset + 0, 8), buf, 2);
-					DecodeEacUnsignedBlock(input.Slice(inputOffset + 8, 8), buf, 1);
+					DecodeEacUnsignedBlock(input.Slice(inputOffset + 0, 8), buffer, 0);
+					DecodeEacUnsignedBlock(input.Slice(inputOffset + 8, 8), buffer, 1);
 					int clen = s < bcw - 1 ? 4 : clen_last;
-					int outputOffset = t * 16 * width + s * 16;
-					Span<uint> outputPtr = MemoryMarshal.Cast<byte, uint>(output.Slice(outputOffset));
-					
+					int outputOffset = t * 4 * width + s * 4;
+					Span<TOutputColor> outputPtr = output.Slice(outputOffset);
+
 					for (int i = 0, y = t * 4; i < 4 && y < height; i++, y++)
 					{
 						for (int j = 0; j < clen; j++)
 						{
-							outputPtr[j + i * width] = buf[j + 4 * i];
+							outputPtr[j + i * width] = buffer[j + 4 * i].Convert<ColorRGBA<byte>, byte, TOutputColor, TOutputChannelValue>();
 						}
 					}
 				}
@@ -303,15 +390,27 @@ namespace AssetRipper.TextureDecoder.Etc
 			return inputOffset;
 		}
 
-		public static int DecompressEACRGSigned(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+		public static int DecompressEACRGSigned<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, out byte[] output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
 			output = new byte[width * height * 4];
-			return DecompressEACRGSigned(input, width, height, output);
+			return DecompressEACRGSigned<TOutputColor, TOutputChannelValue>(input, width, height, output);
 		}
 
-		public static int DecompressEACRGSigned(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+		public static int DecompressEACRGSigned<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, Span<byte> output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
 			ThrowHelper.ThrowIfNotLittleEndian();
+			return DecompressEACRGSigned<TOutputColor, TOutputChannelValue>(input, width, height, MemoryMarshal.Cast<byte, TOutputColor>(output));
+		}
+
+		public static int DecompressEACRGSigned<TOutputColor, TOutputChannelValue>(ReadOnlySpan<byte> input, int width, int height, Span<TOutputColor> output)
+			where TOutputChannelValue : unmanaged
+			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
+		{
+			ThrowHelper.ThrowIfNotEnoughSpace(output.Length, width * height);
 			int requiredLength = ((width + 3) / 4) * ((height + 3) / 4) * 16;
 			if (input.Length < requiredLength)
 			{
@@ -321,27 +420,27 @@ namespace AssetRipper.TextureDecoder.Etc
 			int bcw = (width + 3) / 4;
 			int bch = (height + 3) / 4;
 			int clen_last = (width + 3) % 4 + 1;
-			Span<uint> buf = stackalloc uint[16];
+			Span<ColorRGBA<byte>> buffer = stackalloc ColorRGBA<byte>[16];
 			for (int i = 0; i < 16; i++)
 			{
-				buf[i] = 0xFF000000;
+				buffer[i] = ColorRGBA<byte>.Black;
 			}
 			int inputOffset = 0;
 			for (int t = 0; t < bch; t++)
 			{
 				for (int s = 0; s < bcw; s++, inputOffset += 16)
 				{
-					DecodeEacSignedBlock(input.Slice(inputOffset + 0, 8), buf, 2);
-					DecodeEacSignedBlock(input.Slice(inputOffset + 8, 8), buf, 1);
+					DecodeEacSignedBlock(input.Slice(inputOffset + 0, 8), buffer, 0);
+					DecodeEacSignedBlock(input.Slice(inputOffset + 8, 8), buffer, 1);
 					int clen = s < bcw - 1 ? 4 : clen_last;
-					int outputOffset = t * 16 * width + s * 16;
-					Span<uint> outputPtr = MemoryMarshal.Cast<byte, uint>(output.Slice(outputOffset));
+					int outputOffset = t * 4 * width + s * 4;
+					Span<TOutputColor> outputPtr = output.Slice(outputOffset);
 
 					for (int i = 0, y = t * 4; i < 4 && y < height; i++, y++)
 					{
 						for (int j = 0; j < clen; j++)
 						{
-							outputPtr[j + i * width] = buf[j + 4 * i];
+							outputPtr[j + i * width] = buffer[j + 4 * i].Convert<ColorRGBA<byte>, byte, TOutputColor, TOutputChannelValue>();
 						}
 					}
 				}
@@ -352,7 +451,7 @@ namespace AssetRipper.TextureDecoder.Etc
 		/// <summary>
 		/// Parses an 8-byte Etc1 block from <paramref name="input"/>.
 		/// </summary>
-		private static void DecodeEtc1Block(ReadOnlySpan<byte> input, Span<uint> output)
+		private static void DecodeEtc1Block(ReadOnlySpan<byte> input, Span<ColorRGBA<byte>> output)
 		{
 			byte i3 = input[3];
 			ReadOnlySpan<int> code =
@@ -401,13 +500,12 @@ namespace AssetRipper.TextureDecoder.Etc
 				int index = k << 1 & 2 | j & 1;
 				int cd = code[s];
 				int m = Etc1ModifierTable[cd + index];
-				uint color = ApplicateColor(c, s, m);
 				int oi = WriteOrderTable[i];
-				output[oi] = color;
+				output[oi] = ApplicateColor(c, s, m);
 			}
 		}
 
-		private static void DecodeEtc2Block(ReadOnlySpan<byte> input, Span<uint> output)
+		private static void DecodeEtc2Block(ReadOnlySpan<byte> input, Span<ColorRGBA<byte>> output)
 		{
 			int j = input[6] << 8 | input[7];
 			int k = input[4] << 8 | input[5];
@@ -431,7 +529,7 @@ namespace AssetRipper.TextureDecoder.Etc
 					}
 					int ti = input[3] >> 1 & 6 | input[3] & 1;
 					byte d = Etc2DistanceTable[ti];
-					ReadOnlySpan<uint> color_set =
+					ReadOnlySpan<ColorRGBA<byte>> color_set =
 					[
 						ApplicateColorRaw(c, 0),
 						ApplicateColor(c, 1, d),
@@ -442,9 +540,8 @@ namespace AssetRipper.TextureDecoder.Etc
 					for (int i = 0; i < 16; i++, j >>= 1, k >>= 1)
 					{
 						int index = k << 1 & 2 | j & 1;
-						uint color = color_set[index];
 						int oi = WriteOrderTable[i];
-						output[oi] = color;
+						output[oi] = color_set[index];
 					}
 				}
 				else
@@ -472,7 +569,7 @@ namespace AssetRipper.TextureDecoder.Etc
 							++di;
 						}
 						byte d = Etc2DistanceTable[di];
-						ReadOnlySpan<uint> color_set =
+						ReadOnlySpan<ColorRGBA<byte>> color_set =
 						[
 							ApplicateColor(c, 0, d),
 							ApplicateColor(c, 0, -d),
@@ -482,9 +579,8 @@ namespace AssetRipper.TextureDecoder.Etc
 						for (int i = 0; i < 16; i++, j >>= 1, k >>= 1)
 						{
 							int index = k << 1 & 2 | j & 1;
-							uint color = color_set[index];
 							int oi = WriteOrderTable[i];
-							output[oi] = color;
+							output[oi] = color_set[index];
 						}
 					}
 					else
@@ -515,7 +611,7 @@ namespace AssetRipper.TextureDecoder.Etc
 									byte ri = Clamp255((x * (c[1 * 3 + 0] - c[0 * 3 + 0]) + y * (c[2 * 3 + 0] - c[0 * 3 + 0]) + 4 * c[0 * 3 + 0] + 2) >> 2);
 									byte gi = Clamp255((x * (c[1 * 3 + 1] - c[0 * 3 + 1]) + y * (c[2 * 3 + 1] - c[0 * 3 + 1]) + 4 * c[0 * 3 + 1] + 2) >> 2);
 									byte bi = Clamp255((x * (c[1 * 3 + 2] - c[0 * 3 + 2]) + y * (c[2 * 3 + 2] - c[0 * 3 + 2]) + 4 * c[0 * 3 + 2] + 2) >> 2);
-									output[i] = Color(ri, gi, bi, 255);
+									output[i] = new(ri, gi, bi, byte.MaxValue);
 								}
 							}
 						}
@@ -546,9 +642,8 @@ namespace AssetRipper.TextureDecoder.Etc
 								int index = k << 1 & 2 | j & 1;
 								int ci = code[s];
 								int m = Etc1ModifierTable[ci + index];
-								uint color = ApplicateColor(c, s, m);
 								int oi = WriteOrderTable[i];
-								output[oi] = color;
+								output[oi] = ApplicateColor(c, s, m);
 							}
 						}
 					}
@@ -578,15 +673,14 @@ namespace AssetRipper.TextureDecoder.Etc
 					int index = k << 1 & 2 | j & 1;
 					int ci = code[s];
 					int m = Etc1ModifierTable[ci + index];
-					uint color = ApplicateColor(c, s, m);
 					int oi = WriteOrderTable[i];
-					output[oi] = color;
+					output[oi] = ApplicateColor(c, s, m);
 				}
 			}
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-		private static void DecodeEtc2a1Block(ReadOnlySpan<byte> input, Span<uint> output)
+		private static void DecodeEtc2a1Block(ReadOnlySpan<byte> input, Span<ColorRGBA<byte>> output)
 		{
 			if ((input[3] & 2) != 0)
 			{
@@ -599,7 +693,7 @@ namespace AssetRipper.TextureDecoder.Etc
 			}
 		}
 
-		private static void DecodeEtc2PunchThrowBlock(ReadOnlySpan<byte> input, Span<uint> output)
+		private static void DecodeEtc2PunchThrowBlock(ReadOnlySpan<byte> input, Span<ColorRGBA<byte>> output)
 		{
 			int j = input[6] << 8 | input[7];
 			int k = input[4] << 8 | input[5];
@@ -620,7 +714,7 @@ namespace AssetRipper.TextureDecoder.Etc
 				}
 				int ti = input[3] >> 1 & 6 | input[3] & 1;
 				byte d = Etc2DistanceTable[ti];
-				ReadOnlySpan<uint> color_set =
+				ReadOnlySpan<ColorRGBA<byte>> color_set =
 				[
 					ApplicateColorRaw(c, 0),
 					ApplicateColor(c, 1, d),
@@ -631,10 +725,8 @@ namespace AssetRipper.TextureDecoder.Etc
 				for (int i = 0; i < 16; i++, j >>= 1, k >>= 1)
 				{
 					int index = k << 1 & 2 | j & 1;
-					uint color = color_set[index];
-					uint mask = PunchthroughMaskTable[index];
 					int oi = WriteOrderTable[i];
-					output[oi] = color & mask;
+					output[oi] = PunchthroughBooleanTable[index] ? color_set[index] : default;
 				}
 			}
 			else
@@ -662,7 +754,7 @@ namespace AssetRipper.TextureDecoder.Etc
 						++di;
 					}
 					byte d = Etc2DistanceTable[di];
-					ReadOnlySpan<uint> color_set =
+					ReadOnlySpan<ColorRGBA<byte>> color_set =
 					[
 						ApplicateColor(c, 0, d),
 						ApplicateColor(c, 0, -d),
@@ -672,10 +764,8 @@ namespace AssetRipper.TextureDecoder.Etc
 					for (int i = 0; i < 16; i++, j >>= 1, k >>= 1)
 					{
 						int index = k << 1 & 2 | j & 1;
-						uint color = color_set[index];
-						uint mask = PunchthroughMaskTable[index];
 						int oi = WriteOrderTable[i];
-						output[oi] = color & mask;
+						output[oi] = PunchthroughBooleanTable[index] ? color_set[index] : default;
 					}
 				}
 				else
@@ -706,7 +796,7 @@ namespace AssetRipper.TextureDecoder.Etc
 								byte ri = Clamp255((x * (c[1 * 3 + 0] - c[0 * 3 + 0]) + y * (c[2 * 3 + 0] - c[0 * 3 + 0]) + 4 * c[0 * 3 + 0] + 2) >> 2);
 								byte gi = Clamp255((x * (c[1 * 3 + 1] - c[0 * 3 + 1]) + y * (c[2 * 3 + 1] - c[0 * 3 + 1]) + 4 * c[0 * 3 + 1] + 2) >> 2);
 								byte bi = Clamp255((x * (c[1 * 3 + 2] - c[0 * 3 + 2]) + y * (c[2 * 3 + 2] - c[0 * 3 + 2]) + 4 * c[0 * 3 + 2] + 2) >> 2);
-								output[i] = Color(ri, gi, bi, 255);
+								output[i] = new(ri, gi, bi, byte.MaxValue);
 							}
 						}
 					}
@@ -733,21 +823,26 @@ namespace AssetRipper.TextureDecoder.Etc
 						}
 						for (int i = 0; i < 16; i++, j >>= 1, k >>= 1)
 						{
-							int s = Etc1SubblockTable[ti + i];
 							int index = k << 1 & 2 | j & 1;
-							int ci = code[s];
-							int m = PunchthroughModifierTable[ci + index];
-							uint color = ApplicateColor(c, s, m);
-							uint mask = PunchthroughMaskTable[index];
 							int oi = WriteOrderTable[i];
-							output[oi] = color & mask;
+							if (PunchthroughBooleanTable[index])
+							{
+								int s = Etc1SubblockTable[ti + i];
+								int ci = code[s];
+								int m = PunchthroughModifierTable[ci + index];
+								output[oi] = ApplicateColor(c, s, m);
+							}
+							else
+							{
+								output[oi] = default;
+							}
 						}
 					}
 				}
 			}
 		}
 
-		private static void DecodeEtc2a8Block(ReadOnlySpan<byte> input, Span<uint> output)
+		private static void DecodeEtc2a8Block(ReadOnlySpan<byte> input, Span<ColorRGBA<byte>> output)
 		{
 			ThrowHelper.ThrowIfNotLittleEndian();
 			int @base = input[0];
@@ -757,18 +852,18 @@ namespace AssetRipper.TextureDecoder.Etc
 			{
 				for (int i = 0; i < 16; i++)
 				{
-					DecodeEac11Block(MemoryMarshal.Cast<uint, byte>(output).Slice(3), @base);
+					DecodeEac11Block(MemoryMarshal.Cast<ColorRGBA<byte>, byte>(output).Slice(3), @base);
 				}
 			}
 			else
 			{
 				int table = data1 & 0xF;
 				ulong l = Get6SwapedBytes(input);
-				DecodeEac11Block(MemoryMarshal.Cast<uint, byte>(output).Slice(3), @base, table, mul, l);
+				DecodeEac11Block(MemoryMarshal.Cast<ColorRGBA<byte>, byte>(output).Slice(3), @base, table, mul, l);
 			}
 		}
 
-		private static void DecodeEacUnsignedBlock(ReadOnlySpan<byte> input, Span<uint> output, int channel)
+		private static void DecodeEacUnsignedBlock(ReadOnlySpan<byte> input, Span<ColorRGBA<byte>> output, int channel)
 		{
 			ThrowHelper.ThrowIfNotLittleEndian();
 			int @base = input[0];
@@ -776,17 +871,17 @@ namespace AssetRipper.TextureDecoder.Etc
 			int mul = data1 >> 4;
 			if (mul == 0)
 			{
-				DecodeEac11Block(MemoryMarshal.Cast<uint, byte>(output).Slice(channel), @base);
+				DecodeEac11Block(MemoryMarshal.Cast<ColorRGBA<byte>, byte>(output).Slice(channel), @base);
 			}
 			else
 			{
 				int table = data1 & 0xF;
 				ulong l = Get6SwapedBytes(input);
-				DecodeEac11Block(MemoryMarshal.Cast<uint, byte>(output).Slice(channel), @base, table, mul, l);
+				DecodeEac11Block(MemoryMarshal.Cast<ColorRGBA<byte>, byte>(output).Slice(channel), @base, table, mul, l);
 			}
 		}
 
-		private static void DecodeEacSignedBlock(ReadOnlySpan<byte> input, Span<uint> output, int channel)
+		private static void DecodeEacSignedBlock(ReadOnlySpan<byte> input, Span<ColorRGBA<byte>> output, int channel)
 		{
 			ThrowHelper.ThrowIfNotLittleEndian();
 			int @base = 127 + unchecked((sbyte)input[0]);
@@ -794,13 +889,13 @@ namespace AssetRipper.TextureDecoder.Etc
 			int mul = data1 >> 4;
 			if (mul == 0)
 			{
-				DecodeEac11Block(MemoryMarshal.Cast<uint, byte>(output).Slice(channel), @base);
+				DecodeEac11Block(MemoryMarshal.Cast<ColorRGBA<byte>, byte>(output).Slice(channel), @base);
 			}
 			else
 			{
 				int table = data1 & 0xF;
 				ulong l = Get6SwapedBytes(input);
-				DecodeEac11Block(MemoryMarshal.Cast<uint, byte>(output).Slice(channel), @base, table, mul, l);
+				DecodeEac11Block(MemoryMarshal.Cast<ColorRGBA<byte>, byte>(output).Slice(channel), @base, table, mul, l);
 			}
 		}
 
@@ -825,33 +920,27 @@ namespace AssetRipper.TextureDecoder.Etc
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-		private static uint Color(int r, int g, int b, int a)
-		{
-			return unchecked((uint)(r << 16 | g << 8 | b | a << 24));
-		}
-
-		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static byte Clamp255(int n)
 		{
 			return n < 0 ? (byte)0 : n > 255 ? (byte)255 : unchecked((byte)n);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-		private static uint ApplicateColor(ReadOnlySpan<byte> c, int o, int m)
+		private static ColorRGBA<byte> ApplicateColor(ReadOnlySpan<byte> c, int o, int m)
 		{
-			return Color(Clamp255(c[o * 3 + 0] + m), Clamp255(c[o * 3 + 1] + m), Clamp255(c[o * 3 + 2] + m), 255);
+			return new(Clamp255(c[o * 3 + 0] + m), Clamp255(c[o * 3 + 1] + m), Clamp255(c[o * 3 + 2] + m), byte.MaxValue);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-		private static uint ApplicateColor(ReadOnlySpan<int> c, int o, int m)
+		private static ColorRGBA<byte> ApplicateColor(ReadOnlySpan<int> c, int o, int m)
 		{
-			return Color(Clamp255(c[o * 3 + 0] + m), Clamp255(c[o * 3 + 1] + m), Clamp255(c[o * 3 + 2] + m), 255);
+			return new(Clamp255(c[o * 3 + 0] + m), Clamp255(c[o * 3 + 1] + m), Clamp255(c[o * 3 + 2] + m), byte.MaxValue);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-		private static uint ApplicateColorRaw(ReadOnlySpan<byte> c, int o)
+		private static ColorRGBA<byte> ApplicateColorRaw(ReadOnlySpan<byte> c, int o)
 		{
-			return Color(c[o * 3 + 0], c[o * 3 + 1], c[o * 3 + 2], 255);
+			return new(c[o * 3 + 0], c[o * 3 + 1], c[o * 3 + 2], byte.MaxValue);
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
@@ -909,6 +998,6 @@ namespace AssetRipper.TextureDecoder.Etc
 			-4, -6,  -8,  -9, 3, 5, 7,  8,
 			-3, -5,  -7,  -9, 2, 4, 6,  8,
 		];
-		private static ReadOnlySpan<uint> PunchthroughMaskTable => [0xFFFFFFFF, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF];
+		private static ReadOnlySpan<bool> PunchthroughBooleanTable => [true, true, false, true];
 	}
 }

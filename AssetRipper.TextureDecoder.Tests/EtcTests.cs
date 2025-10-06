@@ -6,14 +6,14 @@ namespace AssetRipper.TextureDecoder.Tests;
 
 public sealed class EtcTests
 {
-	private static DecodingDelegate ETCDelegate { get; } = (ArraySegment<byte> data, int width, int height, out byte[] decompressedData) => EtcDecoder.DecompressETC(data, width, height, out decompressedData);
-	private static DecodingDelegate ETC2Delegate { get; } = (ArraySegment<byte> data, int width, int height, out byte[] decompressedData) => EtcDecoder.DecompressETC2(data, width, height, out decompressedData);
-	private static DecodingDelegate ETC2A1Delegate { get; } = (ArraySegment<byte> data, int width, int height, out byte[] decompressedData) => EtcDecoder.DecompressETC2A1(data, width, height, out decompressedData);
-	private static DecodingDelegate ETC2A8Delegate { get; } = (ArraySegment<byte> data, int width, int height, out byte[] decompressedData) => EtcDecoder.DecompressETC2A8(data, width, height, out decompressedData);
-	private static DecodingDelegate EACRSignedDelegate { get; } = (ArraySegment<byte> data, int width, int height, out byte[] decompressedData) => EtcDecoder.DecompressEACRSigned(data, width, height, out decompressedData);
-	private static DecodingDelegate EACRUnsignedDelegate { get; } = (ArraySegment<byte> data, int width, int height, out byte[] decompressedData) => EtcDecoder.DecompressEACRUnsigned(data, width, height, out decompressedData);
-	private static DecodingDelegate EACRGSignedDelegate { get; } = (ArraySegment<byte> data, int width, int height, out byte[] decompressedData) => EtcDecoder.DecompressEACRGSigned(data, width, height, out decompressedData);
-	private static DecodingDelegate EACRGUnsignedDelegate { get; } = (ArraySegment<byte> data, int width, int height, out byte[] decompressedData) => EtcDecoder.DecompressEACRGUnsigned(data, width, height, out decompressedData);
+	private static DecodingDelegate ETCDelegate { get; } = EtcDecoder.DecompressETC<ColorBGRA32, byte>;
+	private static DecodingDelegate ETC2Delegate { get; } = EtcDecoder.DecompressETC2<ColorBGRA32, byte>;
+	private static DecodingDelegate ETC2A1Delegate { get; } = EtcDecoder.DecompressETC2A1<ColorBGRA32, byte>;
+	private static DecodingDelegate ETC2A8Delegate { get; } = EtcDecoder.DecompressETC2A8<ColorBGRA32, byte>;
+	private static DecodingDelegate EACRSignedDelegate { get; } = EtcDecoder.DecompressEACRSigned<ColorBGRA32, byte>;
+	private static DecodingDelegate EACRUnsignedDelegate { get; } = EtcDecoder.DecompressEACRUnsigned<ColorBGRA32, byte>;
+	private static DecodingDelegate EACRGSignedDelegate { get; } = EtcDecoder.DecompressEACRGSigned<ColorBGRA32, byte>;
+	private static DecodingDelegate EACRGUnsignedDelegate { get; } = EtcDecoder.DecompressEACRGUnsigned<ColorBGRA32, byte>;
 
 	[Test]
 	public void DecompressETCTest() => AssertCorrectByteCountReadFor256SquareWithMips(TestFileFolders.EtcTestFiles + "test.etc", ETCDelegate);
@@ -57,7 +57,7 @@ public sealed class EtcTests
 	[Test]
 	public void CorrectnessEACRGUnsignedTest() => AssertCorrectDecompression<AndroidTextures.Logo_15, ColorRG<byte>>(EACRGUnsignedDelegate, .1, .6);
 
-	private delegate int DecodingDelegate(ArraySegment<byte> data, int width, int height, out byte[] decompressedData);
+	private delegate int DecodingDelegate(ReadOnlySpan<byte> data, int width, int height, out byte[] decompressedData);
 
 	private static void AssertCorrectByteCountReadFor256SquareWithMips(string path, DecodingDelegate decoder)
 	{
@@ -65,7 +65,7 @@ public sealed class EtcTests
 		int totalBytesRead = 0;
 		foreach (int size in new int[] { 256, 128, 64, 32, 16, 8, 4, 2, 1 }) //mip maps
 		{
-			int bytesRead = decoder.Invoke(new ArraySegment<byte>(data, totalBytesRead, data.Length - totalBytesRead), size, size, out _);
+			int bytesRead = decoder.Invoke(new ReadOnlySpan<byte>(data, totalBytesRead, data.Length - totalBytesRead), size, size, out _);
 			totalBytesRead += bytesRead;
 		}
 		Assert.That(totalBytesRead, Is.EqualTo(data.Length));
@@ -79,7 +79,7 @@ public sealed class EtcTests
 	private static void AssertCorrectDecompression<TTexture, TColor>(DecodingDelegate decoder, double maxMeanDeviation, double maxStandardDeviation) where TTexture : ITexture where TColor : unmanaged, IColor<TColor, byte>
 	{
 		byte[] data = TTexture.Data;
-		int bytesRead = decoder.Invoke(new ArraySegment<byte>(data), TTexture.Width, TTexture.Height, out byte[] decompressedData);
+		int bytesRead = decoder.Invoke(new ReadOnlySpan<byte>(data), TTexture.Width, TTexture.Height, out byte[] decompressedData);
 		if (!TTexture.Mips)
 		{
 			Assert.That(bytesRead, Is.EqualTo(data.Length));

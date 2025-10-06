@@ -208,28 +208,28 @@ internal static partial class Program
 		switch (mode)
 		{
 			case 0:
-				EtcDecoder.DecompressETC(input, width, height, output);
+				EtcDecoder.DecompressETC<ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 1:
-				EtcDecoder.DecompressETC2(input, width, height, output);
+				EtcDecoder.DecompressETC2<ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 2:
-				EtcDecoder.DecompressETC2A1(input, width, height, output);
+				EtcDecoder.DecompressETC2A1<ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 3:
-				EtcDecoder.DecompressETC2A8(input, width, height, output);
+				EtcDecoder.DecompressETC2A8<ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 4:
-				EtcDecoder.DecompressEACRUnsigned(input, width, height, output);
+				EtcDecoder.DecompressEACRUnsigned<ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 5:
-				EtcDecoder.DecompressEACRSigned(input, width, height, output);
+				EtcDecoder.DecompressEACRSigned<ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 6:
-				EtcDecoder.DecompressEACRGUnsigned(input, width, height, output);
+				EtcDecoder.DecompressEACRGUnsigned<ColorBGRA32, byte>(input, width, height, output);
 				break;
 			case 7:
-				EtcDecoder.DecompressEACRGSigned(input, width, height, output);
+				EtcDecoder.DecompressEACRGSigned<ColorBGRA32, byte>(input, width, height, output);
 				break;
 
 			default:
