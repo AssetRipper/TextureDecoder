@@ -1,0 +1,25 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/Solution Items/Licenses/">
+    <File Path="Licenses/bcdec.md" />
+    <File Path="Licenses/uTinyRipper.md" />
+  </Folder>
+  <Folder Name="/Solution Items/Workflows/">
+    <File Path=".github/workflows/build.yml" />
+  </Folder>
+  <Project Path="AssetRipper.TextureDecoder.Benchmarks/AssetRipper.TextureDecoder.Benchmarks.csproj" />
+  <Project Path="AssetRipper.TextureDecoder.ColorGenerator/AssetRipper.TextureDecoder.ColorGenerator.csproj" />
+  <Project Path="AssetRipper.TextureDecoder.ConsoleApp/AssetRipper.TextureDecoder.ConsoleApp.csproj" />
+  <Project Path="AssetRipper.TextureDecoder.Paths/AssetRipper.TextureDecoder.Paths.csproj" />
+  <Project Path="AssetRipper.TextureDecoder.SourceGeneration.Common/AssetRipper.TextureDecoder.SourceGeneration.Common.csproj" />
+  <Project Path="AssetRipper.TextureDecoder.TestGenerator/AssetRipper.TextureDecoder.TestGenerator.csproj" />
+  <Project Path="AssetRipper.TextureDecoder.Tests/AssetRipper.TextureDecoder.Tests.csproj" />
+  <Project Path="AssetRipper.TextureDecoder/AssetRipper.TextureDecoder.csproj" />
+  <Project Path="IntegerConversion.ConstantEstimation/IntegerConversion.ConstantEstimation.csproj" />
+</Solution>
