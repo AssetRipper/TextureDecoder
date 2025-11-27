@@ -6,8 +6,7 @@
 		<IsAotCompatible>true</IsAotCompatible>
 		<CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
 
-		<Version>2.4.0</Version>
-		<AssemblyVersion>$(Version)</AssemblyVersion>
+		<VersionPrefix>2.5.0</VersionPrefix>
 		<Copyright>Copyright © ds5678</Copyright>
 		<Authors>ds5678</Authors>
 		<Company>AssetRipper</Company>
