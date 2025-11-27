@@ -8,7 +8,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		public void DecompressAtcRgb4Test()
 		{
 			byte[] data = File.ReadAllBytes(TestFileFolders.AtcTestFiles + "test.atc_rgb4");
-			int bytesRead = Atc.AtcDecoder.DecompressAtcRgb4<ColorBGRA32, byte>(data, 256, 256, out byte[] decodedData);
+			int bytesRead = Atc.AtcDecoder.DecompressAtcRgb4<ColorBGRA<byte>, byte>(data, 256, 256, out byte[] decodedData);
 			Assert.Multiple(() =>
 			{
 				Assert.That(bytesRead, Is.EqualTo(data.Length));
@@ -20,7 +20,7 @@ namespace AssetRipper.TextureDecoder.Tests
 		public void DecompressAtcRgba8Test()
 		{
 			byte[] data = File.ReadAllBytes(TestFileFolders.AtcTestFiles + "test.atc_rgba8");
-			int bytesRead = Atc.AtcDecoder.DecompressAtcRgba8<ColorBGRA32, byte>(data, 256, 256, out byte[] decodedData);
+			int bytesRead = Atc.AtcDecoder.DecompressAtcRgba8<ColorBGRA<byte>, byte>(data, 256, 256, out byte[] decodedData);
 			Assert.Multiple(() =>
 			{
 				Assert.That(bytesRead, Is.EqualTo(data.Length));

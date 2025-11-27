@@ -21,5 +21,5 @@ public class Rgb9e5Decoding
 	public int OriginalMethod() => RgbConverter.RGB9e5FloatToBGRA32(inputData, Width, Height, outputData);
 
 	[Benchmark]
-	public int GenericMethod() => RgbConverter.Convert<ColorRGB9e5, double, ColorBGRA32, byte>(inputData, Width, Height, outputData);
+	public int GenericMethod() => RgbConverter.Convert<ColorRGB9e5, double, ColorBGRA<byte>, byte>(inputData, Width, Height, outputData);
 }

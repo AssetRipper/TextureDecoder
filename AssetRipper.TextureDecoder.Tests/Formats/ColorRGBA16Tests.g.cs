@@ -147,18 +147,6 @@ public partial class ColorRGBA16Tests
 	public static byte MakeRandomValue() => ColorRandom<ColorRGBA16, byte>.MakeRandomValue();
 
 	[Test]
-	public void ConversionIsLosslessToColorARGB32()
-	{
-		LosslessConversion.Assert<ColorRGBA16, byte, ColorARGB32, byte>();
-	}
-
-	[Test]
-	public void ConversionIsLosslessToColorBGRA32()
-	{
-		LosslessConversion.Assert<ColorRGBA16, byte, ColorBGRA32, byte>();
-	}
-
-	[Test]
 	public void ConversionIsLosslessToColorRGBA_sbyte()
 	{
 		LosslessConversion.Assert<ColorRGBA16, byte, ColorRGBA<sbyte>, sbyte>();

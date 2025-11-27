@@ -1,6 +1,7 @@
 ﻿using AssetRipper.Text.SourceGeneration;
 using AssetRipper.TextureDecoder.SourceGeneration.Common;
 using System.CodeDom.Compiler;
+using System.Diagnostics;
 using System.Text;
 
 namespace AssetRipper.TextureDecoder.ColorGenerator;
@@ -18,24 +19,22 @@ internal static partial class Program
 	private static readonly List<(string, Type, bool, bool, bool, bool, bool)> CustomColors = new()
 	{
 		( "ColorARGB16", typeof(byte), true, true, true, true, false ),
-		( "ColorARGB32", typeof(byte), true, true, true, true, true ),
-		( "ColorBGRA32", typeof(byte), true, true, true, true, true ),
 		( "ColorRGB16", typeof(byte), true, true, true, false, false ),
 		( "ColorRGB9e5", typeof(double), true, true, true, false, false ),
 		( "ColorRGBA16", typeof(byte), true, true, true, true, false ),
 	};
 
-	/// <summary>
-	/// Name, Red, Blue, Green, Alpha
-	/// </summary>
-	private static readonly List<(string, bool, bool, bool, bool)> GenericColors = new()
-	{
-		( "ColorR", true, false, false, false ),
-		( "ColorRG", true, true, false, false ),
-		( "ColorRGB", true, true, true, false ),
-		( "ColorRGBA", true, true, true, true ),
-		( "ColorA", false, false, false, true ),
-	};
+	private static readonly List<string> GenericColors =
+	[
+		"ColorR",
+		"ColorRG",
+		"ColorRGB",
+		"ColorRGBA",
+		"ColorA",
+		"ColorARGB",
+		"ColorBGRA",
+		"ColorBGR",
+	];
 
 	static void Main()
 	{
@@ -43,7 +42,7 @@ internal static partial class Program
 		{
 			WriteCustomColor(customColor);
 		}
-		foreach (var genericColor in GenericColors)
+		foreach (string genericColor in GenericColors)
 		{
 			WriteGenericColor(genericColor);
 		}
@@ -63,12 +62,11 @@ internal static partial class Program
 		WriteCustomColor(writer, name, type, hasRed, hasGreen, hasBlue, hasAlpha, fullyUtilized);
 	}
 
-	private static void WriteGenericColor((string, bool, bool, bool, bool) details)
+	private static void WriteGenericColor(string name)
 	{
-		(string name, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha) = details;
 		Console.WriteLine(name);
 		using IndentedTextWriter writer = IndentedTextWriterFactory.Create(FormatsFolder, name);
-		WriteGenericColor(writer, name, hasRed, hasGreen, hasBlue, hasAlpha);
+		WriteGenericColor(writer, name);
 	}
 
 	private static void WriteSuperGenericColor(int channelCount)
@@ -214,7 +212,7 @@ internal static partial class Program
 		}
 	}
 
-	private static void WriteGenericColor(IndentedTextWriter writer, string name, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha)
+	private static void WriteGenericColor(IndentedTextWriter writer, string name)
 	{
 		const string typeName = "T";
 		const string minValue = "NumericConversion.GetMinimumValueSafe<T>()";
@@ -229,14 +227,39 @@ internal static partial class Program
 		writer.WriteLine($"public partial struct {name}<T> : IColor<{name}<T>, T> where T : unmanaged, INumberBase<T>, IMinMaxValue<T>");
 		using (new CurlyBrackets(writer))
 		{
-			WriteProperty(writer, hasRed, typeName, 'R', minValue);
-			writer.WriteLineNoTabs();
-			WriteProperty(writer, hasGreen, typeName, 'G', minValue);
-			writer.WriteLineNoTabs();
-			WriteProperty(writer, hasBlue, typeName, 'B', minValue);
-			writer.WriteLineNoTabs();
-			WriteProperty(writer, hasAlpha, typeName, 'A', maxValue);
-			writer.WriteLineNoTabs();
+			Debug.Assert(name.StartsWith("Color", StringComparison.Ordinal));
+			ReadOnlySpan<char> channels = name.AsSpan()[5..];
+			foreach (char channel in channels)
+			{
+				WriteProperty(writer, true, typeName, channel, minValue);
+				writer.WriteLineNoTabs();
+			}
+
+			bool hasRed = channels.Contains('R');
+			bool hasGreen = channels.Contains('G');
+			bool hasBlue = channels.Contains('B');
+			bool hasAlpha = channels.Contains('A');
+
+			if (!hasRed)
+			{
+				WriteProperty(writer, hasRed, typeName, 'R', minValue);
+				writer.WriteLineNoTabs();
+			}
+			if (!hasGreen)
+			{
+				WriteProperty(writer, hasGreen, typeName, 'G', minValue);
+				writer.WriteLineNoTabs();
+			}
+			if (!hasBlue)
+			{
+				WriteProperty(writer, hasBlue, typeName, 'B', minValue);
+				writer.WriteLineNoTabs();
+			}
+			if (!hasAlpha)
+			{
+				WriteProperty(writer, hasAlpha, typeName, 'A', maxValue);
+				writer.WriteLineNoTabs();
+			}
 
 			WriteConstructor(writer, name, hasRed, hasGreen, hasBlue, hasAlpha, typeName);
 			writer.WriteLineNoTabs();

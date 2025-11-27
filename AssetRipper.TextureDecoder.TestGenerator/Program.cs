@@ -1,5 +1,6 @@
 ﻿using AssetRipper.Text.SourceGeneration;
 using AssetRipper.TextureDecoder.Rgb;
+using AssetRipper.TextureDecoder.Rgb.Channels;
 using AssetRipper.TextureDecoder.Rgb.Formats;
 using AssetRipper.TextureDecoder.SourceGeneration.Common;
 using System.CodeDom.Compiler;
@@ -12,8 +13,6 @@ namespace AssetRipper.TextureDecoder.TestGenerator
 		internal static readonly List<GenerationData> dataList = new()
 		{
 			GenerationData.Create<ColorARGB16>(2),
-			GenerationData.Create<ColorARGB32>(4),
-			GenerationData.Create<ColorBGRA32>(4),
 			GenerationData.Create<ColorRGB16>(2),
 			GenerationData.Create<ColorRGB9e5>(4),
 			GenerationData.Create<ColorRGBA16>(2),
@@ -35,7 +34,8 @@ namespace AssetRipper.TextureDecoder.TestGenerator
 			writer.WriteGeneratedCodeWarning();
 			writer.WriteLine();
 			writer.WriteLine($"using {typeof(RgbConverter).Namespace};");
-			writer.WriteLine($"using {typeof(ColorBGRA32).Namespace};");
+			writer.WriteLine($"using {typeof(B).Namespace};");
+			writer.WriteLine($"using {typeof(ColorRGBA16).Namespace};");
 			writer.WriteLine($"using {typeof(NFloat).Namespace};");
 			writer.WriteLine();
 

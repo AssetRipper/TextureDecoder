@@ -68,7 +68,7 @@ public sealed class AstcTests
 	private static void AssertCorrectDecompression<T>(int blockWidth, int blockHeight, double maxMeanDeviation, double maxStandardDeviation) where T : ITexture
 	{
 		ReadOnlySpan<byte> data = T.Data;
-		int bytesRead = AstcDecoder.DecodeASTC<ColorBGRA32, byte>(data, T.Width, T.Height, blockWidth, blockHeight, out byte[] decompressedData);
+		int bytesRead = AstcDecoder.DecodeASTC<ColorBGRA<byte>, byte>(data, T.Width, T.Height, blockWidth, blockHeight, out byte[] decompressedData);
 		if (!T.Mips)
 		{
 			Assert.That(bytesRead, Is.EqualTo(data.Length));
@@ -79,6 +79,6 @@ public sealed class AstcTests
 	[TestCase(new byte[16] { 83, 1, 147, 104, 198, 173, 55, 116, 182, 66, 105, 11, 102, 43, 148, 125 }, 8, 8, TestName = "GetBits Should not throw in DecodeIntseq")]
 	public void DecodesBlockWithoutThrowing(byte[] block, int blockWidth, int blockHeight)
 	{
-		Assert.DoesNotThrow(() => AstcDecoder.DecodeASTC<ColorBGRA32, byte>(block, blockWidth, blockHeight, blockWidth, blockHeight, out _));
+		Assert.DoesNotThrow(() => AstcDecoder.DecodeASTC<ColorBGRA<byte>, byte>(block, blockWidth, blockHeight, blockWidth, blockHeight, out _));
 	}
 }

@@ -27,7 +27,7 @@ internal static partial class Program
 		string args6 = args.GetArgument(6);
 		byte[] data = File.ReadAllBytes(path);
 
-		DirectBitmap<ColorBGRA32, byte> bitmap = new DirectBitmap<ColorBGRA32, byte>(width, height);
+		DirectBitmap<ColorBGRA<byte>, byte> bitmap = new DirectBitmap<ColorBGRA<byte>, byte>(width, height);
 		switch (inputType)
 		{
 			case "astc":
@@ -52,7 +52,7 @@ internal static partial class Program
 				DecodeRgb(data, width, height, args5, bitmap.Bits);
 				break;
 			case "yuy2":
-				Yuy2Decoder.DecompressYUY2<ColorBGRA32, byte>(data, width, height, bitmap.Bits);
+				Yuy2Decoder.DecompressYUY2<ColorBGRA<byte>, byte>(data, width, height, bitmap.Bits);
 				break;
 			default:
 				throw new NotSupportedException(inputType);
@@ -105,7 +105,7 @@ internal static partial class Program
 		Console.WriteLine("Arg at index 6 : blockYSize");
 		int blockXSize = int.Parse(blockXSizeString);
 		int blockYSize = int.Parse(blockYSizeString);
-		AstcDecoder.DecodeASTC<ColorBGRA32, byte>(input, width, height, blockXSize, blockYSize, output);
+		AstcDecoder.DecodeASTC<ColorBGRA<byte>, byte>(input, width, height, blockXSize, blockYSize, output);
 	}
 
 	private static void DecodeAtc(ReadOnlySpan<byte> input, int width, int height, string modeString, Span<byte> output)
@@ -117,10 +117,10 @@ internal static partial class Program
 		switch (mode)
 		{
 			case 0:
-				AtcDecoder.DecompressAtcRgb4<ColorBGRA32, byte>(input, width, height, output);
+				AtcDecoder.DecompressAtcRgb4<ColorBGRA<byte>, byte>(input, width, height, output);
 				break;
 			case 1:
-				AtcDecoder.DecompressAtcRgba8<ColorBGRA32, byte>(input, width, height, output);
+				AtcDecoder.DecompressAtcRgba8<ColorBGRA<byte>, byte>(input, width, height, output);
 				break;
 
 			default:
@@ -143,25 +143,25 @@ internal static partial class Program
 		switch (mode)
 		{
 			case 1:
-				Bc1.Decompress<ColorBGRA32, byte>(input, width, height, output);
+				Bc1.Decompress<ColorBGRA<byte>, byte>(input, width, height, output);
 				break;
 			case 2:
-				Bc2.Decompress<ColorBGRA32, byte>(input, width, height, output);
+				Bc2.Decompress<ColorBGRA<byte>, byte>(input, width, height, output);
 				break;
 			case 3:
-				Bc3.Decompress<ColorBGRA32, byte>(input, width, height, output);
+				Bc3.Decompress<ColorBGRA<byte>, byte>(input, width, height, output);
 				break;
 			case 4:
-				Bc4.Decompress<ColorBGRA32, byte>(input, width, height, output);
+				Bc4.Decompress<ColorBGRA<byte>, byte>(input, width, height, output);
 				break;
 			case 5:
-				Bc5.Decompress<ColorBGRA32, byte>(input, width, height, output);
+				Bc5.Decompress<ColorBGRA<byte>, byte>(input, width, height, output);
 				break;
 			case 6:
-				Bc6h.Decompress<ColorBGRA32, byte>(input, width, height, bool.Parse(isSignedString), output);
+				Bc6h.Decompress<ColorBGRA<byte>, byte>(input, width, height, bool.Parse(isSignedString), output);
 				break;
 			case 7:
-				Bc7.Decompress<ColorBGRA32, byte>(input, width, height, output);
+				Bc7.Decompress<ColorBGRA<byte>, byte>(input, width, height, output);
 				break;
 
 			default:
@@ -179,13 +179,13 @@ internal static partial class Program
 		switch (mode)
 		{
 			case 0:
-				DxtDecoder.DecompressDXT1<ColorBGRA32, byte>(input, width, height, output);
+				DxtDecoder.DecompressDXT1<ColorBGRA<byte>, byte>(input, width, height, output);
 				break;
 			case 1:
-				DxtDecoder.DecompressDXT3<ColorBGRA32, byte>(input, width, height, output);
+				DxtDecoder.DecompressDXT3<ColorBGRA<byte>, byte>(input, width, height, output);
 				break;
 			case 2:
-				DxtDecoder.DecompressDXT5<ColorBGRA32, byte>(input, width, height, output);
+				DxtDecoder.DecompressDXT5<ColorBGRA<byte>, byte>(input, width, height, output);
 				break;
 
 			default:
@@ -208,28 +208,28 @@ internal static partial class Program
 		switch (mode)
 		{
 			case 0:
-				EtcDecoder.DecompressETC<ColorBGRA32, byte>(input, width, height, output);
+				EtcDecoder.DecompressETC<ColorBGRA<byte>, byte>(input, width, height, output);
 				break;
 			case 1:
-				EtcDecoder.DecompressETC2<ColorBGRA32, byte>(input, width, height, output);
+				EtcDecoder.DecompressETC2<ColorBGRA<byte>, byte>(input, width, height, output);
 				break;
 			case 2:
-				EtcDecoder.DecompressETC2A1<ColorBGRA32, byte>(input, width, height, output);
+				EtcDecoder.DecompressETC2A1<ColorBGRA<byte>, byte>(input, width, height, output);
 				break;
 			case 3:
-				EtcDecoder.DecompressETC2A8<ColorBGRA32, byte>(input, width, height, output);
+				EtcDecoder.DecompressETC2A8<ColorBGRA<byte>, byte>(input, width, height, output);
 				break;
 			case 4:
-				EtcDecoder.DecompressEACRUnsigned<ColorBGRA32, byte>(input, width, height, output);
+				EtcDecoder.DecompressEACRUnsigned<ColorBGRA<byte>, byte>(input, width, height, output);
 				break;
 			case 5:
-				EtcDecoder.DecompressEACRSigned<ColorBGRA32, byte>(input, width, height, output);
+				EtcDecoder.DecompressEACRSigned<ColorBGRA<byte>, byte>(input, width, height, output);
 				break;
 			case 6:
-				EtcDecoder.DecompressEACRGUnsigned<ColorBGRA32, byte>(input, width, height, output);
+				EtcDecoder.DecompressEACRGUnsigned<ColorBGRA<byte>, byte>(input, width, height, output);
 				break;
 			case 7:
-				EtcDecoder.DecompressEACRGSigned<ColorBGRA32, byte>(input, width, height, output);
+				EtcDecoder.DecompressEACRGSigned<ColorBGRA<byte>, byte>(input, width, height, output);
 				break;
 
 			default:
@@ -241,6 +241,6 @@ internal static partial class Program
 	{
 		Console.WriteLine("Arg at index 5 : 2bitMode");
 		bool do2bit = bool.Parse(do2bitModeString);
-		PvrtcDecoder.DecompressPVRTC<ColorBGRA32, byte>(input, width, height, do2bit, output);
+		PvrtcDecoder.DecompressPVRTC<ColorBGRA<byte>, byte>(input, width, height, do2bit, output);
 	}
 }

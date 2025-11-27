@@ -21,5 +21,5 @@ public class Argb32Decoding
 	public int OriginalMethod() => RgbConverter.ARGB32ToBGRA32(inputData, Width, Height, outputData);
 
 	[Benchmark]
-	public int GenericMethod() => RgbConverter.Convert<ColorARGB32, byte, ColorBGRA32, byte>(inputData, Width, Height, outputData);
+	public int GenericMethod() => RgbConverter.Convert<ColorARGB<byte>, byte, ColorBGRA<byte>, byte>(inputData, Width, Height, outputData);
 }

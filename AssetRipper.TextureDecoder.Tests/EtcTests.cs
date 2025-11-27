@@ -6,14 +6,14 @@ namespace AssetRipper.TextureDecoder.Tests;
 
 public sealed class EtcTests
 {
-	private static DecodingDelegate ETCDelegate { get; } = EtcDecoder.DecompressETC<ColorBGRA32, byte>;
-	private static DecodingDelegate ETC2Delegate { get; } = EtcDecoder.DecompressETC2<ColorBGRA32, byte>;
-	private static DecodingDelegate ETC2A1Delegate { get; } = EtcDecoder.DecompressETC2A1<ColorBGRA32, byte>;
-	private static DecodingDelegate ETC2A8Delegate { get; } = EtcDecoder.DecompressETC2A8<ColorBGRA32, byte>;
-	private static DecodingDelegate EACRSignedDelegate { get; } = EtcDecoder.DecompressEACRSigned<ColorBGRA32, byte>;
-	private static DecodingDelegate EACRUnsignedDelegate { get; } = EtcDecoder.DecompressEACRUnsigned<ColorBGRA32, byte>;
-	private static DecodingDelegate EACRGSignedDelegate { get; } = EtcDecoder.DecompressEACRGSigned<ColorBGRA32, byte>;
-	private static DecodingDelegate EACRGUnsignedDelegate { get; } = EtcDecoder.DecompressEACRGUnsigned<ColorBGRA32, byte>;
+	private static DecodingDelegate ETCDelegate { get; } = EtcDecoder.DecompressETC<ColorBGRA<byte>, byte>;
+	private static DecodingDelegate ETC2Delegate { get; } = EtcDecoder.DecompressETC2<ColorBGRA<byte>, byte>;
+	private static DecodingDelegate ETC2A1Delegate { get; } = EtcDecoder.DecompressETC2A1<ColorBGRA<byte>, byte>;
+	private static DecodingDelegate ETC2A8Delegate { get; } = EtcDecoder.DecompressETC2A8<ColorBGRA<byte>, byte>;
+	private static DecodingDelegate EACRSignedDelegate { get; } = EtcDecoder.DecompressEACRSigned<ColorBGRA<byte>, byte>;
+	private static DecodingDelegate EACRUnsignedDelegate { get; } = EtcDecoder.DecompressEACRUnsigned<ColorBGRA<byte>, byte>;
+	private static DecodingDelegate EACRGSignedDelegate { get; } = EtcDecoder.DecompressEACRGSigned<ColorBGRA<byte>, byte>;
+	private static DecodingDelegate EACRGUnsignedDelegate { get; } = EtcDecoder.DecompressEACRGUnsigned<ColorBGRA<byte>, byte>;
 
 	[Test]
 	public void DecompressETCTest() => AssertCorrectByteCountReadFor256SquareWithMips(TestFileFolders.EtcTestFiles + "test.etc", ETCDelegate);
@@ -88,12 +88,12 @@ public sealed class EtcTests
 		byte[] comparisonData = AndroidTextures.Logo_00.Data;
 
 		//Remove unused color channels
-		if (typeof(TColor) != typeof(ColorBGRA32) && typeof(TColor) != typeof(ColorRGBA<byte>))
+		if (typeof(TColor) != typeof(ColorBGRA<byte>) && typeof(TColor) != typeof(ColorRGBA<byte>))
 		{
-			Span<ColorBGRA32> pixels = MemoryMarshal.Cast<byte, ColorBGRA32>((Span<byte>)comparisonData);
+			Span<ColorBGRA<byte>> pixels = MemoryMarshal.Cast<byte, ColorBGRA<byte>>((Span<byte>)comparisonData);
 			for (int i = 0; i < pixels.Length; i++)
 			{
-				pixels[i] = pixels[i].Convert<ColorBGRA32, byte, TColor, byte>().Convert<TColor, byte, ColorBGRA32, byte>();
+				pixels[i] = pixels[i].Convert<ColorBGRA<byte>, byte, TColor, byte>().Convert<TColor, byte, ColorBGRA<byte>, byte>();
 			}
 		}
 

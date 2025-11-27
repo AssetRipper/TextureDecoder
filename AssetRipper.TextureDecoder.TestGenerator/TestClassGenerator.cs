@@ -75,27 +75,27 @@ internal static class TestClassGenerator
 				}
 
 				textWriter.WriteLineNoTabs();
-				textWriter.WriteLosslessConversionTest(data.ColorType.Name, data.ChannelTypeName, $"{nameof(ColorRGBA<byte>)}<{channelTypeName}>", channelTypeName);
+				textWriter.WriteLosslessConversionTest(data.ColorType.Name, data.ChannelTypeName, $"{nameof(ColorRGBA<>)}<{channelTypeName}>", channelTypeName);
 
 				if (!data.AlphaChannel)
 				{
 					textWriter.WriteLineNoTabs();
-					textWriter.WriteLosslessConversionTest(data.ColorType.Name, data.ChannelTypeName, $"{nameof(ColorRGB<byte>)}<{channelTypeName}>", channelTypeName);
+					textWriter.WriteLosslessConversionTest(data.ColorType.Name, data.ChannelTypeName, $"{nameof(ColorRGB<>)}<{channelTypeName}>", channelTypeName);
 					if (!data.BlueChannel)
 					{
 						textWriter.WriteLineNoTabs();
-						textWriter.WriteLosslessConversionTest(data.ColorType.Name, data.ChannelTypeName, $"{nameof(ColorRG<byte>)}<{channelTypeName}>", channelTypeName);
+						textWriter.WriteLosslessConversionTest(data.ColorType.Name, data.ChannelTypeName, $"{nameof(ColorRG<>)}<{channelTypeName}>", channelTypeName);
 						if (!data.GreenChannel)
 						{
 							textWriter.WriteLineNoTabs();
-							textWriter.WriteLosslessConversionTest(data.ColorType.Name, data.ChannelTypeName, $"{nameof(ColorR<byte>)}<{channelTypeName}>", channelTypeName);
+							textWriter.WriteLosslessConversionTest(data.ColorType.Name, data.ChannelTypeName, $"{nameof(ColorR<>)}<{channelTypeName}>", channelTypeName);
 						}
 					}
 				}
 				if (!data.RedChannel && !data.GreenChannel && !data.BlueChannel)
 				{
 					textWriter.WriteLineNoTabs();
-					textWriter.WriteLosslessConversionTest(data.ColorType.Name, data.ChannelTypeName, $"{nameof(ColorA<byte>)}<{channelTypeName}>", channelTypeName);
+					textWriter.WriteLosslessConversionTest(data.ColorType.Name, data.ChannelTypeName, $"{nameof(ColorA<>)}<{channelTypeName}>", channelTypeName);
 				}
 			}
 
@@ -135,11 +135,13 @@ internal static class TestClassGenerator
 
 	internal static IEnumerable<string> GetGenericColorNames()
 	{
-		yield return nameof(ColorR<byte>);
-		yield return nameof(ColorRG<byte>);
-		yield return nameof(ColorRGB<byte>);
-		yield return nameof(ColorRGBA<byte>);
-		yield return nameof(ColorA<byte>);
+		yield return nameof(ColorR<>);
+		yield return nameof(ColorRG<>);
+		yield return nameof(ColorRGB<>);
+		yield return nameof(ColorRGBA<>);
+		yield return nameof(ColorA<>);
+		yield return nameof(ColorARGB<>);
+		yield return nameof(ColorBGRA<>);
 	}
 
 	private static void MakeLosslessColorTests()

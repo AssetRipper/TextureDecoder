@@ -4,6 +4,8 @@ namespace AssetRipper.TextureDecoder.Rgb.Formats;
 
 public partial struct ColorA<T> : IColor<ColorA<T>, T> where T : unmanaged, INumberBase<T>, IMinMaxValue<T>
 {
+	public T A { get; set; }
+
 	public readonly T R 
 	{
 		get => NumericConversion.GetMinimumValueSafe<T>();
@@ -21,8 +23,6 @@ public partial struct ColorA<T> : IColor<ColorA<T>, T> where T : unmanaged, INum
 		get => NumericConversion.GetMinimumValueSafe<T>();
 		set { }
 	}
-
-	public T A { get; set; }
 
 	public ColorA(T a)
 	{
