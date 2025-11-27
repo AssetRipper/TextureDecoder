@@ -100,85 +100,85 @@ namespace AssetRipper.TextureDecoder.Tests
 		[Test]
 		public void PartialBlock_BC1([Range(1, 4)] int width, [Range(1, 4)] int height)
 		{
-			Assert.Multiple(() =>
+			using (Assert.EnterMultipleScope())
 			{
 				ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.DxtTestFiles + "test.dxt1").AsSpan()[..Bc1.BlockSize];
 				int bytesRead = Bc1.Decompress<ColorBGRA<byte>, byte>(data, width, height, out byte[] decodedData);
 				Assert.That(bytesRead, Is.EqualTo(data.Length));
 				Assert.That(decodedData, Has.Length.EqualTo(width * height * Unsafe.SizeOf<ColorBGRA<byte>>()));
-			});
+			}
 		}
 
 		[Test]
 		public void PartialBlock_BC2([Range(1, 4)] int width, [Range(1, 4)] int height)
 		{
-			Assert.Multiple(() =>
+			using (Assert.EnterMultipleScope())
 			{
 				ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.DxtTestFiles + "test.dxt3").AsSpan()[..Bc2.BlockSize];
 				int bytesRead = Bc2.Decompress<ColorBGRA<byte>, byte>(data, width, height, out byte[] decodedData);
 				Assert.That(bytesRead, Is.EqualTo(data.Length));
 				Assert.That(decodedData, Has.Length.EqualTo(width * height * Unsafe.SizeOf<ColorBGRA<byte>>()));
-			});
+			}
 		}
 
 		[Test]
 		public void PartialBlock_BC3([Range(1, 4)] int width, [Range(1, 4)] int height)
 		{
-			Assert.Multiple(() =>
+			using (Assert.EnterMultipleScope())
 			{
 				ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.DxtTestFiles + "test.dxt5").AsSpan()[..Bc3.BlockSize];
 				int bytesRead = Bc3.Decompress<ColorBGRA<byte>, byte>(data, width, height, out byte[] decodedData);
 				Assert.That(bytesRead, Is.EqualTo(data.Length));
 				Assert.That(decodedData, Has.Length.EqualTo(width * height * Unsafe.SizeOf<ColorBGRA<byte>>()));
-			});
+			}
 		}
 
 		[Test]
 		public void PartialBlock_BC4([Range(1, 4)] int width, [Range(1, 4)] int height)
 		{
-			Assert.Multiple(() =>
+			using (Assert.EnterMultipleScope())
 			{
 				ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.BcTestFiles + "test.bc4").AsSpan()[..Bc4.BlockSize];
 				int bytesRead = Bc4.Decompress<ColorBGRA<byte>, byte>(data, width, height, out byte[] decodedData);
 				Assert.That(bytesRead, Is.EqualTo(data.Length));
 				Assert.That(decodedData, Has.Length.EqualTo(width * height * Unsafe.SizeOf<ColorBGRA<byte>>()));
-			});
+			}
 		}
 
 		[Test]
 		public void PartialBlock_BC5([Range(1, 4)] int width, [Range(1, 4)] int height)
 		{
-			Assert.Multiple(() =>
+			using (Assert.EnterMultipleScope())
 			{
 				ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.BcTestFiles + "test.bc5").AsSpan()[..Bc5.BlockSize];
 				int bytesRead = Bc5.Decompress<ColorBGRA<byte>, byte>(data, width, height, out byte[] decodedData);
 				Assert.That(bytesRead, Is.EqualTo(data.Length));
 				Assert.That(decodedData, Has.Length.EqualTo(width * height * Unsafe.SizeOf<ColorBGRA<byte>>()));
-			});
+			}
 		}
 
 		[Test]
 		public void PartialBlock_BC6H([Range(1, 4)] int width, [Range(1, 4)] int height)
 		{
-			Assert.Multiple(() =>
+			using (Assert.EnterMultipleScope())
 			{
 				ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.BcTestFiles + "test.bc6h_best").AsSpan()[..Bc6h.BlockSize];
 				int bytesRead = Bc6h.Decompress<ColorBGRA<byte>, byte>(data, width, height, false, out byte[] decodedData);
 				Assert.That(bytesRead, Is.EqualTo(data.Length));
 				Assert.That(decodedData, Has.Length.EqualTo(width * height * Unsafe.SizeOf<ColorBGRA<byte>>()));
-			});
+			}
 		}
 
 		[Test]
 		public void PartialBlock_BC7([Range(1, 4)] int width, [Range(1, 4)] int height)
 		{
-			Assert.Multiple(() =>
+			using (Assert.EnterMultipleScope())
 			{
 				ReadOnlySpan<byte> data = File.ReadAllBytes(TestFileFolders.BcTestFiles + "test.bc7_best").AsSpan()[..Bc7.BlockSize];
 				int bytesRead = Bc7.Decompress<ColorBGRA<byte>, byte>(data, width, height, out byte[] decodedData);
 				Assert.That(bytesRead, Is.EqualTo(data.Length));
 				Assert.That(decodedData, Has.Length.EqualTo(width * height * Unsafe.SizeOf<ColorBGRA<byte>>()));
-			});
+			}
 		}
 
 		private static void AssertCorrectBC6HDecompression(string path, int width, int height, bool isSigned)

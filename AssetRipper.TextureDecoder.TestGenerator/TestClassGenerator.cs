@@ -220,7 +220,7 @@ internal static class TestClassGenerator
 
 		textWriter.WriteLine("var color = MakeRandomColor();");
 		textWriter.WriteLine("color.GetChannels(out var r, out var g, out var b, out var a);");
-		textWriter.WriteLine("Assert.Multiple(() =>");
+		textWriter.WriteLine("using (Assert.EnterMultipleScope())");
 		textWriter.WriteLine("{");
 		textWriter.Indent += 1;
 
@@ -230,7 +230,7 @@ internal static class TestClassGenerator
 		}
 
 		textWriter.Indent -= 1;
-		textWriter.WriteLine("});");
+		textWriter.WriteLine("};");
 
 		textWriter.Indent -= 1;
 		textWriter.WriteLine("}");
@@ -250,7 +250,7 @@ internal static class TestClassGenerator
 		}
 		textWriter.WriteLine($"color.{channel} = MakeRandomValue();");
 
-		textWriter.WriteLine("Assert.Multiple(() =>");
+		textWriter.WriteLine("using (Assert.EnterMultipleScope())");
 		textWriter.WriteLine("{");
 		textWriter.Indent += 1;
 
@@ -260,7 +260,7 @@ internal static class TestClassGenerator
 		}
 
 		textWriter.Indent -= 1;
-		textWriter.WriteLine("});");
+		textWriter.WriteLine("};");
 
 		textWriter.Indent -= 1;
 		textWriter.WriteLine("}");
@@ -310,7 +310,7 @@ internal static class TestClassGenerator
 		textWriter.WriteLine("var color = MakeRandomColor();");
 		textWriter.WriteLine("color.GetChannels(out var r, out var g, out var b, out var a);");
 		textWriter.WriteLine("color.SetChannels(r, g, b, a);");
-		textWriter.WriteLine("Assert.Multiple(() =>");
+		textWriter.WriteLine("using (Assert.EnterMultipleScope())");
 		textWriter.WriteLine("{");
 		textWriter.Indent += 1;
 
@@ -320,7 +320,7 @@ internal static class TestClassGenerator
 		}
 
 		textWriter.Indent -= 1;
-		textWriter.WriteLine("});");
+		textWriter.WriteLine("};");
 
 		textWriter.Indent -= 1;
 		textWriter.WriteLine("}");

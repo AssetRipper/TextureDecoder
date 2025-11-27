@@ -55,12 +55,12 @@ internal partial class GenericColorTests<TColor, TChannelValue> where TColor : u
 		TChannelValue b = color.B;
 		TChannelValue a = color.A;
 		color.R = MakeRandomValue();
-		Assert.Multiple(() =>
+		using (Assert.EnterMultipleScope())
 		{
 			Assert.That(color.G, Is.EqualTo(g));
 			Assert.That(color.B, Is.EqualTo(b));
 			Assert.That(color.A, Is.EqualTo(a));
-		});
+		}
 	}
 
 	[Test]
@@ -71,12 +71,12 @@ internal partial class GenericColorTests<TColor, TChannelValue> where TColor : u
 		TChannelValue b = color.B;
 		TChannelValue a = color.A;
 		color.G = MakeRandomValue();
-		Assert.Multiple(() =>
+		using (Assert.EnterMultipleScope())
 		{
 			Assert.That(color.R, Is.EqualTo(r));
 			Assert.That(color.B, Is.EqualTo(b));
 			Assert.That(color.A, Is.EqualTo(a));
-		});
+		}
 	}
 
 	[Test]
@@ -87,12 +87,12 @@ internal partial class GenericColorTests<TColor, TChannelValue> where TColor : u
 		TChannelValue g = color.G;
 		TChannelValue a = color.A;
 		color.B = MakeRandomValue();
-		Assert.Multiple(() =>
+		using (Assert.EnterMultipleScope())
 		{
 			Assert.That(color.R, Is.EqualTo(r));
 			Assert.That(color.G, Is.EqualTo(g));
 			Assert.That(color.A, Is.EqualTo(a));
-		});
+		}
 	}
 
 	[Test]
@@ -103,12 +103,12 @@ internal partial class GenericColorTests<TColor, TChannelValue> where TColor : u
 		TChannelValue g = color.G;
 		TChannelValue b = color.B;
 		color.A = MakeRandomValue();
-		Assert.Multiple(() =>
+		using (Assert.EnterMultipleScope())
 		{
 			Assert.That(color.R, Is.EqualTo(r));
 			Assert.That(color.G, Is.EqualTo(g));
 			Assert.That(color.B, Is.EqualTo(b));
-		});
+		}
 	}
 
 	[Test]
@@ -116,13 +116,13 @@ internal partial class GenericColorTests<TColor, TChannelValue> where TColor : u
 	{
 		TColor color = MakeRandomColor();
 		color.GetChannels(out TChannelValue r, out TChannelValue g, out TChannelValue b, out TChannelValue a);
-		Assert.Multiple(() =>
+		using (Assert.EnterMultipleScope())
 		{
 			Assert.That(color.R, Is.EqualTo(r));
 			Assert.That(color.G, Is.EqualTo(g));
 			Assert.That(color.B, Is.EqualTo(b));
 			Assert.That(color.A, Is.EqualTo(a));
-		});
+		}
 	}
 
 	[Test]
@@ -131,13 +131,13 @@ internal partial class GenericColorTests<TColor, TChannelValue> where TColor : u
 		TColor color = MakeRandomColor();
 		color.GetChannels(out TChannelValue r, out TChannelValue g, out TChannelValue b, out TChannelValue a);
 		color.SetChannels(r, g, b, a);
-		Assert.Multiple(() =>
+		using (Assert.EnterMultipleScope())
 		{
 			Assert.That(color.R, Is.EqualTo(r));
 			Assert.That(color.G, Is.EqualTo(g));
 			Assert.That(color.B, Is.EqualTo(b));
 			Assert.That(color.A, Is.EqualTo(a));
-		});
+		}
 	}
 
 	private static TChannelValue MakeRandomValue() => ColorRandom<TColor, TChannelValue>.MakeRandomValue();

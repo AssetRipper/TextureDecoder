@@ -18,13 +18,13 @@ public partial class ColorRGB9e5Tests
 	{
 		var color = MakeRandomColor();
 		color.GetChannels(out var r, out var g, out var b, out var a);
-		Assert.Multiple(() =>
+		using (Assert.EnterMultipleScope())
 		{
 			Assert.That(color.R, Is.EqualTo(r));
 			Assert.That(color.G, Is.EqualTo(g));
 			Assert.That(color.B, Is.EqualTo(b));
 			Assert.That(color.A, Is.EqualTo(a));
-		});
+		};
 	}
 
 	[Test]
@@ -33,13 +33,13 @@ public partial class ColorRGB9e5Tests
 		var color = MakeRandomColor();
 		color.GetChannels(out var r, out var g, out var b, out var a);
 		color.SetChannels(r, g, b, a);
-		Assert.Multiple(() =>
+		using (Assert.EnterMultipleScope())
 		{
 			Assert.That(color.R, Is.EqualTo(r));
 			Assert.That(color.G, Is.EqualTo(g));
 			Assert.That(color.B, Is.EqualTo(b));
 			Assert.That(color.A, Is.EqualTo(a));
-		});
+		};
 	}
 
 	public static ColorRGB9e5 MakeRandomColor() => ColorRandom<ColorRGB9e5, double>.MakeRandomColor();

@@ -30,11 +30,11 @@ internal static class ByteArrayDeviation
 		double standardDeviation = Math.Sqrt(sumOfSquaredDeviations / (decoded.Length - 1));
 		//Not sure if Bessel's correction is needed here, but it doesn't hurt, especially since length is around 1 million in the current use.
 
-		Assert.Multiple(() =>
+		using (Assert.EnterMultipleScope())
 		{
 			Assert.That(mean, Is.LessThan(maxMeanDeviation), "Mean too far positive");
 			Assert.That(mean, Is.GreaterThan(-maxMeanDeviation), "Mean too far negative");
 			Assert.That(standardDeviation, Is.LessThan(maxStandardDeviation), "Standard deviation too large");
-		});
+		}
 	}
 }

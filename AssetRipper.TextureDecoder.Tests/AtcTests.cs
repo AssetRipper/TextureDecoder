@@ -9,11 +9,11 @@ namespace AssetRipper.TextureDecoder.Tests
 		{
 			byte[] data = File.ReadAllBytes(TestFileFolders.AtcTestFiles + "test.atc_rgb4");
 			int bytesRead = Atc.AtcDecoder.DecompressAtcRgb4<ColorBGRA<byte>, byte>(data, 256, 256, out byte[] decodedData);
-			Assert.Multiple(() =>
+			using (Assert.EnterMultipleScope())
 			{
 				Assert.That(bytesRead, Is.EqualTo(data.Length));
 				Assert.That(decodedData, Is.EqualTo(File.ReadAllBytes(TestFileFolders.AtcTestFiles + "test.atc_rgb4_decoded")));
-			});
+			}
 		}
 
 		[Test]
@@ -21,11 +21,11 @@ namespace AssetRipper.TextureDecoder.Tests
 		{
 			byte[] data = File.ReadAllBytes(TestFileFolders.AtcTestFiles + "test.atc_rgba8");
 			int bytesRead = Atc.AtcDecoder.DecompressAtcRgba8<ColorBGRA<byte>, byte>(data, 256, 256, out byte[] decodedData);
-			Assert.Multiple(() =>
+			using (Assert.EnterMultipleScope())
 			{
 				Assert.That(bytesRead, Is.EqualTo(data.Length));
 				Assert.That(decodedData, Is.EqualTo(File.ReadAllBytes(TestFileFolders.AtcTestFiles + "test.atc_rgba8_decoded")));
-			});
+			}
 		}
 	}
 }

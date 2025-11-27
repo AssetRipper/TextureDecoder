@@ -57,12 +57,12 @@ public partial class ColorRGB16Tests
 		var b = color.B;
 		var a = color.A;
 		color.R = MakeRandomValue();
-		Assert.Multiple(() =>
+		using (Assert.EnterMultipleScope())
 		{
 			Assert.That(color.G, Is.EqualTo(g));
 			Assert.That(color.B, Is.EqualTo(b));
 			Assert.That(color.A, Is.EqualTo(a));
-		});
+		};
 	}
 	
 	[Test]
@@ -73,12 +73,12 @@ public partial class ColorRGB16Tests
 		var b = color.B;
 		var a = color.A;
 		color.G = MakeRandomValue();
-		Assert.Multiple(() =>
+		using (Assert.EnterMultipleScope())
 		{
 			Assert.That(color.R, Is.EqualTo(r));
 			Assert.That(color.B, Is.EqualTo(b));
 			Assert.That(color.A, Is.EqualTo(a));
-		});
+		};
 	}
 	
 	[Test]
@@ -89,12 +89,12 @@ public partial class ColorRGB16Tests
 		var g = color.G;
 		var a = color.A;
 		color.B = MakeRandomValue();
-		Assert.Multiple(() =>
+		using (Assert.EnterMultipleScope())
 		{
 			Assert.That(color.R, Is.EqualTo(r));
 			Assert.That(color.G, Is.EqualTo(g));
 			Assert.That(color.A, Is.EqualTo(a));
-		});
+		};
 	}
 	
 	[Test]
@@ -105,12 +105,12 @@ public partial class ColorRGB16Tests
 		var g = color.G;
 		var b = color.B;
 		color.A = MakeRandomValue();
-		Assert.Multiple(() =>
+		using (Assert.EnterMultipleScope())
 		{
 			Assert.That(color.R, Is.EqualTo(r));
 			Assert.That(color.G, Is.EqualTo(g));
 			Assert.That(color.B, Is.EqualTo(b));
-		});
+		};
 	}
 	
 	[Test]
@@ -118,13 +118,13 @@ public partial class ColorRGB16Tests
 	{
 		var color = MakeRandomColor();
 		color.GetChannels(out var r, out var g, out var b, out var a);
-		Assert.Multiple(() =>
+		using (Assert.EnterMultipleScope())
 		{
 			Assert.That(color.R, Is.EqualTo(r));
 			Assert.That(color.G, Is.EqualTo(g));
 			Assert.That(color.B, Is.EqualTo(b));
 			Assert.That(color.A, Is.EqualTo(a));
-		});
+		};
 	}
 
 	[Test]
@@ -133,13 +133,13 @@ public partial class ColorRGB16Tests
 		var color = MakeRandomColor();
 		color.GetChannels(out var r, out var g, out var b, out var a);
 		color.SetChannels(r, g, b, a);
-		Assert.Multiple(() =>
+		using (Assert.EnterMultipleScope())
 		{
 			Assert.That(color.R, Is.EqualTo(r));
 			Assert.That(color.G, Is.EqualTo(g));
 			Assert.That(color.B, Is.EqualTo(b));
 			Assert.That(color.A, Is.EqualTo(a));
-		});
+		};
 	}
 
 	public static ColorRGB16 MakeRandomColor() => ColorRandom<ColorRGB16, byte>.MakeRandomColor();

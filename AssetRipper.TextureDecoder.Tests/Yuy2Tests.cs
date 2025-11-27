@@ -14,11 +14,11 @@ namespace AssetRipper.TextureDecoder.Tests
 		{
 			byte[] input = File.ReadAllBytes(TestFileFolders.Yuy2TestFiles + "test.yuy2");
 			int bytesRead = Yuy2Decoder.DecompressYUY2<ColorBGRA<byte>, byte>(input, TestImageWidth, TestImageHeight, out byte[] decodedData);
-			Assert.Multiple(() =>
+			using (Assert.EnterMultipleScope())
 			{
 				Assert.That(bytesRead, Is.EqualTo(input.Length));
 				Assert.That(decodedData, Has.Length.EqualTo(TestImageWidth * TestImageHeight * Unsafe.SizeOf<ColorBGRA<byte>>()));
-			});
+			}
 		}
 	}
 }
