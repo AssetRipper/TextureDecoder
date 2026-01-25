@@ -54,22 +54,28 @@ internal class Program
 					if (ConvertEstimate(originalMaxValue, ia, ib, ic) == newMaxValue)
 					{
 						float error = 0;
+						bool anyIncorrect = false;
 						for (uint x = 1; x < originalMaxValue; x++)
 						{
 							uint y = ConvertEstimate(x, ia, ib, ic);
 							float yExact = (float)x * newMaxValue / originalMaxValue;
+							uint yExactRounded = (uint)float.Round(yExact);
+							anyIncorrect |= (y != yExactRounded);
 							float diff = yExact - y;
 							error += diff * diff;
+						}
+						if (!anyIncorrect)
+						{
+							a = ia;
+							b = ib;
+							c = ic;
+							return;
 						}
 						if (error < bestError)
 						{
 							a = ia;
 							b = ib;
 							c = ic;
-							if (error == 0)//Huge performance savings for when newBitCount / originalBitCount has no remainder.
-							{
-								return;
-							}
 							bestError = error;
 						}
 					}
