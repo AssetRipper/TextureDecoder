@@ -13,7 +13,6 @@
   <Folder Name="/Solution Items/Workflows/">
     <File Path=".github/workflows/build.yml" />
   </Folder>
-  <Project Path="AssetRipper.TextureDecoder.Benchmarks/AssetRipper.TextureDecoder.Benchmarks.csproj" />
   <Project Path="AssetRipper.TextureDecoder.ColorGenerator/AssetRipper.TextureDecoder.ColorGenerator.csproj" />
   <Project Path="AssetRipper.TextureDecoder.ConsoleApp/AssetRipper.TextureDecoder.ConsoleApp.csproj" />
   <Project Path="AssetRipper.TextureDecoder.Paths/AssetRipper.TextureDecoder.Paths.csproj" />
