@@ -64,5 +64,25 @@ namespace AssetRipper.TextureDecoder.Rgb
 				throw new ArgumentException("Destination span is not large enough to hold the converted data.", nameof(destinationSpan));
 			}
 		}
+
+		public static void SRgbToLinear<TColor, TChannel>(Span<TColor> span)
+			where TChannel : unmanaged
+			where TColor : unmanaged, IColor<TChannel>
+		{
+			for (int i = 0; i < span.Length; i++)
+			{
+				span[i] = span[i].SRgbToLinear<TColor, TChannel>();
+			}
+		}
+
+		public static void LinearToSRgb<TColor, TChannel>(Span<TColor> span)
+			where TChannel : unmanaged
+			where TColor : unmanaged, IColor<TChannel>
+		{
+			for (int i = 0; i < span.Length; i++)
+			{
+				span[i] = span[i].LinearToSRgb<TColor, TChannel>();
+			}
+		}
 	}
 }

@@ -92,4 +92,30 @@ public static class Color
 			return destination;
 		}
 	}
+
+	internal static TColor SRgbToLinear<TColor, TChannel>(this TColor color)
+		where TChannel : unmanaged
+		where TColor : unmanaged, IColor<TChannel>
+	{
+		color.GetChannels(out TChannel r, out TChannel g, out TChannel b, out TChannel a);
+		color.SetChannels(
+			SRgb.ToLinear(r),
+			SRgb.ToLinear(g),
+			SRgb.ToLinear(b),
+			a);
+		return color;
+	}
+
+	internal static TColor LinearToSRgb<TColor, TChannel>(this TColor color)
+		where TChannel : unmanaged
+		where TColor : unmanaged, IColor<TChannel>
+	{
+		color.GetChannels(out TChannel r, out TChannel g, out TChannel b, out TChannel a);
+		color.SetChannels(
+			SRgb.FromLinear(r),
+			SRgb.FromLinear(g),
+			SRgb.FromLinear(b),
+			a);
+		return color;
+	}
 }
