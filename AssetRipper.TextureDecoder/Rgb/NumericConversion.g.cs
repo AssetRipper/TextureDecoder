@@ -187,7 +187,7 @@ static partial class NumericConversion
 		}
 		else if (typeof(TTo) == typeof(Half))
 		{
-			// There isn't enough precision to convert from anything bigger than byte to Half, so we convert to float first.
+			// There isn't enough precision to convert from byte to Half, so we convert to float first.
 			float x = ConvertByte<float>(value);
 			Half converted = (Half)x;
 			return Unsafe.As<Half, TTo>(ref converted);
@@ -327,7 +327,7 @@ static partial class NumericConversion
 		}
 		else if (typeof(TTo) == typeof(Half))
 		{
-			// There isn't enough precision to convert from anything bigger than byte to Half, so we convert to float first.
+			// There isn't enough precision to convert from ushort to Half, so we convert to float first.
 			float x = ConvertUInt16<float>(value);
 			Half converted = (Half)x;
 			return Unsafe.As<Half, TTo>(ref converted);
@@ -470,14 +470,16 @@ static partial class NumericConversion
 		}
 		else if (typeof(TTo) == typeof(Half))
 		{
-			// There isn't enough precision to convert from anything bigger than byte to Half, so we convert to float first.
-			float x = ConvertUInt32<float>(value);
+			// There isn't enough precision to convert from uint to Half, so we convert to double first.
+			double x = ConvertUInt32<double>(value);
 			Half converted = (Half)x;
 			return Unsafe.As<Half, TTo>(ref converted);
 		}
 		else if (typeof(TTo) == typeof(float))
 		{
-			float converted = (float)value / (float)uint.MaxValue;
+			// There isn't enough precision to convert from uint to float, so we convert to double first.
+			double x = ConvertUInt32<double>(value);
+			float converted = (float)x;
 			return Unsafe.As<float, TTo>(ref converted);
 		}
 		else if (typeof(TTo) == typeof(NFloat))
@@ -640,14 +642,16 @@ static partial class NumericConversion
 		}
 		else if (typeof(TTo) == typeof(Half))
 		{
-			// There isn't enough precision to convert from anything bigger than byte to Half, so we convert to float first.
-			float x = ConvertUInt64<float>(value);
+			// There isn't enough precision to convert from ulong to Half, so we convert to double first.
+			double x = ConvertUInt64<double>(value);
 			Half converted = (Half)x;
 			return Unsafe.As<Half, TTo>(ref converted);
 		}
 		else if (typeof(TTo) == typeof(float))
 		{
-			float converted = (float)value / (float)ulong.MaxValue;
+			// There isn't enough precision to convert from ulong to float, so we convert to double first.
+			double x = ConvertUInt64<double>(value);
+			float converted = (float)x;
 			return Unsafe.As<float, TTo>(ref converted);
 		}
 		else if (typeof(TTo) == typeof(NFloat))
@@ -785,14 +789,16 @@ static partial class NumericConversion
 		}
 		else if (typeof(TTo) == typeof(Half))
 		{
-			// There isn't enough precision to convert from anything bigger than byte to Half, so we convert to float first.
-			float x = ConvertUInt128<float>(value);
+			// There isn't enough precision to convert from UInt128 to Half, so we convert to double first.
+			double x = ConvertUInt128<double>(value);
 			Half converted = (Half)x;
 			return Unsafe.As<Half, TTo>(ref converted);
 		}
 		else if (typeof(TTo) == typeof(float))
 		{
-			float converted = (float)value / (float)UInt128.MaxValue;
+			// There isn't enough precision to convert from UInt128 to float, so we convert to double first.
+			double x = ConvertUInt128<double>(value);
+			float converted = (float)x;
 			return Unsafe.As<float, TTo>(ref converted);
 		}
 		else if (typeof(TTo) == typeof(NFloat))
@@ -834,7 +840,7 @@ static partial class NumericConversion
 		}
 		else if (typeof(TTo) == typeof(byte))
 		{
-			// We use float because it has enough precision to convert from Half to any integer type.
+			// We use float because it has enough precision to convert from Half to byte.
 			return ConvertSingle<TTo>((float)value);
 		}
 		else if (typeof(TTo) == typeof(short))
@@ -844,7 +850,7 @@ static partial class NumericConversion
 		}
 		else if (typeof(TTo) == typeof(ushort))
 		{
-			// We use float because it has enough precision to convert from Half to any integer type.
+			// We use float because it has enough precision to convert from Half to ushort.
 			return ConvertSingle<TTo>((float)value);
 		}
 		else if (typeof(TTo) == typeof(int))
@@ -854,8 +860,8 @@ static partial class NumericConversion
 		}
 		else if (typeof(TTo) == typeof(uint))
 		{
-			// We use float because it has enough precision to convert from Half to any integer type.
-			return ConvertSingle<TTo>((float)value);
+			// We use double because it has enough precision to convert from Half to uint.
+			return ConvertDouble<TTo>((double)value);
 		}
 		else if (typeof(TTo) == typeof(nint))
 		{
@@ -890,8 +896,8 @@ static partial class NumericConversion
 		}
 		else if (typeof(TTo) == typeof(ulong))
 		{
-			// We use float because it has enough precision to convert from Half to any integer type.
-			return ConvertSingle<TTo>((float)value);
+			// We use double because it has enough precision to convert from Half to ulong.
+			return ConvertDouble<TTo>((double)value);
 		}
 		else if (typeof(TTo) == typeof(Int128))
 		{
@@ -900,8 +906,8 @@ static partial class NumericConversion
 		}
 		else if (typeof(TTo) == typeof(UInt128))
 		{
-			// We use float because it has enough precision to convert from Half to any integer type.
-			return ConvertSingle<TTo>((float)value);
+			// We use double because it has enough precision to convert from Half to UInt128.
+			return ConvertDouble<TTo>((double)value);
 		}
 		else if (typeof(TTo) == typeof(Half))
 		{
@@ -975,10 +981,8 @@ static partial class NumericConversion
 		}
 		else if (typeof(TTo) == typeof(uint))
 		{
-			// x must be clamped because of rounding errors.
-			float x = value * (float)uint.MaxValue;
-			uint converted = (float)uint.MaxValue < x ? uint.MaxValue : (x > (float)uint.MinValue ? (uint)x : uint.MinValue);
-			return Unsafe.As<uint, TTo>(ref converted);
+			// We use double because it has enough precision to convert from float to uint.
+			return ConvertDouble<TTo>((double)value);
 		}
 		else if (typeof(TTo) == typeof(nint))
 		{
@@ -1013,10 +1017,8 @@ static partial class NumericConversion
 		}
 		else if (typeof(TTo) == typeof(ulong))
 		{
-			// x must be clamped because of rounding errors.
-			float x = value * (float)ulong.MaxValue;
-			ulong converted = (float)ulong.MaxValue < x ? ulong.MaxValue : (x > (float)ulong.MinValue ? (ulong)x : ulong.MinValue);
-			return Unsafe.As<ulong, TTo>(ref converted);
+			// We use double because it has enough precision to convert from float to ulong.
+			return ConvertDouble<TTo>((double)value);
 		}
 		else if (typeof(TTo) == typeof(Int128))
 		{
@@ -1025,10 +1027,8 @@ static partial class NumericConversion
 		}
 		else if (typeof(TTo) == typeof(UInt128))
 		{
-			// x must be clamped because of rounding errors.
-			float x = value * (float)UInt128.MaxValue;
-			UInt128 converted = (float)UInt128.MaxValue < x ? UInt128.MaxValue : (x > (float)UInt128.MinValue ? (UInt128)x : UInt128.MinValue);
-			return Unsafe.As<UInt128, TTo>(ref converted);
+			// We use double because it has enough precision to convert from float to UInt128.
+			return ConvertDouble<TTo>((double)value);
 		}
 		else if (typeof(TTo) == typeof(Half))
 		{

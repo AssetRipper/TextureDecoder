@@ -68,10 +68,17 @@ public static class CSharpPrimitives
 		return type == typeof(Half) || type == typeof(float) || type == typeof(NFloat) || type == typeof(double) || type == typeof(decimal);
 	}
 
+	public static bool IsInteger(Type type)
+	{
+		return IsUnsignedInteger(type) || IsSignedInteger(type);
+	}
+
 	public static bool IsUnsignedInteger(Type type)
 	{
 		return type == typeof(byte) || type == typeof(ushort) || type == typeof(uint) || type == typeof(nuint) || type == typeof(ulong) || type == typeof(UInt128);
 	}
+
+	public static bool IsSignedInteger(Type type) => IsSignedInteger(type, out _);
 
 	public static bool IsSignedInteger(Type type, [NotNullWhen(true)] out Type? unsignedType)
 	{
@@ -193,6 +200,21 @@ public static class CSharpPrimitives
 		{
 			return type.Name;
 		}
+	}
+
+	public static Data GetDataForIntegerFloatingPointConversion(Data integerType, Data floatingPointType)
+	{
+		if (!IsInteger(integerType.Type))
+		{
+			throw new ArgumentException("The provided integer type is not an integer type.", nameof(integerType));
+		}
+		if (!IsFloatingPoint(floatingPointType.Type))
+		{
+			throw new ArgumentException("The provided floating point type is not a floating point type.", nameof(floatingPointType));
+		}
+
+		Data result = integerType.Size < sizeof(uint) ? Dictionary[typeof(float)] : Dictionary[typeof(double)];
+		return floatingPointType.Size >= result.Size ? floatingPointType : result;
 	}
 
 	public abstract class Data

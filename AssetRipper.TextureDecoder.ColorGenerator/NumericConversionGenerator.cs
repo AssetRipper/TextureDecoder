@@ -163,10 +163,11 @@ internal static class NumericConversionGenerator
 							else
 							{
 								Debug.Assert(to.IsUnsignedInteger);
-								if (from.Type == typeof(Half))
+								CSharpPrimitives.Data conversionType = CSharpPrimitives.GetDataForIntegerFloatingPointConversion(to, from);
+								if (conversionType != from)
 								{
-									writer.WriteComment("We use float because it has enough precision to convert from Half to any integer type.");
-									writer.WriteLine($"return {ConvertMethodName(typeof(float))}<TTo>((float)value);");
+									writer.WriteComment($"We use {conversionType.LangName} because it has enough precision to convert from {from.LangName} to {to.LangName}.");
+									writer.WriteLine($"return {ConvertMethodName(conversionType.Type)}<TTo>(({conversionType.LangName})value);");
 								}
 								else
 								{
@@ -184,12 +185,13 @@ internal static class NumericConversionGenerator
 							Debug.Assert(from.IsUnsignedInteger);
 							if (to.IsFloatingPoint)
 							{
-								if (to.Type == typeof(Half))
+								CSharpPrimitives.Data conversionType = CSharpPrimitives.GetDataForIntegerFloatingPointConversion(from, to);
+								if (conversionType != to)
 								{
-									writer.WriteComment("There isn't enough precision to convert from anything bigger than byte to Half, so we convert to float first.");
-									writer.WriteLine($"float x = {methodName}<float>(value);");
-									writer.WriteLine("Half converted = (Half)x;");
-									writer.WriteLine("return Unsafe.As<Half, TTo>(ref converted);");
+									writer.WriteComment($"There isn't enough precision to convert from {from.LangName} to {to.LangName}, so we convert to {conversionType.LangName} first.");
+									writer.WriteLine($"{conversionType.LangName} x = {methodName}<{conversionType.LangName}>(value);");
+									writer.WriteLine($"{to.LangName} converted = ({to.LangName})x;");
+									writer.WriteLine($"return Unsafe.As<{to.LangName}, TTo>(ref converted);");
 								}
 								else
 								{
