@@ -229,6 +229,13 @@ internal static class NumericConversionGenerator
 										writer.WriteLine("byte converted = unchecked((byte)x);");
 										writer.WriteLine("return Unsafe.As<byte, TTo>(ref converted);");
 									}
+									else if (from.Size < sizeof(double) && to.Size < sizeof(double))
+									{
+										writer.WriteLine($"double interpolated = (double)value / (double){from.MaxValue};");
+										writer.WriteLine($"double exact = interpolated * (double){to.MaxValue};");
+										writer.WriteLine($"{to.LangName} converted = ({to.LangName})double.Round(exact, MidpointRounding.AwayFromZero);");
+										writer.WriteLine($"return Unsafe.As<{to.LangName}, TTo>(ref converted);");
+									}
 									else
 									{
 										writer.WriteComment($"There are more accurate ways to map {from.TypeName} onto {to.TypeName}, but this is the simplest.");

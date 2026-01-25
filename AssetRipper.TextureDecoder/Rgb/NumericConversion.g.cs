@@ -383,12 +383,10 @@ static partial class NumericConversion
 		else if (typeof(TTo) == typeof(byte))
 		{
 			// See https://github.com/AssetRipper/TextureDecoder/issues/19
-			// There are more accurate ways to map UInt32 onto Byte, but this is the simplest.
-			unchecked
-			{
-				byte converted = (byte)((uint)value >> 24);
-				return Unsafe.As<byte, TTo>(ref converted);
-			}
+			double interpolated = (double)value / (double)uint.MaxValue;
+			double exact = interpolated * (double)byte.MaxValue;
+			byte converted = (byte)double.Round(exact, MidpointRounding.AwayFromZero);
+			return Unsafe.As<byte, TTo>(ref converted);
 		}
 		else if (typeof(TTo) == typeof(short))
 		{
@@ -398,12 +396,10 @@ static partial class NumericConversion
 		else if (typeof(TTo) == typeof(ushort))
 		{
 			// See https://github.com/AssetRipper/TextureDecoder/issues/19
-			// There are more accurate ways to map UInt32 onto UInt16, but this is the simplest.
-			unchecked
-			{
-				ushort converted = (ushort)((uint)value >> 16);
-				return Unsafe.As<ushort, TTo>(ref converted);
-			}
+			double interpolated = (double)value / (double)uint.MaxValue;
+			double exact = interpolated * (double)ushort.MaxValue;
+			ushort converted = (ushort)double.Round(exact, MidpointRounding.AwayFromZero);
+			return Unsafe.As<ushort, TTo>(ref converted);
 		}
 		else if (typeof(TTo) == typeof(int))
 		{
