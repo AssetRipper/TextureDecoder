@@ -76,16 +76,16 @@ internal static class BinaryWriterExtensions
 		switch (Unsafe.SizeOf<T>())
 		{
 			case sizeof(byte):
-				writer.Write(Unsafe.As<T, byte>(ref value));
+				writer.Write(Unsafe.BitCast<T, byte>(value));
 				break;
 			case sizeof(ushort):
-				writer.Write(Unsafe.As<T, ushort>(ref value));
+				writer.Write(Unsafe.BitCast<T, ushort>(value));
 				break;
 			case sizeof(uint):
-				writer.Write(Unsafe.As<T, uint>(ref value));
+				writer.Write(Unsafe.BitCast<T, uint>(value));
 				break;
 			case sizeof(ulong):
-				writer.Write(Unsafe.As<T, ulong>(ref value));
+				writer.Write(Unsafe.BitCast<T, ulong>(value));
 				break;
 		}
 	}

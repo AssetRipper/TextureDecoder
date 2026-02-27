@@ -42,7 +42,7 @@ public static partial class NumericConversion
 
 		TFrom SignBit = TFrom.One << (Unsafe.SizeOf<TFrom>() * 8 - 1);
 		TFrom converted = (SignBit ^ value);
-		return Unsafe.As<TFrom, TTo>(ref converted);
+		return Unsafe.BitCast<TFrom, TTo>(converted);
 	}
 
 	[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
@@ -56,6 +56,6 @@ public static partial class NumericConversion
 		}
 
 		TTo SignBit = TTo.One << (Unsafe.SizeOf<TTo>() * 8 - 1);
-		return SignBit ^ Unsafe.As<TFrom, TTo>(ref value);
+		return SignBit ^ Unsafe.BitCast<TFrom, TTo>(value);
 	}
 }

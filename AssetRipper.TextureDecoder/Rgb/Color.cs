@@ -82,7 +82,7 @@ public static class Color
 	{
 		if (typeof(TThis) == typeof(TTarget))
 		{
-			return Unsafe.As<TThis, TTarget>(ref color);
+			return Unsafe.BitCast<TThis, TTarget>(color);
 		}
 		else
 		{

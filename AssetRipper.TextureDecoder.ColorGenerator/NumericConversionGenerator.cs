@@ -82,14 +82,14 @@ internal static class NumericConversionGenerator
 			writer.WriteLine("if (typeof(TFrom) == typeof(TTo))");
 			using (new CurlyBrackets(writer))
 			{
-				writer.WriteLine("return Unsafe.As<TFrom, TTo>(ref value);");
+				writer.WriteLine("return Unsafe.BitCast<TFrom, TTo>(value);");
 			}
 			foreach (CSharpPrimitives.Data from in CSharpPrimitives.List)
 			{
 				writer.WriteLine($"else if (typeof(TFrom) == typeof({from.LangName}))");
 				using (new CurlyBrackets(writer))
 				{
-					writer.WriteLine($"return {ConvertMethodName(from.Type)}<TTo>(Unsafe.As<TFrom, {from.LangName}>(ref value));");
+					writer.WriteLine($"return {ConvertMethodName(from.Type)}<TTo>(Unsafe.BitCast<TFrom, {from.LangName}>(value));");
 				}
 			}
 			writer.WriteLine("else");
@@ -133,32 +133,32 @@ internal static class NumericConversionGenerator
 					{
 						if (from == to)
 						{
-							writer.WriteLine($"return Unsafe.As<{to.LangName}, TTo>(ref value);");
+							writer.WriteLine($"return Unsafe.BitCast<{to.LangName}, TTo>(value);");
 						}
 						else if (to.HasPointerSize(out CSharpPrimitives.Data? bit32To, out CSharpPrimitives.Data? bit64To))
 						{
 							using (new If(writer, "IntPtr.Size == sizeof(int)"))
 							{
 								writer.WriteLine($"{to.LangName} converted = ({to.LangName}){methodName}<{bit32To.LangName}>(value);");
-								writer.WriteLine($"return Unsafe.As<{to.LangName}, TTo>(ref converted);");
+								writer.WriteLine($"return Unsafe.BitCast<{to.LangName}, TTo>(converted);");
 							}
 							using (new Else(writer))
 							{
 								writer.WriteLine($"{to.LangName} converted = ({to.LangName}){methodName}<{bit64To.LangName}>(value);");
-								writer.WriteLine($"return Unsafe.As<{to.LangName}, TTo>(ref converted);");
+								writer.WriteLine($"return Unsafe.BitCast<{to.LangName}, TTo>(converted);");
 							}
 						}
 						else if (to.IsSignedInteger(out CSharpPrimitives.Data? unsignedTo))
 						{
 							writer.WriteLine($"{to.LangName} converted = {ChangeSign}({methodName}<{unsignedTo.LangName}>(value));");
-							writer.WriteLine($"return Unsafe.As<{to.LangName}, TTo>(ref converted);");
+							writer.WriteLine($"return Unsafe.BitCast<{to.LangName}, TTo>(converted);");
 						}
 						else if (from.IsFloatingPoint)
 						{
 							if (to.IsFloatingPoint)
 							{
 								writer.WriteLine($"{to.LangName} converted = ({to.LangName})value;");
-								writer.WriteLine($"return Unsafe.As<{to.LangName}, TTo>(ref converted);");
+								writer.WriteLine($"return Unsafe.BitCast<{to.LangName}, TTo>(converted);");
 							}
 							else
 							{
@@ -176,7 +176,7 @@ internal static class NumericConversionGenerator
 									string maxValue = to.MaxValue;
 									writer.WriteLine($"{from.LangName} x = value * ({from.LangName}){maxValue};");
 									writer.WriteLine($"{to.LangName} converted = ({from.LangName}){maxValue} < x ? {maxValue} : (x > ({from.LangName}){minValue} ? ({to.LangName})x : {minValue});");
-									writer.WriteLine($"return Unsafe.As<{to.LangName}, TTo>(ref converted);");
+									writer.WriteLine($"return Unsafe.BitCast<{to.LangName}, TTo>(converted);");
 								}
 							}
 						}
@@ -191,12 +191,12 @@ internal static class NumericConversionGenerator
 									writer.WriteComment($"There isn't enough precision to convert from {from.LangName} to {to.LangName}, so we convert to {conversionType.LangName} first.");
 									writer.WriteLine($"{conversionType.LangName} x = {methodName}<{conversionType.LangName}>(value);");
 									writer.WriteLine($"{to.LangName} converted = ({to.LangName})x;");
-									writer.WriteLine($"return Unsafe.As<{to.LangName}, TTo>(ref converted);");
+									writer.WriteLine($"return Unsafe.BitCast<{to.LangName}, TTo>(converted);");
 								}
 								else
 								{
 									writer.WriteLine($"{to.LangName} converted = ({to.LangName})value / ({to.LangName}){from.MaxValue};");
-									writer.WriteLine($"return Unsafe.As<{to.LangName}, TTo>(ref converted);");
+									writer.WriteLine($"return Unsafe.BitCast<{to.LangName}, TTo>(converted);");
 								}
 							}
 							else
@@ -216,7 +216,7 @@ internal static class NumericConversionGenerator
 											writer.Write($"(({conversionType})value << {i * from.Size * 8}) | ");
 										}
 										writer.WriteLine("value);");
-										writer.WriteLine($"return Unsafe.As<{to.LangName}, TTo>(ref converted);");
+										writer.WriteLine($"return Unsafe.BitCast<{to.LangName}, TTo>(converted);");
 									}
 								}
 								else
@@ -227,14 +227,14 @@ internal static class NumericConversionGenerator
 										writer.WriteComment("This is a special case where we already know an optimal algorithm.");
 										writer.WriteLine("uint x = (value * 255u + 32895u) >> 16;");
 										writer.WriteLine("byte converted = unchecked((byte)x);");
-										writer.WriteLine("return Unsafe.As<byte, TTo>(ref converted);");
+										writer.WriteLine("return Unsafe.BitCast<byte, TTo>(converted);");
 									}
 									else if (from.Size < sizeof(double) && to.Size < sizeof(double))
 									{
 										writer.WriteLine($"double interpolated = (double)value / (double){from.MaxValue};");
 										writer.WriteLine($"double exact = interpolated * (double){to.MaxValue};");
 										writer.WriteLine($"{to.LangName} converted = ({to.LangName})double.Round(exact, MidpointRounding.AwayFromZero);");
-										writer.WriteLine($"return Unsafe.As<{to.LangName}, TTo>(ref converted);");
+										writer.WriteLine($"return Unsafe.BitCast<{to.LangName}, TTo>(converted);");
 									}
 									else
 									{
@@ -245,7 +245,7 @@ internal static class NumericConversionGenerator
 										{
 											int offset = (from.Size / to.Size - 1) * to.Size * 8;
 											writer.WriteLine($"{to.LangName} converted = ({to.LangName})(({conversionType})value >> {offset});");
-											writer.WriteLine($"return Unsafe.As<{to.LangName}, TTo>(ref converted);");
+											writer.WriteLine($"return Unsafe.BitCast<{to.LangName}, TTo>(converted);");
 										}
 									}
 								}
@@ -276,7 +276,7 @@ internal static class NumericConversionGenerator
 				using (new CurlyBrackets(writer))
 				{
 					writer.WriteLine($"{from.LangName} value = {methodName}Safe<{from.LangName}>();");
-					writer.WriteLine($"return Unsafe.As<{from.LangName}, T>(ref value);");
+					writer.WriteLine($"return Unsafe.BitCast<{from.LangName}, T>(value);");
 				}
 			}
 			writer.WriteLine("else");
