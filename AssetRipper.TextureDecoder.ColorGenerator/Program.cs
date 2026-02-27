@@ -13,18 +13,23 @@ internal static partial class Program
 	private const string FormatsNamespace = "AssetRipper.TextureDecoder.Rgb.Formats";
 	private const string FormatsFolder = "../../../../AssetRipper.TextureDecoder/Rgb/Formats/";
 
-	/// <summary>
-	/// Name, Type, Red, Blue, Green, Alpha, Fully Utilized
-	/// </summary>
-	private static readonly List<(string, Type, bool, bool, bool, bool, bool)> CustomColors = new()
+	private readonly record struct CustomColorDetails(string Name, Type Type, bool HasRed, bool HasGreen, bool HasBlue, bool HasAlpha, bool FullyUtilized)
 	{
+		public static implicit operator CustomColorDetails((string, Type, bool, bool, bool, bool, bool) details)
+		{
+			return new CustomColorDetails(details.Item1, details.Item2, details.Item3, details.Item4, details.Item5, details.Item6, details.Item7);
+		}
+	}
+
+	private static readonly CustomColorDetails[] CustomColors =
+	[
 		( "ColorARGB16", typeof(byte), true, true, true, true, false ),
 		( "ColorRGB16", typeof(byte), true, true, true, false, false ),
 		( "ColorRGB9e5", typeof(double), true, true, true, false, false ),
 		( "ColorRGBA16", typeof(byte), true, true, true, true, false ),
-	};
+	];
 
-	private static readonly List<string> GenericColors =
+	private static readonly string[] GenericColors =
 	[
 		"ColorR",
 		"ColorRG",
@@ -38,7 +43,7 @@ internal static partial class Program
 
 	static void Main()
 	{
-		foreach (var customColor in CustomColors)
+		foreach (CustomColorDetails customColor in CustomColors)
 		{
 			WriteCustomColor(customColor);
 		}
@@ -54,7 +59,7 @@ internal static partial class Program
 		Console.WriteLine("Done!");
 	}
 
-	private static void WriteCustomColor((string, Type, bool, bool, bool, bool, bool) details)
+	private static void WriteCustomColor(CustomColorDetails details)
 	{
 		(string name, Type type, bool hasRed, bool hasGreen, bool hasBlue, bool hasAlpha, bool fullyUtilized) = details;
 		Console.WriteLine(name);
