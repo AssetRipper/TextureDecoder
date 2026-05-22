@@ -66,10 +66,7 @@ namespace AssetRipper.TextureDecoder.Astc
 			if (input[0] == 0xfc && (input[1] & 1) == 1)
 			{
 				ColorRGBA<byte> c = new(input[9], input[11], input[13], input[15]);
-				for (int i = 0; i < blockWidth * blockHeight; i++)
-				{
-					output[i] = c;
-				}
+				output[..(blockWidth * blockHeight)].Fill(c);
 			}
 			else
 			{
