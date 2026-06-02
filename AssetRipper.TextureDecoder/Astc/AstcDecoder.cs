@@ -883,6 +883,11 @@ namespace AssetRipper.TextureDecoder.Astc
 		[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
 		private static int GetBits(ReadOnlySpan<byte> input, int bit, int len)
 		{
+			if (bit < 0 || input.Length * 8 < bit + len)
+			{
+				// Invalid input, but we should return something instead of throwing an exception
+				return default;
+			}
 			ReadOnlySpan<byte> slice = input[(bit / 8)..];
 			int bitBuffer;
 			if (slice.Length >= sizeof(int))

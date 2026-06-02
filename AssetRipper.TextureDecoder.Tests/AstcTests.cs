@@ -77,6 +77,8 @@ public sealed class AstcTests
 	}
 
 	[TestCase(new byte[16] { 83, 1, 147, 104, 198, 173, 55, 116, 182, 66, 105, 11, 102, 43, 148, 125 }, 8, 8, TestName = "GetBits Should not throw in DecodeIntseq")]
+	[TestCase(new byte[16] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, 8, 8, TestName = "Zero blocks should not throw", Description = "Blocks of all zeros are valid")]
+	[TestCase(new byte[16] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF }, 8, 8, TestName = "0xFF blocks should not throw", Description = "Blocks with all bits set are invalid, but should be handled gracefully")]
 	public void DecodesBlockWithoutThrowing(byte[] block, int blockWidth, int blockHeight)
 	{
 		Assert.DoesNotThrow(() => AstcDecoder.DecodeASTC<ColorBGRA<byte>, byte>(block, blockWidth, blockHeight, blockWidth, blockHeight, out _));
