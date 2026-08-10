@@ -18,7 +18,7 @@ namespace AssetRipper.TextureDecoder.Astc
 			where TOutputChannelValue : unmanaged
 			where TOutputColor : unmanaged, IColor<TOutputChannelValue>
 		{
-			output = new byte[width * height * 4];
+			output = new byte[width * height * Unsafe.SizeOf<TOutputColor>()];
 			return DecodeASTC<TOutputColor, TOutputChannelValue>(input, width, height, blockWidth, blockHeight, output);
 		}
 
