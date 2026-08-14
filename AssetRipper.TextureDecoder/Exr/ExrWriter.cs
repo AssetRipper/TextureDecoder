@@ -75,7 +75,7 @@ public static class ExrWriter
 		for (int i = 0; i < height; i++)
 		{
 			writer.Write(offset);
-			offset += sizeof(int) + ChannelCount * ChannelSize * width;
+			offset += sizeof(int) + sizeof(int) + ChannelCount * ChannelSize * width;
 		}
 
 		//Scan lines
