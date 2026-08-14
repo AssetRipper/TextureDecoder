@@ -4,7 +4,7 @@ public readonly record struct ExrChannelList(ExrChannel[] Channels) : IExrDataTy
 {
 	public static ReadOnlySpan<byte> TypeName => "chlist"u8;
 
-	public int Size => Channels.Sum(c => c.Size);
+	public int Size => Channels.Sum(c => c.Size) + sizeof(byte);
 
 	public void Write(BinaryWriter writer)
 	{
