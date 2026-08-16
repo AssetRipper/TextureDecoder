@@ -15,7 +15,6 @@
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<DocumentationFile>bin\TextureDecoder.xml</DocumentationFile>
 		<NoWarn>1591</NoWarn>
 	</PropertyGroup>
 
